@@ -1,0 +1,5 @@
+author = TUA mod team
+version = 0.1
+displayName = LiquidAPI
+buildIgnore = *.csproj, *.user, obj\*, bin\*, .vs\*
+includePDB = true

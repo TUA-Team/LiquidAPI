@@ -58,7 +58,7 @@ namespace LiquidAPI
 
             if (!Liquid.quickFall)
             {
-                if (liquid.delay < 50)
+                if (liquid.delay < 2)
                 {
                     ++liquid.delay;
                     return false;

@@ -109,7 +109,15 @@ namespace LiquidAPI
 
 	    public static bool RunUpdate(byte index, int x, int y)
 	    {
-            return liquidList[index].CustomPhysic(x, y);
+		    int newIndex = index - 3;
+		    if (newIndex > liquidList.Count || newIndex < 0)
+		    {
+			    return false;
+		    }
+		    else
+		    {
+			    return liquidList[newIndex].CustomPhysic(x, y);
+		    }
 	    }
 	}
 }

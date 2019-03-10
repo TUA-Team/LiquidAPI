@@ -51,16 +51,19 @@ namespace LiquidAPI.LiquidMod
             {
                 if (tile.bTileHeader == 159)
                 {
-                    LiquidCore.liquidGrid[x, y][0] = true;
+                    //LiquidCore.liquidGrid[x, y][0] = true;
+                    LiquidCore.liquidGrid[x, y].data = 0;
                 }
                 else if (tile.lava())
                 {
-                    LiquidCore.liquidGrid[x, y][1] = true;
-                }
+                    //LiquidCore.liquidGrid[x, y][1] = true;
+                    LiquidCore.liquidGrid[x, y].data = 1;
+				}
                 else if (tile.honey())
                 {
-                    LiquidCore.liquidGrid[x, y][2] = true;
-                }
+                    //LiquidCore.liquidGrid[x, y][2] = true;
+                    LiquidCore.liquidGrid[x, y].data = 2;
+				}
                 this._liquidType = tile.liquidType();
                 this._liquidAmount = tile.liquid;
             }

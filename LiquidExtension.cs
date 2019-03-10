@@ -14,10 +14,10 @@ namespace LiquidAPI
         public static void MethodSwap()
         {
             On.Terraria.Liquid.Update += ModdedLiquidUpdate;
-            On.Terraria.Liquid.AddWater += AddWater;
+            //On.Terraria.Liquid.AddWater += AddWater;
         }
 
-        /*public static void UpdateLiquid(On.Terraria.Liquid.orig_Update orig)
+		/*public static void UpdateLiquid(On.Terraria.Liquid.orig_Update orig)
         {
             FieldInfo info = typeof(Liquid).GetField("wetCounter", BindingFlags.Static | BindingFlags.NonPublic);
             int wetCounter = (int)info.GetValue(null);
@@ -166,12 +166,12 @@ namespace LiquidAPI
             }
         }*/
 
-        /// <summary>
-        /// tile.nactive() mean check if the tile is actuated
-        /// </summary>
-        /// <param name="self"></param>
+		/// <summary>
+		/// tile.nactive() mean check if the tile is actuated
+		/// </summary>
+		/// <param name="self"></param>
 
-        public static void ModdedLiquidUpdate(On.Terraria.Liquid.orig_Update orig, Liquid self)
+		/*public static void ModdedLiquidUpdate(On.Terraria.Liquid.orig_Update orig, Liquid self)
         {
             if (self.x < 5 || self.x > Main.maxTilesX - 5 || self.y < 5 || self.y > Main.maxTilesY - 5)
             {
@@ -193,39 +193,6 @@ namespace LiquidAPI
             if (b == 3)
             {
                 Main.NewText("Waste found");
-            }
-
-            for (byte i = 0; i < 255; i++)
-            {
-                if (liquidSelf.Liquids(i))
-                {
-                    if (i >= 2)
-                    {
-                    }
-
-                    liquidTypeSelf = i;
-                    break;
-                }
-            }
-
-
-
-            for (byte i = 0; i < 255; i++)
-            {
-                if (liquidLeft.Liquids(i))
-                {
-                    liquidTypeLeft = i;
-                    break;
-                }
-            }
-
-            for (byte i = 0; i < 255; i++)
-            {
-                if (liquidRight.Liquids(i))
-                {
-                    liquidTypeRight = i;
-                    break;
-                }
             }
 
             if (liquidSelf.tile.nactive() && Main.tileSolid[(int)liquidSelf.tile.type] &&
@@ -809,18 +776,660 @@ namespace LiquidAPI
                                 Liquid.AddWater(self.x + 1, self.y);
                             }
 
-                            liquidLeft.tile.liquid = (byte)num;
+                            liquidSelf.tile.liquid = (byte)num;
                         }
                     }
 
                 }
 
             }
-        }
+			
+            if (liquidSelf.tile.liquid == liquid)
+            {
+	            self.kill++;
+	            return;
+            }
+            if (liquidSelf.tile.liquid == 254 && liquid == 255)
+            {
+	            liquidSelf.tile.liquid = 255;
+	            self.kill++;
+	            return;
+            }
+            Liquid.AddWater(self.x, self.y - 1);
+            self.kill = 0;
+		}*/
+
+		public static void ModdedLiquidUpdate(On.Terraria.Liquid.orig_Update orig, Liquid self)
+		{
+			if (self.x < 5 || self.x > Main.maxTilesX - 5 || self.y < 5 || self.y > Main.maxTilesY - 5)
+			{
+				return;
+			}
+
+			Main.tileSolid[TileID.Bubble] = true; //bubble
+
+			LiquidRef liquidLeft = LiquidCore.grid[self.x - 1, self.y];
+			LiquidRef liquidRight = LiquidCore.grid[self.x + 1, self.y];
+			LiquidRef liquidUp = LiquidCore.grid[self.x, self.y - 1];
+			LiquidRef liquidDown = LiquidCore.grid[self.x, self.y + 1];
+			LiquidRef liquidSelf = LiquidCore.grid[self.x, self.y];
+
+			byte liquidTypeSelf = LiquidCore.liquidGrid[self.x, self.y].data;
+			byte liquidTypeLeft = LiquidCore.liquidGrid[self.x - 1, self.y].data;
+			byte liquidTypeRight = LiquidCore.liquidGrid[self.x + 1, self.y].data;
+			byte b = LiquidCore.liquidGrid[self.x, self.y].data;
+
+			if (liquidSelf.tile.nactive() && Main.tileSolid[(int)liquidSelf.tile.type] && !Main.tileSolidTop[(int)liquidSelf.tile.type])
+			{
+				self.kill = 9;
+				return;
+			}
+			byte liquid = liquidSelf.tile.liquid;
+
+			if (liquidSelf.tile.nactive() && Main.tileSolid[(int)liquidSelf.tile.type] &&
+				!Main.tileSolidTop[(int)liquidSelf.tile.type])
+			{
+
+				self.kill = 9;
+			}
+			else
+			{
+				byte liquidAmount = liquidSelf.tile.liquid;
+				//liquidSelf.liquidAmount = 0;
+
+				if (liquidSelf.tile.liquid <= (byte)0)
+				{
+					self.kill = 9;
+				}
+				else
+				{
+					if (liquidTypeSelf == 0)
+					{
+						if (!Liquid.quickFall)
+						{
+							if (self.delay < 3)
+							{
+								++self.delay;
+								return;
+							}
+
+							self.delay = 0;
+							if (liquidLeft.Liquids(0))
+							{
+								Liquid.AddWater(self.x - 1, self.y);
+							}
+
+							if (liquidRight.Liquids(0))
+							{
+								Liquid.AddWater(self.x + 1, self.y);
+							}
+
+							if (liquidUp.Liquids(0))
+							{
+								Liquid.AddWater(self.x, self.y - 1);
+							}
+
+							if (liquidDown.Liquids(0))
+							{
+								Liquid.AddWater(self.x, self.y + 1);
+							}
+						}
+					}
+					else if (liquidTypeSelf == 1)
+					{
+						LiquidCheck.LavaCheck(self.x, self.y);
+						if (!Liquid.quickFall)
+						{
+							if (self.delay < 5)
+							{
+								++self.delay;
+								return;
+							}
+
+							self.delay = 0;
+							if (liquidSelf.Liquids(1))
+							{
+								Liquid.AddWater(self.x - 1, self.y);
+							}
+
+							if (liquidSelf.Liquids(1))
+							{
+								Liquid.AddWater(self.x + 1, self.y);
+							}
+
+							if (liquidSelf.Liquids(1))
+							{
+								Liquid.AddWater(self.x, self.y - 1);
+							}
+
+							if (liquidSelf.Liquids(1))
+							{
+								Liquid.AddWater(self.x, self.y + 1);
+							}
+						}
+					}
+					else if (liquidTypeSelf == 2)
+					{
+						LiquidCheck.HoneyCheck(self.x, self.y);
+						if (!Liquid.quickFall)
+						{
+							if (self.delay < 10)
+							{
+								++self.delay;
+								return;
+							}
+
+							self.delay = 0;
+							if (liquidLeft.Liquids(2))
+							{
+								Liquid.AddWater(self.x - 1, self.y);
+							}
+
+							if (liquidRight.Liquids(2))
+							{
+								Liquid.AddWater(self.x + 1, self.y);
+							}
+
+							if (liquidUp.Liquids(2))
+							{
+								Liquid.AddWater(self.x, self.y - 1);
+							}
+
+							if (liquidDown.Liquids(2))
+							{
+								Liquid.AddWater(self.x, self.y + 1);
+							}
+						}
+					}
+					else if (!LiquidRegistry.RunUpdate(liquidTypeSelf, self.x, self.y))
+					{
+						return;
+					}
 
 
+					if ((!liquidDown.tile.nactive() || !Main.tileSolid[(int)liquidDown.tile.type] ||
+						 Main.tileSolidTop[(int)liquidDown.tile.type]) &&
+						((liquidDown.tile.liquid <= (byte)0 ||
+						  liquidDown.Liquids(liquidTypeSelf)) &&
+						 liquidDown.tile.liquid < byte.MaxValue))
+					{
+						float num = (float)((int)byte.MaxValue - (int)liquidDown.tile.liquid);
+						if ((double)num > (double)liquidSelf.tile.liquid)
+						{
+							num = (float)liquidSelf.tile.liquid;
+						}
 
-        public static void AddModdedLiquidAround(int x, int y)
+						liquidSelf.tile.liquid -= (byte)num;
+						liquidDown.tile.liquid += (byte)num;
+						liquidDown.tile.liquid = liquidSelf.tile.liquid;
+						Liquid.AddWater(self.x, self.y + 1);
+						liquidDown.tile.skipLiquid(true);
+						liquidSelf.tile.skipLiquid(true);
+						if (liquidSelf.tile.liquid > (byte)250)
+						{
+							liquidSelf.tile.liquid = byte.MaxValue;
+						}
+						else
+						{
+							Liquid.AddWater(self.x - 1, self.y);
+							Liquid.AddWater(self.x + 1, self.y);
+						}
+					}
+
+					if (liquidSelf.tile.liquid > (byte)0)
+					{
+						bool flag = true;
+						bool flag2 = true;
+						bool flag3 = true;
+						bool flag4 = true;
+						if (liquidLeft.tile.nactive() && Main.tileSolid[(int)liquidLeft.tile.type] &&
+							!Main.tileSolidTop[(int)liquidLeft.tile.type])
+						{
+							flag = false;
+						}
+						else if (liquidLeft.tile.liquid > 0 &&
+								 liquidLeft.Liquids(liquidTypeSelf))
+						{
+							flag = false;
+						}
+						else if (LiquidCore.grid[self.x - 2, self.y].tile.nactive() &&
+								 Main.tileSolid[(int)LiquidCore.grid[self.x - 2, self.y].tile.type] &&
+								 !Main.tileSolidTop[(int)LiquidCore.grid[self.x - 2, self.y].tile.type])
+						{
+							flag3 = false;
+						}
+						else if (LiquidCore.grid[self.x - 2, self.y].tile.liquid == 0)
+						{
+							flag3 = false;
+						}
+						else if (LiquidCore.grid[self.x - 2, self.y].tile.liquid > 0 &&
+								 LiquidCore.grid[self.x - 2, self.y].Liquids(liquidTypeLeft))
+						{
+							flag3 = false;
+						}
+
+						if (liquidRight.tile.nactive() && Main.tileSolid[(int)liquidRight.tile.type] &&
+							!Main.tileSolidTop[(int)liquidRight.tile.type])
+						{
+							flag2 = false;
+						}
+						else if (liquidRight.tile.liquid > 0 && !liquidRight.Liquids(liquidTypeSelf))
+						{
+							flag2 = false;
+						}
+						else if (LiquidCore.grid[self.x + 2, self.y].tile.nactive() &&
+								 Main.tileSolid[(int)LiquidCore.grid[self.x + 2, self.y].tile.type] &&
+								 !Main.tileSolidTop[(int)LiquidCore.grid[self.x + 2, self.y].tile.type])
+						{
+							flag4 = false;
+						}
+						else if (LiquidCore.grid[self.x + 2, self.y].tile.liquid == 0)
+						{
+							flag4 = false;
+						}
+						else if (LiquidCore.grid[self.x + 2, self.y].tile.liquid > 0 &&
+								 !LiquidCore.grid[self.x + 2, self.y].Liquids(liquidTypeSelf))
+						{
+							flag4 = false;
+						}
+
+						int num2 = 0;
+						if (liquidSelf.tile.liquid < 3)
+						{
+							num2 = -1;
+						}
+
+						if (flag && flag2)
+						{
+							if (flag3 && flag4)
+							{
+								bool flag5 = true;
+								bool flag6 = true;
+								if (LiquidCore.grid[self.x - 3, self.y].tile.nactive() &&
+									Main.tileSolid[(int)LiquidCore.grid[self.x - 3, self.y].tile.type] &&
+									!Main.tileSolidTop[(int)LiquidCore.grid[self.x - 3, self.y].tile.type])
+								{
+									flag5 = false;
+								}
+								else if (LiquidCore.grid[self.x - 3, self.y].tile.liquid == 0)
+								{
+									flag5 = false;
+								}
+								else if (LiquidCore.grid[self.x - 3, self.y].Liquids(liquidTypeSelf))
+								{
+									flag5 = false;
+								}
+
+								if (LiquidCore.grid[self.x + 3, self.y].tile.nactive() &&
+									Main.tileSolid[(int)LiquidCore.grid[self.x + 3, self.y].tile.type] &&
+									!Main.tileSolidTop[(int)LiquidCore.grid[self.x + 3, self.y].tile.type])
+								{
+									flag6 = false;
+								}
+								else if (LiquidCore.grid[self.x + 3, self.y].tile.liquid == 0)
+								{
+									flag6 = false;
+								}
+								else if (LiquidCore.grid[self.x + 3, self.y].Liquids(liquidTypeSelf))
+								{
+									flag6 = false;
+								}
+
+								if (flag5 && flag6)
+								{
+									float num = (float)((int)(liquidLeft.tile.liquid + liquidRight.tile.liquid +
+																LiquidCore.grid[self.x - 2, self.y].tile.liquid +
+																LiquidCore.grid[self.x + 2, self.y].tile.liquid +
+																LiquidCore.grid[self.x - 3, self.y].tile.liquid +
+																LiquidCore.grid[self.x + 3, self.y].tile.liquid +
+																liquidSelf.tile.liquid) + num2);
+									num = (float)Math.Round((double)(num / 7f));
+									int num3 = 0;
+									liquidLeft.SetLiquidsState(liquidTypeSelf, true);
+									if (liquidLeft.tile.liquid != (byte)num)
+									{
+										liquidLeft.tile.liquid = (byte)num;
+										Liquid.AddWater(self.x - 1, self.y);
+									}
+									else
+									{
+										num3++;
+									}
+
+									liquidRight.SetLiquidsState(liquidTypeSelf, true);
+									if (liquidRight.tile.liquid != (byte)num)
+									{
+										liquidRight.tile.liquid = (byte)num;
+										Liquid.AddWater(self.x + 1, self.y);
+									}
+									else
+									{
+										num3++;
+									}
+
+									LiquidCore.grid[self.x - 2, self.y].SetLiquidsState(liquidTypeSelf, true);
+									if (LiquidCore.grid[self.x - 2, self.y].tile.liquid != (byte)num)
+									{
+										LiquidCore.grid[self.x - 2, self.y].tile.liquid = (byte)num;
+										Liquid.AddWater(self.x - 2, self.y);
+									}
+									else
+									{
+										num3++;
+									}
+
+									LiquidCore.grid[self.x + 2, self.y].SetLiquidsState(liquidTypeSelf, true);
+									if (LiquidCore.grid[self.x + 2, self.y].tile.liquid != (byte)num)
+									{
+										LiquidCore.grid[self.x + 2, self.y].tile.liquid = (byte)num;
+										Liquid.AddWater(self.x + 2, self.y);
+									}
+									else
+									{
+										num3++;
+									}
+
+									LiquidCore.grid[self.x - 3, self.y].SetLiquidsState(liquidTypeSelf, true);
+									if (LiquidCore.grid[self.x - 3, self.y].tile.liquid != (byte)num)
+									{
+										LiquidCore.grid[self.x - 3, self.y].tile.liquid = (byte)num;
+										Liquid.AddWater(self.x - 3, self.y);
+									}
+									else
+									{
+										num3++;
+									}
+
+									LiquidCore.grid[self.x + 3, self.y].SetLiquidsState(liquidTypeSelf, true);
+									if (LiquidCore.grid[self.x + 3, self.y].tile.liquid != (byte)num)
+									{
+										LiquidCore.grid[self.x + 3, self.y].tile.liquid = (byte)num;
+										Liquid.AddWater(self.x + 3, self.y);
+									}
+									else
+									{
+										num3++;
+									}
+
+									if (liquidLeft.tile.liquid != (byte)num ||
+										liquidSelf.tile.liquid != (byte)num)
+									{
+										Liquid.AddWater(self.x - 1, self.y);
+									}
+
+									if (liquidRight.tile.liquid != (byte)num ||
+										liquidSelf.tile.liquid != (byte)num)
+									{
+										Liquid.AddWater(self.x + 1, self.y);
+									}
+
+									if (LiquidCore.grid[self.x - 2, self.y].tile.liquid != (byte)num ||
+										liquidSelf.tile.liquid != (byte)num)
+									{
+										Liquid.AddWater(self.x - 2, self.y);
+									}
+
+									if (LiquidCore.grid[self.x + 2, self.y].tile.liquid != (byte)num ||
+										liquidSelf.tile.liquid != (byte)num)
+									{
+										Liquid.AddWater(self.x + 2, self.y);
+									}
+
+									if (LiquidCore.grid[self.x - 3, self.y].tile.liquid != (byte)num ||
+										liquidSelf.tile.liquid != (byte)num)
+									{
+										Liquid.AddWater(self.x - 3, self.y);
+									}
+
+									if (LiquidCore.grid[self.x + 3, self.y].tile.liquid != (byte)num ||
+										liquidSelf.tile.liquid != (byte)num)
+									{
+										Liquid.AddWater(self.x + 3, self.y);
+									}
+
+									if (num3 != 6 || liquidUp.tile.liquid <= 0)
+									{
+										liquidSelf.tile.liquid = (byte)num;
+									}
+								}
+								else
+								{
+									int num4 = 0;
+									float num = (float)((int)(liquidLeft.tile.liquid + liquidRight.tile.liquid +
+																LiquidCore.grid[self.x - 2, self.y].tile.liquid +
+																LiquidCore.grid[self.x + 2, self.y].tile.liquid +
+																liquidSelf.tile.liquid) + num2);
+									num = (float)Math.Round((double)(num / 5f));
+									liquidLeft.SetLiquidsState(liquidTypeSelf, true);
+									if (liquidLeft.tile.liquid != (byte)num)
+									{
+										liquidLeft.tile.liquid = (byte)num;
+										Liquid.AddWater(self.x - 1, self.y);
+									}
+									else
+									{
+										num4++;
+									}
+
+									liquidRight.SetLiquidsState(liquidTypeSelf, true);
+									if (liquidRight.tile.liquid != (byte)num)
+									{
+										liquidRight.tile.liquid = (byte)num;
+										Liquid.AddWater(self.x + 1, self.y);
+									}
+									else
+									{
+										num4++;
+									}
+
+									LiquidCore.grid[self.x - 2, self.y].SetLiquidsState(liquidTypeSelf, true);
+									if (LiquidCore.grid[self.x - 2, self.y].tile.liquid != (byte)num)
+									{
+										LiquidCore.grid[self.x - 2, self.y].tile.liquid = (byte)num;
+										Liquid.AddWater(self.x - 2, self.y);
+									}
+									else
+									{
+										num4++;
+									}
+
+									LiquidCore.grid[self.x + 2, self.y].SetLiquidsState(liquidTypeSelf, true);
+									if (LiquidCore.grid[self.x + 2, self.y].tile.liquid != (byte)num)
+									{
+										LiquidCore.grid[self.x + 2, self.y].tile.liquid = (byte)num;
+										Liquid.AddWater(self.x + 2, self.y);
+									}
+									else
+									{
+										num4++;
+									}
+
+									if (liquidLeft.tile.liquid != (byte)num ||
+										liquidSelf.tile.liquid != (byte)num)
+									{
+										Liquid.AddWater(self.x - 1, self.y);
+									}
+
+									if (liquidRight.tile.liquid != (byte)num ||
+										liquidSelf.tile.liquid != (byte)num)
+									{
+										Liquid.AddWater(self.x + 1, self.y);
+									}
+
+									if (LiquidCore.grid[self.x - 2, self.y].tile.liquid != (byte)num ||
+										liquidSelf.tile.liquid != (byte)num)
+									{
+										Liquid.AddWater(self.x - 2, self.y);
+									}
+
+									if (LiquidCore.grid[self.x + 2, self.y].tile.liquid != (byte)num ||
+										liquidSelf.tile.liquid != (byte)num)
+									{
+										Liquid.AddWater(self.x + 2, self.y);
+									}
+
+									if (num4 != 4 || liquidUp.tile.liquid <= 0)
+									{
+										liquidSelf.tile.liquid = (byte)num;
+									}
+								}
+							}
+							else if (flag3)
+							{
+								float num = (float)((int)(liquidLeft.tile.liquid + liquidRight.tile.liquid +
+															LiquidCore.grid[self.x - 2, self.y].tile.liquid +
+															liquidSelf.tile.liquid) + num2);
+								num = (float)Math.Round((double)(num / 4f) + 0.001);
+								liquidLeft.SetLiquidsState(liquidTypeSelf, true);
+								if (liquidLeft.tile.liquid != (byte)num ||
+									liquidSelf.tile.liquid != (byte)num)
+								{
+									liquidLeft.tile.liquid = (byte)num;
+									Liquid.AddWater(self.x - 1, self.y);
+								}
+
+								liquidRight.SetLiquidsState(liquidTypeSelf, true);
+								if (liquidRight.tile.liquid != (byte)num ||
+									liquidSelf.tile.liquid != (byte)num)
+								{
+									liquidRight.tile.liquid = (byte)num;
+									Liquid.AddWater(self.x + 1, self.y);
+								}
+
+								LiquidCore.grid[self.x - 2, self.y].SetLiquidsState(liquidTypeSelf, true);
+								if (LiquidCore.grid[self.x - 2, self.y].tile.liquid != (byte)num ||
+									liquidSelf.tile.liquid != (byte)num)
+								{
+									LiquidCore.grid[self.x - 2, self.y].tile.liquid = (byte)num;
+									Liquid.AddWater(self.x - 2, self.y);
+								}
+
+								liquidSelf.tile.liquid = (byte)num;
+							}
+							else if (flag4)
+							{
+								float num = (float)((int)(liquidLeft.tile.liquid + liquidRight.tile.liquid +
+															LiquidCore.grid[self.x + 2, self.y].tile.liquid +
+															liquidSelf.tile.liquid) + num2);
+								num = (float)Math.Round((double)(num / 4f) + 0.001);
+								liquidLeft.SetLiquidsState(liquidTypeSelf, true);
+								if (liquidLeft.tile.liquid != (byte)num ||
+									liquidSelf.tile.liquid != (byte)num)
+								{
+									liquidLeft.tile.liquid = (byte)num;
+									Liquid.AddWater(self.x - 1, self.y);
+								}
+
+								liquidRight.SetLiquidsState(liquidTypeSelf, true);
+								if (liquidRight.tile.liquid != (byte)num ||
+									liquidSelf.tile.liquid != (byte)num)
+								{
+									liquidRight.tile.liquid = (byte)num;
+									Liquid.AddWater(self.x + 1, self.y);
+								}
+
+								LiquidCore.grid[self.x + 2, self.y].SetLiquidsState(liquidTypeSelf, true);
+								if (LiquidCore.grid[self.x + 2, self.y].tile.liquid != (byte)num ||
+									liquidSelf.tile.liquid != (byte)num)
+								{
+									LiquidCore.grid[self.x + 2, self.y].tile.liquid = (byte)num;
+									Liquid.AddWater(self.x + 2, self.y);
+								}
+
+								liquidSelf.tile.liquid = (byte)num;
+							}
+							else
+							{
+								float num = (float)((int)(liquidLeft.tile.liquid + liquidRight.tile.liquid +
+															liquidSelf.tile.liquid) + num2);
+								num = (float)Math.Round((double)(num / 3f) + 0.001);
+								liquidLeft.SetLiquidsState(liquidTypeSelf, true);
+								if (liquidLeft.tile.liquid != (byte)num)
+								{
+									liquidLeft.tile.liquid = (byte)num;
+								}
+
+								if (liquidSelf.tile.liquid != (byte)num ||
+									liquidLeft.tile.liquid != (byte)num)
+								{
+									Liquid.AddWater(self.x - 1, self.y);
+								}
+
+								liquidRight.SetLiquidsState(liquidTypeSelf, true);
+								if (liquidRight.tile.liquid != (byte)num)
+								{
+									liquidRight.tile.liquid = (byte)num;
+								}
+
+								if (liquidSelf.tile.liquid != (byte)num ||
+									liquidRight.tile.liquid != (byte)num)
+								{
+									Liquid.AddWater(self.x + 1, self.y);
+								}
+
+								liquidSelf.tile.liquid = (byte)num;
+							}
+						}
+						else if (flag)
+						{
+							float num =
+								(float)((int)(liquidLeft.tile.liquid + liquidSelf.tile.liquid) + num2);
+							num = (float)Math.Round((double)(num / 2f) + 0.001);
+							if (liquidLeft.tile.liquid != (byte)num)
+							{
+								liquidLeft.tile.liquid = (byte)num;
+							}
+
+							liquidLeft.SetLiquidsState(liquidTypeSelf, true);
+							if (liquidSelf.tile.liquid != (byte)num ||
+								liquidLeft.tile.liquid != (byte)num)
+							{
+								Liquid.AddWater(self.x - 1, self.y);
+							}
+
+							liquidSelf.tile.liquid = (byte)num;
+						}
+						else if (flag2)
+						{
+							float num =
+								(float)((int)(liquidRight.tile.liquid + liquidSelf.tile.liquid) +
+										 num2);
+							num = (float)Math.Round((double)(num / 2f) + 0.001);
+							if (liquidRight.tile.liquid != (byte)num)
+							{
+								liquidRight.tile.liquid = (byte)num;
+							}
+
+							liquidRight.SetLiquidsState(liquidTypeSelf, true);
+							if (liquidSelf.tile.liquid != (byte)num ||
+								liquidRight.tile.liquid != (byte)num)
+							{
+								Liquid.AddWater(self.x + 1, self.y);
+							}
+
+							liquidSelf.tile.liquid = (byte)num;
+						}
+					}
+
+				}
+
+			}
+			if (liquidSelf.tile.liquid == liquid)
+			{
+				self.kill++;
+				return;
+			}
+			if (liquidSelf.tile.liquid == 254 && liquid == 255)
+			{
+				liquidSelf.tile.liquid = 255;
+				self.kill++;
+				return;
+			}
+			Liquid.AddWater(self.x, self.y - 1);
+			self.kill = 0;
+		}
+
+		public static void AddModdedLiquidAround(int x, int y)
         {
             LiquidRef liquid = LiquidCore.grid[x, y];
             if (Main.tile[x, y] == null || liquid.CheckingLiquid() || (x >= Main.maxTilesX - 5 || y >= Main.maxTilesY - 5) || (x < 5 || y < 5 || liquid.NoLiquid()))

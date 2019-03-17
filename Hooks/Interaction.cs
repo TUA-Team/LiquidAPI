@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using LiquidAPI.ID;
+using LiquidAPI.LiquidMod;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
@@ -14,52 +16,52 @@ namespace LiquidAPI.Hooks
 	{
 		private static void LiquidOnLavaCheck(On.Terraria.Liquid.orig_LavaCheck orig, int x, int y)
 		{
-			// TODO: Fix Later
-			return;
+			LiquidRef liquidLeft = LiquidCore.grid[x - 1, y];
+			LiquidRef liquidRight = LiquidCore.grid[x + 1, y];
+			LiquidRef liquidDown = LiquidCore.grid[x, y - 1];
+			LiquidRef liquidUp = LiquidCore.grid[x, y + 1];
+			LiquidRef liquidSelf = LiquidCore.grid[x, y];
 
-			Tile tile1 = Main.tile[x - 1, y];
-			Tile tile2 = Main.tile[x + 1, y];
-			Tile tile3 = Main.tile[x, y - 1];
-			Tile tile4 = Main.tile[x, y + 1];
-			Tile tile5 = Main.tile[x, y];
-			if (tile1.liquid > (byte)0 && !tile1.lava() || tile2.liquid > (byte)0 && !tile2.lava() ||
-				tile3.liquid > (byte)0 && !tile3.lava())
+			if (liquidLeft.Amount > 0 && liquidLeft.Type != LiquidID.lava || 
+			    liquidRight.Amount > 0 && liquidRight.Type != LiquidID.lava ||
+				liquidDown.Amount > 0 && liquidDown.Type != LiquidID.lava)
 			{
 				int num = 0;
 				int type = 56;
-				if (!tile1.lava())
+				if (liquidLeft.Type != LiquidID.lava)
 				{
-					num += (int)tile1.liquid;
-					tile1.liquid = (byte)0;
+					num += liquidLeft.Amount;
+					liquidLeft.Amount = 0;
 				}
 
-				if (!tile2.lava())
+				if (liquidRight.Type != LiquidID.lava)
 				{
-					num += (int)tile2.liquid;
-					tile2.liquid = (byte)0;
+					num += liquidRight.Amount;
+					liquidRight.Amount = 0;
 				}
 
-				if (!tile3.lava())
+				if (liquidDown.Type != LiquidID.lava)
 				{
-					num += (int)tile3.liquid;
-					tile3.liquid = (byte)0;
+					num += liquidDown.Amount;
+					liquidDown.Amount = 0;
 				}
 
-				if (tile1.honey() || tile2.honey() || tile3.honey())
+				if (liquidLeft.Type == LiquidID.honey || liquidRight.Type == LiquidID.honey || liquidDown.Type == LiquidID.honey)
 					type = 230;
 				if (num < 24)
 					return;
-				if (tile5.active() && Main.tileObsidianKill[(int)tile5.type])
+				if (liquidSelf.Tile.active() && Main.tileObsidianKill[liquidSelf.Tile.type])
 				{
 					WorldGen.KillTile(x, y, false, false, false);
 					if (Main.netMode == 2)
 						NetMessage.SendData(17, -1, -1, (NetworkText)null, 0, (float)x, (float)y, 0.0f, 0, 0, 0);
 				}
 
-				if (tile5.active())
+				if (liquidSelf.Tile.active())
 					return;
-				tile5.liquid = (byte)0;
-				tile5.lava(false);
+				liquidSelf.Amount = 0;
+				liquidSelf.Type = LiquidID.water;
+				//liquidSelf.lava(false);
 				if (type == 56)
 					Main.PlaySound(SoundID.LiquidsWaterLava, new Vector2((float)(x * 16 + 8), (float)(y * 16 + 8)));
 				else
@@ -73,20 +75,18 @@ namespace LiquidAPI.Hooks
 			}
 			else
 			{
-				if (tile4.liquid <= (byte)0 || tile4.lava())
+				if (liquidUp.Amount <= 0 || liquidUp.Type == LiquidID.lava)
 					return;
-				bool flag = false;
-				if (tile5.active() && TileID.Sets.ForceObsidianKill[(int)tile5.type] &&
-					!TileID.Sets.ForceObsidianKill[(int)tile4.type])
-					flag = true;
-				if (Main.tileCut[(int)tile4.type])
+				bool flag = liquidSelf.Tile.active() && TileID.Sets.ForceObsidianKill[liquidSelf.Tile.type] &&
+				            !TileID.Sets.ForceObsidianKill[liquidUp.Tile.type];
+				if (Main.tileCut[liquidUp.Tile.type])
 				{
 					WorldGen.KillTile(x, y + 1, false, false, false);
 					if (Main.netMode == 2)
 						NetMessage.SendData(17, -1, -1, (NetworkText)null, 0, (float)x, (float)(y + 1), 0.0f, 0, 0,
 							0);
 				}
-				else if (tile4.active() && Main.tileObsidianKill[(int)tile4.type])
+				else if (liquidUp.Tile.active() && Main.tileObsidianKill[liquidUp.Tile.type])
 				{
 					WorldGen.KillTile(x, y + 1, false, false, false);
 					if (Main.netMode == 2)
@@ -94,12 +94,12 @@ namespace LiquidAPI.Hooks
 							0);
 				}
 
-				if (!(!tile4.active() | flag))
+				if (!(!liquidUp.Tile.active() | flag))
 					return;
-				if (tile5.liquid < (byte)24)
+				if (liquidSelf.Amount < 24)
 				{
-					tile5.liquid = (byte)0;
-					tile5.liquidType(0);
+					liquidSelf.Amount = 0;
+					liquidSelf.Type = LiquidID.water;
 					if (Main.netMode != 2)
 						return;
 					NetMessage.SendTileSquare(-1, x - 1, y, 3, TileChangeType.None);
@@ -107,11 +107,12 @@ namespace LiquidAPI.Hooks
 				else
 				{
 					int type = 56;
-					if (tile4.honey())
+					if (liquidUp.Type == LiquidID.honey)
 						type = 230;
-					tile5.liquid = (byte)0;
-					tile5.lava(false);
-					tile4.liquid = (byte)0;
+					liquidSelf.Amount = 0;
+					liquidSelf.Type = LiquidID.water;
+					//liquidSelf.lava(false);
+					liquidUp.Amount = 0;
 					if (type == 56)
 						Main.PlaySound(SoundID.LiquidsWaterLava,
 							new Vector2((float)(x * 16 + 8), (float)(y * 16 + 8)));
@@ -130,53 +131,51 @@ namespace LiquidAPI.Hooks
 
 		private static void LiquidOnHoneyCheck(On.Terraria.Liquid.orig_HoneyCheck orig, int x, int y)
 		{
-			// TODO: Fix Later
-			return;
+			LiquidRef liquidLeft = LiquidCore.grid[x - 1, y];
+			LiquidRef liquidRight = LiquidCore.grid[x + 1, y];
+			LiquidRef liquidDown = LiquidCore.grid[x, y - 1];
+			LiquidRef liquidUp = LiquidCore.grid[x, y + 1];
+			LiquidRef liquidSelf = LiquidCore.grid[x, y];
 
-			/*Tile tile1 = Main.Tile[x - 1, y];
-			Tile tile2 = Main.Tile[x + 1, y];
-			Tile tile3 = Main.Tile[x, y - 1];
-			Tile tile4 = Main.Tile[x, y + 1];
-			Tile tile5 = Main.Tile[x, y];
 			bool flag = false;
-			if (tile1.liquid > (byte) 0 && tile1.liquidTypeX() == (byte) 0 ||
-			    tile2.liquid > (byte) 0 && tile2.liquidTypeX() == (byte) 0 ||
-			    tile3.liquid > (byte) 0 && tile3.liquidTypeX() == (byte) 0)
+			if (liquidLeft.Amount > 0 && liquidLeft.Type == LiquidID.water ||
+			    liquidRight.Amount > 0 && liquidRight.Type == LiquidID.water ||
+			    liquidDown.Amount > 0 && liquidDown.Type == LiquidID.water)
 			{
 				int num = 0;
-				if (tile1.liquidTypeX() == (byte) 0)
+				if (liquidLeft.Type == LiquidID.water)
 				{
-					num += (int) tile1.liquid;
-					tile1.liquid = (byte) 0;
+					num += (int) liquidLeft.Amount;
+					liquidLeft.Amount = (byte) 0;
 				}
 
-				if (tile2.liquidTypeX() == (byte) 0)
+				if (liquidRight.Type == LiquidID.water)
 				{
-					num += (int) tile2.liquid;
-					tile2.liquid = (byte) 0;
+					num += (int) liquidRight.Amount;
+					liquidRight.Amount = (byte) 0;
 				}
 
-				if (tile3.liquidTypeX() == (byte) 0)
+				if (liquidDown.Type == LiquidID.water)
 				{
-					num += (int) tile3.liquid;
-					tile3.liquid = (byte) 0;
+					num += (int) liquidDown.Amount;
+					liquidDown.Amount = (byte) 0;
 				}
 
-				if (tile1.lava() || tile2.lava() || tile3.lava())
+				if (liquidLeft.Type == LiquidID.lava || liquidRight.Type == LiquidID.lava || liquidDown.Type == LiquidID.lava)
 					flag = true;
 				if (num < 32)
 					return;
-				if (tile5.active() && Main.tileObsidianKill[(int) tile5.type])
+				if (liquidSelf.Tile.active() && Main.tileObsidianKill[liquidSelf.Tile.type])
 				{
 					WorldGen.KillTile(x, y, false, false, false);
 					if (Main.netMode == 2)
 						NetMessage.SendData(17, -1, -1, (NetworkText) null, 0, (float) x, (float) y, 0.0f, 0, 0, 0);
 				}
 
-				if (tile5.active())
+				if (liquidSelf.Tile.active())
 					return;
-				tile5.liquid = (byte) 0;
-				tile5.liquidType(0);
+				liquidSelf.Amount = 0;
+				liquidSelf.Type = LiquidID.water;
 				WorldGen.PlaceTile(x, y, 229, true, true, -1, 0);
 				if (flag)
 					Main.PlaySound(SoundID.LiquidsHoneyLava, new Vector2((float) (x * 16 + 8), (float) (y * 16 + 8)));
@@ -190,16 +189,16 @@ namespace LiquidAPI.Hooks
 			}
 			else
 			{
-				if (tile4.liquid <= (byte) 0 || tile4.liquidTypeX() != (byte) 0)
+				if (liquidUp.Amount <= 0 || liquidUp.Type != LiquidID.water)
 					return;
-				if (Main.tileCut[(int) tile4.type])
+				if (Main.tileCut[liquidUp.Tile.type])
 				{
 					WorldGen.KillTile(x, y + 1, false, false, false);
 					if (Main.netMode == 2)
 						NetMessage.SendData(17, -1, -1, (NetworkText) null, 0, (float) x, (float) (y + 1), 0.0f, 0, 0,
 							0);
 				}
-				else if (tile4.active() && Main.tileObsidianKill[(int) tile4.type])
+				else if (liquidUp.Tile.active() && Main.tileObsidianKill[liquidUp.Tile.type])
 				{
 					WorldGen.KillTile(x, y + 1, false, false, false);
 					if (Main.netMode == 2)
@@ -207,24 +206,24 @@ namespace LiquidAPI.Hooks
 							0);
 				}
 
-				if (tile4.active())
+				if (liquidUp.Tile.active())
 					return;
-				if (tile5.liquid < (byte) 32)
+				if (liquidSelf.Amount < 32)
 				{
-					tile5.liquid = (byte) 0;
-					tile5.liquidType(0);
+					liquidSelf.Amount = 0;
+					liquidSelf.Type = LiquidID.water;
 					if (Main.netMode != 2)
 						return;
 					NetMessage.SendTileSquare(-1, x - 1, y, 3, TileChangeType.None);
 				}
 				else
 				{
-					if (tile4.lava())
+					if (liquidUp.Type == LiquidID.lava)
 						flag = true;
-					tile5.liquid = (byte) 0;
-					tile5.liquidType(0);
-					tile4.liquid = (byte) 0;
-					tile4.liquidType(0);
+					liquidSelf.Amount = 0;
+					liquidSelf.Type = LiquidID.water;
+					liquidUp.Amount = 0;
+					liquidUp.Type = LiquidID.water;
 					if (flag)
 						Main.PlaySound(SoundID.LiquidsHoneyLava,
 							new Vector2((float) (x * 16 + 8), (float) (y * 16 + 8)));
@@ -238,7 +237,7 @@ namespace LiquidAPI.Hooks
 					NetMessage.SendTileSquare(-1, x - 1, y, 3,
 						flag ? TileChangeType.HoneyLava : TileChangeType.HoneyWater);
 				}
-			}*/
+			}
 		}
 	}
 }

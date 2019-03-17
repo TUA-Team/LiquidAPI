@@ -148,6 +148,8 @@ namespace LiquidAPI
 
 		public override void SetDefaults()
 		{
+			item.width = 24;
+			item.height = 22;
 			item.maxStack = 99;
 			item.useStyle = ItemUseStyleID.SwingThrow;
 			item.useTime = 100;
@@ -189,7 +191,7 @@ namespace LiquidAPI
 			}
 
 			Texture2D liquidTexture = LiquidAPI.instance.GetTexture("Texture/Bucket/liquid");
-			spriteBatch.Draw(liquidTexture, position, liquidColor);
+			spriteBatch.Draw(liquidTexture, position, null, liquidColor, 0.0f, origin, new Vector2(scale), SpriteEffects.None, 0);
 		}
 
 		public override void PostDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor,

@@ -21,7 +21,7 @@ namespace LiquidAPI
 		{
 			instance = this;
 
-			ModBucket bucket = new ModBucket(-1, Color.Gray, "Empty");
+			ModBucket bucket = new ModBucket(-1, Color.Transparent, "Empty");
 			AddItem(bucket.name, bucket.Clone());
 
 			bucket = new ModBucket(0, new Color(51, 107, 249), "Water");

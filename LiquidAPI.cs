@@ -4,7 +4,6 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using LiquidAPI.Swap;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.Map;

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using LiquidAPI.Hooks;
 using LiquidAPI.LiquidMod;
-using LiquidAPI.Swap;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.GameContent.Liquid;

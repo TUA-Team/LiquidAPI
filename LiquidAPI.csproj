@@ -88,6 +88,7 @@
     <Content Include="ModBucket.png" />
     <Content Include="Test\PlutonicWaste.png" />
     <Content Include="Test\WeirdLiquid.png" />
+    <Content Include="Texture\Bucket\liquid.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

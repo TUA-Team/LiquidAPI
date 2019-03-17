@@ -15,20 +15,20 @@ namespace LiquidAPI.Swap
             //ReflectionUtils.MethodSwap(liquid, "AddWater", thisObject, "AddWater");
         }
 
-        public static void AddWater(int x, int y)
+        /*public static void AddWater(int x, int y)
         {
-            Tile tile = Main.tile[x, y];
-            if (tile == null)
+            Tile Tile = Main.Tile[x, y];
+            if (Tile == null)
             {
                 return;
             }
             LiquidRef liquid = new LiquidRef(x, y);
-            if (Main.tile[x, y] == null)
+            if (Main.Tile[x, y] == null)
             {
                 return;
             }
 
-            if (tile.checkingLiquid())
+            if (Tile.checkingLiquid())
             {
                 return;
             }
@@ -51,7 +51,7 @@ namespace LiquidAPI.Swap
                 return;
             }
 
-            if (tile.liquid == 0)
+            if (Tile.liquid == 0)
             {
                 return;
             }
@@ -62,29 +62,29 @@ namespace LiquidAPI.Swap
                 return;
             }
 
-            tile.checkingLiquid(true);
+            Tile.checkingLiquid(true);
             Main.liquid[Liquid.numLiquid].kill = 0;
             Main.liquid[Liquid.numLiquid].x = x;
             Main.liquid[Liquid.numLiquid].y = y;
             Main.liquid[Liquid.numLiquid].delay = 0;
-            tile.skipLiquid(false);
+            Tile.skipLiquid(false);
             Liquid.numLiquid++;
             if (Main.netMode == 2)
             {
                 Liquid.NetSendLiquid(x, y);
             }
 
-            if (tile.active() && !WorldGen.gen)
+            if (Tile.active() && !WorldGen.gen)
             {
                 bool flag = false;
                 if (liquid.Liquids(1))
                 {
-                    if (TileObjectData.CheckLavaDeath(tile))
+                    if (TileObjectData.CheckLavaDeath(Tile))
                     {
                         flag = true;
                     }
                 }
-                else if (TileObjectData.CheckWaterDeath(tile))
+                else if (TileObjectData.CheckWaterDeath(Tile))
                 {
                     flag = true;
                 }
@@ -98,7 +98,7 @@ namespace LiquidAPI.Swap
                     }
                 }
             }
-        }
+        }*/
     }
 }
 

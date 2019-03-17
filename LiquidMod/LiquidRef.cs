@@ -2,124 +2,79 @@
 
 namespace LiquidAPI.LiquidMod
 {
-    public class LiquidRef
-    {
+	public class LiquidRef
+	{
+		public int x;
+		public int y;
 
-        public int x;
-        public int y;
+		public Tile Tile => Main.tile[x, y];
 
-        public byte _liquidType;
-        public byte _liquidAmount;
+		public byte Type
+		{
+			get => LiquidCore.liquidGrid[x, y].data;
+			set => LiquidCore.liquidGrid[x, y].data = value;
+		}
 
-        public Tile tile;
+		public byte Amount
+		{
+			get => Tile.liquid;
+			set => Tile.liquid = value;
+		}
 
-        public byte liquidType
-        {
-            get
-            {
-                return _liquidType;
-            }
-            set
-            {
-                _liquidType = value;
-            }
-        }
+		private bool _checkingLiquid;
+		private bool _skipLiquid;
 
-        public byte liquidAmount
-        {
-            get { return _liquidAmount; }
-            set
-            {
-                tile.liquid = value;
-                _liquidAmount = value;
-            }
-            
-        }
+		public LiquidRef(int x, int y)
+		{
+			if (Main.tile[x, y] == null)
+			{
+				Main.tile[x, y] = new Tile();
+			}
 
-        public LiquidRef(int x, int y)
-        {
-            if (Main.tile[x, y] == null)
-            {
-                Main.tile[x, y] = new Tile();
-            }
-            tile = Main.tile[x, y];
-            this.x = x;
-            this.y = y;
-            
+			this.x = x;
+			this.y = y;
 
-            if (tile != null)
-            {
-                if (tile.bTileHeader == 159)
-                {
-                    //LiquidCore.liquidGrid[x, y][0] = true;
-                    LiquidCore.liquidGrid[x, y].data = 0;
-                }
-                else if (tile.lava())
-                {
-                    //LiquidCore.liquidGrid[x, y][1] = true;
-                    LiquidCore.liquidGrid[x, y].data = 1;
-				}
-                else if (tile.honey())
-                {
-                    //LiquidCore.liquidGrid[x, y][2] = true;
-                    LiquidCore.liquidGrid[x, y].data = 2;
-				}
-                this._liquidType = tile.liquidType();
-                this._liquidAmount = tile.liquid;
-            }
-            else
-            {
-                _liquidType = 255;
-            }
-        }
+			if (Tile.bTileHeader == 159)
+			{
+				LiquidCore.liquidGrid[x, y].data = 0;
+			}
+			else if (Tile.lava())
+			{
+				LiquidCore.liquidGrid[x, y].data = 1;
+			}
+			else if (Tile.honey())
+			{
+				LiquidCore.liquidGrid[x, y].data = 2;
+			}
+		}
 
-        public bool CheckingLiquid()
-        {
-            return liquidType == 255;
-        }
+		public bool CheckingLiquid()
+		{
+			//return _checkingLiquid;
+			return Tile.checkingLiquid();
+		}
 
-        public bool Liquids(byte index)
-        {
-            return LiquidCore.liquidGrid[x, y][index];
-        }
+		public void SetCheckingLiquid(bool flag)
+		{
+			//_checkingLiquid = flag;
+			Tile.checkingLiquid(flag);
+		}
 
-        public byte liquidsType()
-        {
-            return _liquidType;
-        }
+		public bool SkipLiquid()
+		{
+			//return _skipLiquid;
+			return Tile.skipLiquid();
+		}
 
-        public void SetLiquidsState(byte index, bool value)
-        {
-            LiquidCore.liquidGrid[x, y].data = index;
-            /*switch (index)
-            {
-                case 0:
-                    _liquidType = 0;
-                    LiquidCore.liquidGrid[x, y].data = index;
-                    break;
-                case 1:
-                    _liquidType = 1;
-                    LiquidCore.liquidGrid[x, y][index] = value;
-                    break;
-                case 2:
-                    _liquidType = 2;
-                    LiquidCore.liquidGrid[x, y][index] = value;
-                    break;
-                default:
-                    _liquidType = index;
-                    LiquidCore.liquidGrid[x, y][index] = value;
-                    break;
-            }*/
-        }
+		public void SetSkipLiquid(bool flag)
+		{
+			//_skipLiquid = flag;
+			Tile.skipLiquid(flag);
+		}
 
-        public byte GetLiquidAmount()
-        {
-            return tile.liquid;
-        }
-
-        public bool NoLiquid()
-        {
-            return tile.liquid == 0;
-        }
-    }
+		public bool NoLiquid()
+		{
+			return Amount == 0;
+		}
+	}
 }

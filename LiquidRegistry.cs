@@ -29,29 +29,32 @@ namespace LiquidAPI
 		public void addNewModLiquid(ModLiquid liquid)
 		{
 			Array.Resize(ref Main.liquidTexture, Main.liquidTexture.Length + 1);
-			Array.Resize(ref LiquidRendererExtension.liquidTexture2D, LiquidRendererExtension.liquidTexture2D.Length + 1);
+			Array.Resize(ref LiquidRendererExtension.liquidTexture2D,
+				LiquidRendererExtension.liquidTexture2D.Length + 1);
 			liquid.liquidIndex = initialLiquidIndex;
 			initialLiquidIndex++;
 			liquidList.Add(liquid);
-			if(Main.netMode == 0) {
-				Main.liquidTexture[Main.liquidTexture.Length-1] = liquid.texture;
-			    LiquidRendererExtension.liquidTexture2D[LiquidRendererExtension.liquidTexture2D.Length - 1] =
-			        liquid.texture;
+			if (Main.netMode == 0)
+			{
+				Main.liquidTexture[Main.liquidTexture.Length - 1] = liquid.texture;
+				LiquidRendererExtension.liquidTexture2D[LiquidRendererExtension.liquidTexture2D.Length - 1] =
+					liquid.texture;
 			}
+
 			liquid.AddModBucket();
 		}
 
 		private LiquidRegistry()
 		{
-			liquidList = new List<ModLiquid>();		
+			liquidList = new List<ModLiquid>();
 		}
 
 		public static void MassMethodSwap()
 		{
-			LiquidSwapping.MethodSwap();
-			WaterDrawInjection.MethodSwap();
-			InternalLiquidDrawInjection.SwapMethod();
-            LiquidExtension.MethodSwap();
+			//LiquidSwapping.MethodSwap();
+			//WaterDrawInjection.MethodSwap();
+			//InternalLiquidDrawInjection.SwapMethod();
+			LiquidExtension.MethodSwap();
 		}
 
 		public void Unload()
@@ -64,31 +67,32 @@ namespace LiquidAPI
 
 		public static void PreDrawValue(ref bool bg, ref int style, ref float Alpha)
 		{
-            for (int i = 0; i < liquidList.Count; i++)
+			for (int i = 0; i < liquidList.Count; i++)
 			{
-                ModLiquid liquid = liquidList[i];
-                liquid.PreDraw(Main.tileBatch);
+				ModLiquid liquid = liquidList[i];
+				liquid.PreDraw(Main.tileBatch);
 			}
 		}
 
 		public static void Update()
 		{
-            for (int i = 0; i < liquidList.Count; i++)
+			for (int i = 0; i < liquidList.Count; i++)
 			{
-                ModLiquid liquid = liquidList[i];
-                liquid.Update();
+				ModLiquid liquid = liquidList[i];
+				liquid.Update();
 			}
 		}
 
 		public static float setOpacity(LiquidRef liquid)
 		{
-			for (byte by = 0; by < LiquidRegistry.liquidList.Count; by = (byte)(by + 1))
+			/*for (byte by = 0; by < LiquidRegistry.liquidList.Count; by = (byte) (by + 1))
 			{
 				if (liquid.Liquids((byte) (2 + by)))
 				{
 					return liquidList[by].SetLiquidOpacity();
 				}
-			}
+			}*/
+
 			return 1f;
 		}
 
@@ -107,17 +111,17 @@ namespace LiquidAPI
 			liquidList[index].ItemInteraction(item);
 		}
 
-	    public static bool RunUpdate(byte index, int x, int y)
-	    {
-		    int newIndex = index - 3;
-		    if (newIndex > liquidList.Count || newIndex < 0)
-		    {
-			    return false;
-		    }
-		    else
-		    {
-			    return liquidList[newIndex].CustomPhysic(x, y);
-		    }
-	    }
+		/*public static bool RunUpdate(byte index, int x, int y)
+		{
+			int newIndex = index - 3;
+			if (newIndex > liquidList.Count || newIndex < 0)
+			{
+				return false;
+			}
+			else
+			{
+				return liquidList[newIndex].CustomPhysic(x, y);
+			}
+		}*/
 	}
 }

@@ -30,13 +30,9 @@ namespace LiquidAPI.Hooks
 			On.Terraria.Liquid.HoneyCheck += LiquidOnHoneyCheck;
 
 			// Rendering
-			//On.Terraria.Main.drawWaters += MainOnDrawWaters;
-			//On.Terraria.Main.DrawWater += MainOnDrawWater;
 			On.Terraria.Main.oldDrawWater += MainOnOldDrawWater;
 
 			// Liquid Renderer
-			//On.Terraria.GameContent.Liquid.LiquidRenderer.InternalPrepareDraw += LiquidRendererOnInternalPrepareDraw;
-			//On.Terraria.GameContent.Liquid.LiquidRenderer.InternalDraw += LiquidRendererOnInternalDraw;
 			On.Terraria.GameContent.Liquid.LiquidRenderer.Update +=
 				(orig, self, time) => LiquidRenderer.Instance.Update(time);
 			On.Terraria.GameContent.Liquid.LiquidRenderer.PrepareDraw +=
@@ -54,9 +50,7 @@ namespace LiquidAPI.Hooks
 
 			// TODO: WaterStyleLoader -> Resize Arrays hook needed for LiquidRenderer texture array (Might not be required if done on PostLoad)
 			// TODO: ModInternals -> SetupContent hook needed for LiquidRenderer texture array (Might not be required if done on PostLoad)
-
-
-
+			
 		}
 	}
 }

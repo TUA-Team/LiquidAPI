@@ -44,7 +44,7 @@ namespace LiquidAPI.Swap
                     if (Main.tile[x, y] != null)
                     {
                         LiquidRef liquid = LiquidCore.grid[x, y];
-                        if (!liquid.NoLiquid())
+                        if (liquid.HasLiquid())
                         {
                             Vector2 vector2;
                             vector2.X = (float)(x * 16);

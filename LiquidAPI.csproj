@@ -66,14 +66,20 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Data\Bit.cs" />
+    <Compile Include="Hooks\Interaction.cs" />
+    <Compile Include="Hooks\Rendering.cs" />
+    <Compile Include="Hooks\Update.cs" />
+    <Compile Include="Hooks\Utility.cs" />
+    <Compile Include="ID\LiquidID.cs" />
     <Compile Include="LiquidAPI.cs" />
-    <Compile Include="LiquidExtension.cs" />
+    <Compile Include="Hooks\LiquidHooks.cs" />
     <Compile Include="LiquidMod\LiquidCore.cs" />
     <Compile Include="LiquidMod\LiquidGlobalItem.cs" />
     <Compile Include="LiquidMod\LiquidGlobalNPC.cs" />
     <Compile Include="LiquidMod\LiquidPlayer.cs" />
     <Compile Include="LiquidMod\LiquidRef.cs" />
     <Compile Include="LiquidRegistry.cs" />
+    <Compile Include="LiquidRenderer.cs" />
     <Compile Include="ModLiquid.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Swap\CollisionSwap.cs" />

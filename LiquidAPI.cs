@@ -35,7 +35,14 @@ namespace LiquidAPI
 			AddItem(bucket.name, bucket.Clone());
 
 			LoadModContent(mod => { Autoload(mod); });
+		}
 
+		public override void PostSetupContent()
+		{
+			// Do this after everything is loaded to ensure that ModLoader liquids get taken care of.
+			// Otherwise we would need to override ModLoader functions to resize the arrays and load textures.
+			LiquidRenderer.Instance = new LiquidRenderer();
+			
 			LiquidRegistry.MassMethodSwap();
 		}
 
@@ -45,7 +52,6 @@ namespace LiquidAPI
 			LiquidRegistry.MassMethodSwap();
 
 			Array.Resize(ref Main.liquidTexture, initialLiquidTextureIndex);
-			Array.Resize(ref LiquidRendererExtension.liquidTexture2D, initialLiquidTextureIndex);
 		}
 
 		private static void LoadModContent(Action<Mod> loadAction)
@@ -87,14 +93,16 @@ namespace LiquidAPI
 			string texturePath = liquid.GetType().FullName.Replace(".", "/").Replace(this.Name + "/", "");
 			if (liquid.Autoload(ref texturePath))
 			{
-
-				if (Main.netMode == 0)
-				{
-					Main.liquidTexture[Main.liquidTexture.Length - 1] = this.GetTexture(texturePath);
-					LiquidRendererExtension.liquidTexture2D[LiquidRendererExtension.liquidTexture2D.Length - 1] =
-						this.GetTexture(texturePath);
-				}
-				LiquidRegistry.getInstance().addNewModLiquid(liquid);
+				// @Dradon y u do dis twice lulz
+				// it supposed to be in func call belowe butt dis no need
+				// an break honey textuar
+				//if (Main.netMode == 0)
+				//{
+					//Main.liquidTexture[Main.liquidTexture.Length - 1] = this.GetTexture(texturePath);
+					//LiquidRenderer.Instance.LiquidTextures[LiquidRenderer.Instance.LiquidTextures.Count - 1] =
+					//	this.GetTexture(texturePath);
+				//}
+				LiquidRegistry.getInstance().AddNewModLiquid(liquid, this.GetTexture(texturePath));
 			}
 		}
 	}

@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using LiquidAPI.Hooks;
 using LiquidAPI.LiquidMod;
 using LiquidAPI.Swap;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.GameContent.Liquid;
 
@@ -10,7 +12,7 @@ namespace LiquidAPI
 	class LiquidRegistry
 	{
 		private static LiquidRegistry instance;
-		internal static List<ModLiquid> liquidList;
+		internal static List<ModLiquid> liquidList = new List<ModLiquid>();
 		private static int initialLiquidIndex = 3;
 		private static int liquidTextureIndex = 12;
 
@@ -26,19 +28,17 @@ namespace LiquidAPI
 			return instance;
 		}
 
-		public void addNewModLiquid(ModLiquid liquid)
+		public void AddNewModLiquid(ModLiquid liquid, Texture2D texture = null)
 		{
+			Texture2D usedTexture = texture ?? liquid.texture;
 			Array.Resize(ref Main.liquidTexture, Main.liquidTexture.Length + 1);
-			Array.Resize(ref LiquidRendererExtension.liquidTexture2D,
-				LiquidRendererExtension.liquidTexture2D.Length + 1);
 			liquid.liquidIndex = initialLiquidIndex;
 			initialLiquidIndex++;
 			liquidList.Add(liquid);
 			if (Main.netMode == 0)
 			{
-				Main.liquidTexture[Main.liquidTexture.Length - 1] = liquid.texture;
-				LiquidRendererExtension.liquidTexture2D[LiquidRendererExtension.liquidTexture2D.Length - 1] =
-					liquid.texture;
+				Main.liquidTexture[Main.liquidTexture.Length - 1] = usedTexture;
+				LiquidRenderer.Instance.LiquidTextures[LiquidRenderer.Instance.LiquidTextures.Count - 1] = usedTexture;
 			}
 
 			liquid.AddModBucket();
@@ -46,7 +46,7 @@ namespace LiquidAPI
 
 		private LiquidRegistry()
 		{
-			liquidList = new List<ModLiquid>();
+			
 		}
 
 		public static void MassMethodSwap()
@@ -54,13 +54,12 @@ namespace LiquidAPI
 			//LiquidSwapping.MethodSwap();
 			//WaterDrawInjection.MethodSwap();
 			//InternalLiquidDrawInjection.SwapMethod();
-			LiquidExtension.MethodSwap();
+			LiquidHooks.MethodSwap();
 		}
 
 		public void Unload()
 		{
 			Array.Resize(ref Main.liquidTexture, vanillaMaxVanilla);
-			Array.Resize(ref LiquidRenderer.Instance._liquidTextures, vanillaMaxVanilla);
 			liquidList.Clear();
 			liquidList = null;
 		}

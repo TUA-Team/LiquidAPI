@@ -159,7 +159,7 @@ namespace LiquidAPI
 		{
 			LiquidRef liquid = LiquidCore.grid[Player.tileTargetX, Player.tileTargetY];
 			
-			if (liquid.NoLiquid() || liquid.Type == liquidType)
+			if (!liquid.HasLiquid() || liquid.Type == liquidType)
 			{
 
 				//Item newItem = Main.item[Item.NewItem(player.position, item.type)];

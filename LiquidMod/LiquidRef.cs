@@ -72,9 +72,9 @@ namespace LiquidAPI.LiquidMod
 			Tile.skipLiquid(flag);
 		}
 
-		public bool NoLiquid()
+		public bool HasLiquid()
 		{
-			return Amount == 0;
+			return Amount > 0;
 		}
 	}
 }

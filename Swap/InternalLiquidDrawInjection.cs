@@ -74,7 +74,7 @@ namespace LiquidAPI.Swap
 
         }
 		*/
-        public static Texture2D[] liquidTexture2D = (Texture2D[]) LiquidRenderer.Instance._liquidTextures.Clone(); 
+        //public static Texture2D[] liquidTexture2D = (Texture2D[]) LiquidRenderer.Instance._liquidTextures.Clone(); 
 
         /*private struct LiquidDrawCache
         {

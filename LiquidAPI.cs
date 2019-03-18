@@ -19,7 +19,8 @@ namespace LiquidAPI
 
 		public override void Load()
 		{
-			instance = this;
+            LiquidRenderer.Instance = new LiquidRenderer();
+            instance = this;
 
 			ModBucket bucket = new ModBucket(-1, Color.Transparent, "Empty");
 			AddItem(bucket.name, bucket.Clone());
@@ -33,17 +34,19 @@ namespace LiquidAPI
 			bucket = new ModBucket(2, new Color(215, 131, 8), "Honey");
 			AddItem(bucket.name, bucket.Clone());
 
-			LoadModContent(mod => { Autoload(mod); });
-		}
+		    LoadModContent(mod => { Autoload(mod); });
+        }
 
 		public override void PostSetupContent()
 		{
 			// Do this after everything is loaded to ensure that ModLoader liquids get taken care of.
 			// Otherwise we would need to override ModLoader functions to resize the arrays and load textures.
-			LiquidRenderer.Instance = new LiquidRenderer();
+			
 			
 			LiquidRegistry.MassMethodSwap();
-		}
+
+		    
+        }
 
 		public override void Unload()
 		{
@@ -58,11 +61,15 @@ namespace LiquidAPI
 			for (int i = 0; i < ModLoader.Mods.Length; i++)
 			{
 				Mod mod = ModLoader.Mods[i];
-				try
-				{
-					loadAction(mod);
-				}
-				catch { }
+
+			    try
+			    {
+			        loadAction(mod);
+			    }
+			    catch (Exception e)
+			    {
+			        Main.statusText = e.Message;
+			    }
 			}
 		}
 
@@ -77,7 +84,7 @@ namespace LiquidAPI
 			var array = mod.Code.DefinedTypes.OrderBy(type => type.FullName, StringComparer.InvariantCulture);
 			for (int i = 0; i < array.Count(); i++)
 			{
-				var type = array.ElementAt(i);
+				var type =  array.ElementAt(i);
 				if (type.IsSubclassOf(typeof(ModLiquid)))
 				{
 					AutoloadLiquid(mod, type);

@@ -112,13 +112,17 @@ namespace LiquidAPI.Hooks
 						{
 							num12 = 11;
 						}
+					    else
+					    {
 
-						if (num12 == 0)
+					    }
+
+					    if (num12 == 0)
 						{
 							num12 = Style;
 						}
 
-						if ((num12 != 1 && num12 != 11) || !Main.drewLava)
+						if ((num12 != 1 && num12 <= 11) || !Main.drewLava)
 						{
 							float num17 = 0.5f;
 							if (bg)
@@ -126,7 +130,7 @@ namespace LiquidAPI.Hooks
 								num17 = 1f;
 							}
 
-							if (num12 != 1 && num12 != 11)
+							if (num12 != 1 && num12 <= 11)
 							{
 								num17 *= Alpha;
 							}

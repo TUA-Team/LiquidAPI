@@ -93,6 +93,8 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>"E:\Terraria\tModLoader 0.11b2 TUA Dev\tModLoaderServer.exe" -build "$(ProjectDir)\" -eac "$(TargetPath)"</PostBuildEvent>
+    <PostBuildEvent>pushd $(ProjectDir)_scripts\
+"tmlbuild.bat" "$(ProjectDir)\" -eac "$(TargetPath)"
+popd</PostBuildEvent>
   </PropertyGroup>
 </Project>

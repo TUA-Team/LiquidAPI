@@ -4,7 +4,9 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using LiquidAPI.Hooks;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.Map;
 using Terraria.ModLoader;
@@ -34,6 +36,19 @@ namespace LiquidAPI
 			bucket = new ModBucket(2, new Color(215, 131, 8), "Honey");
 			AddItem(bucket.name, bucket.Clone());
 
+		    LiquidHooks.OldHoneyTexture = Main.liquidTexture[11];
+		    LiquidHooks.OldLavaTexture = Main.liquidTexture[1];
+            List<Texture2D> OldWaterTextureList = new List<Texture2D>();
+		    for (int i = 0; i < 11; i++)
+		    {
+		        if (i == 1 || i == 11)
+		        {
+		            continue;
+		        }
+                OldWaterTextureList.Add(Main.liquidTexture[i]);
+		    }
+
+		    LiquidHooks.OldWaterTexture = OldWaterTextureList;
 		    LoadModContent(mod => { Autoload(mod); });
         }
 

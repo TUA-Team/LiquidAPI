@@ -9,13 +9,13 @@ namespace LiquidAPI.LiquidMod
 		public override void PostUpdate()
 		{
 			bool[] liquidCollision = ModdedWetCollision(player.Center, player.width, player.height);
-			for (byte i = 0; i < LiquidRegistry.liquidList.Capacity; i++)
+			/*for (byte i = 0; i < LiquidRegistry.liquidList.; i++)
 			{
 				if (liquidCollision[i])
 				{
 					LiquidRegistry.PlayerInteraction(i, player);
 				}
-			}
+			}*/
 		}
 
 		private static bool[] ModdedWetCollision(Vector2 Position, int Width, int Height)

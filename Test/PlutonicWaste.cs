@@ -8,11 +8,6 @@ namespace LiquidAPI.Test
 {
     class PlutonicWaste : ModLiquid
     {
-        public override Texture2D texture
-        {
-            get { return mod.GetTexture("Texture/water/BestWater"); }
-        }
-
         public override string name => "Liquid waste";
 
         public override Color liquidColor => Color.GreenYellow;

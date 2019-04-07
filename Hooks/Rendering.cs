@@ -16,9 +16,14 @@ namespace LiquidAPI.Hooks
 {
 	internal static partial class LiquidHooks
 	{
+	    public static Texture2D OldHoneyTexture;
+	    public static Texture2D OldLavaTexture;
+	    public static List<Texture2D> OldWaterTexture; 
+    
 		private static void MainOnOldDrawWater(On.Terraria.Main.orig_oldDrawWater orig, Terraria.Main self,
 			bool bg = false, int Style = 0, float Alpha = 1f)
 		{
+		    Texture2D liquidTexture = OldWaterTexture[Style];
 			float num = 0f;
 			float num2 = 99999f;
 			float num3 = 99999f;
@@ -65,7 +70,7 @@ namespace LiquidAPI.Hooks
 					LiquidRef liquidUp = LiquidCore.grid[j, i + 1];
 					LiquidRef liquidDown = LiquidCore.grid[j, i - 1];
 
-					if (liquid.Amount > 0 &&
+                    if (liquid.Amount > 0 &&
 					    (!liquid.Tile.nactive() || !Main.tileSolid[liquid.Tile.type] ||
 					     Main.tileSolidTop[liquid.Tile.type]) && (Lighting.Brightness(j, i) > 0f || bg))
 					{
@@ -106,16 +111,16 @@ namespace LiquidAPI.Hooks
 								num5 = i * 16 + 8;
 							}
 
-							num12 = 1;
+						    liquidTexture = OldLavaTexture;
 						}
 						else if (liquid.Type == LiquidID.honey)
 						{
-							num12 = 11;
+						    liquidTexture = OldHoneyTexture;
 						}
-					    else
-					    {
-
-					    }
+					    else if(liquid.Type != LiquidID.water)
+						{
+						    liquidTexture = LiquidRegistry.getInstance()[liquid.Type].texture;
+						}
 
 					    if (num12 == 0)
 						{
@@ -389,7 +394,7 @@ namespace LiquidAPI.Hooks
 								}
 								else
 								{
-									Main.spriteBatch.Draw(Main.liquidTexture[num12], value - Main.screenPosition + zero,
+									Main.spriteBatch.Draw(liquidTexture, value - Main.screenPosition + zero,
 										new Microsoft.Xna.Framework.Rectangle?(value2), color, 0f, default(Vector2), 1f,
 										SpriteEffects.None, 0f);
 								}
@@ -401,7 +406,7 @@ namespace LiquidAPI.Hooks
 									value2.X += (int) (Main.wFrame * 18f);
 								}
 
-								Main.spriteBatch.Draw(Main.liquidTexture[num12], value - Main.screenPosition + zero,
+								Main.spriteBatch.Draw(liquidTexture, value - Main.screenPosition + zero,
 									new Microsoft.Xna.Framework.Rectangle?(value2), color, 0f, default(Vector2), 1f,
 									SpriteEffects.None, 0f);
 							}
@@ -416,7 +421,7 @@ namespace LiquidAPI.Hooks
 								color = new Microsoft.Xna.Framework.Color((int) ((byte) num24), (int) ((byte) num25),
 									(int) ((byte) num26), (int) ((byte) num27));
 								value = new Vector2((float) (j * 16), (float) (i * 16 + 16));
-								Main.spriteBatch.Draw(Main.liquidTexture[num12], value - Main.screenPosition + zero,
+								Main.spriteBatch.Draw(liquidTexture, value - Main.screenPosition + zero,
 									new Microsoft.Xna.Framework.Rectangle?(
 										new Microsoft.Xna.Framework.Rectangle(0, 4, 16, 8)), color, 0f,
 									default(Vector2), 1f, SpriteEffects.None, 0f);

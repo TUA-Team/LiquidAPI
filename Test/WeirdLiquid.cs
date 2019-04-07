@@ -6,10 +6,6 @@ namespace LiquidAPI.Test
 {
     class WeirdLiquid : ModLiquid
     {
-        public override Texture2D texture
-        {
-            get { return mod.GetTexture("Texture/water/BestWater2"); }
-        }
 
         public override string name => "Test liquid";
 

@@ -11,7 +11,7 @@ namespace LiquidAPI
 	class LiquidRegistry
 	{
 		private static LiquidRegistry instance;
-		internal static List<ModLiquid> liquidList = new List<ModLiquid>();
+		internal static Dictionary<int, ModLiquid> liquidList = new Dictionary<int, ModLiquid>();
 		private static int initialLiquidIndex = 3;
 		private static int liquidTextureIndex = 12;
 
@@ -33,10 +33,9 @@ namespace LiquidAPI
 			Array.Resize(ref Main.liquidTexture, Main.liquidTexture.Length + 1);
 			liquid.liquidIndex = initialLiquidIndex;
 			initialLiquidIndex++;
-			liquidList.Add(liquid);
+			liquidList.Add(3, liquid);
 			if (Main.netMode == 0)
 			{
-				Main.liquidTexture[Main.liquidTexture.Length - 1] = usedTexture;
 				LiquidRenderer.Instance.LiquidTextures[LiquidRenderer.Instance.LiquidTextures.Count - 1] = usedTexture;
 			}
 
@@ -48,7 +47,14 @@ namespace LiquidAPI
 			
 		}
 
-		public static void MassMethodSwap()
+        public ModLiquid this[int i] {
+            get
+            {
+                return liquidList[i];
+            }
+        }
+
+	    public static void MassMethodSwap()
 		{
 			//LiquidSwapping.MethodSwap();
 			//WaterDrawInjection.MethodSwap();

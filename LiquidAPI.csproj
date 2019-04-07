@@ -58,7 +58,7 @@
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
     <Reference Include="Terraria">
-      <HintPath>..\..\..\..\..\..\..\Terraria\tModLoader 0.11b2 TUA Dev\Terraria.exe</HintPath>
+      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Terraria\Terraria.exe</HintPath>
     </Reference>
     <Reference Include="TerrariaHooks">
       <HintPath>..\..\references\TerrariaHooks.dll</HintPath>
@@ -67,6 +67,7 @@
   <ItemGroup>
     <Compile Include="Data\Bit.cs" />
     <Compile Include="Hooks\Interaction.cs" />
+    <Compile Include="Hooks\ModLoaderMonoModHook.cs" />
     <Compile Include="Hooks\Rendering.cs" />
     <Compile Include="Hooks\Update.cs" />
     <Compile Include="Hooks\Utility.cs" />

@@ -28,10 +28,15 @@ namespace LiquidAPI
 
 		public virtual Texture2D texture
 		{
-			get { return null; }
+			get { return ModContent.GetTexture(this.GetType().FullName.Replace(".", "/")); }
 		}
 
-		internal int liquidIndex;
+	    public virtual Texture2D old_Texture
+	    {
+	        get { return ModContent.GetTexture(this.GetType().FullName.Replace(".", "/")); }
+	    }
+
+	    internal int liquidIndex;
 
 		/// <summary>
 		/// Take an array that contain legacy style texture and 1.3.4+ texture style
@@ -40,6 +45,7 @@ namespace LiquidAPI
 		/// <returns></returns>
 		public virtual bool Autoload(ref string name)
 		{
+
 			return true;
 		}
 

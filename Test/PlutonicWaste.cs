@@ -1,5 +1,4 @@
 ﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -8,16 +7,6 @@ namespace LiquidAPI.Test
 {
     class PlutonicWaste : ModLiquid
     {
-        public override string name => "Liquid waste";
-
-        public override Color liquidColor => Color.GreenYellow;
-
-        public override bool Autoload(ref string name)
-        {
-            
-            return base.Autoload(ref name);
-        }
-
         public override void PreDrawValueSet(ref bool bg, ref int style, ref float Alpha)
         {
             style = 12;
@@ -34,7 +23,7 @@ namespace LiquidAPI.Test
             Main.NewText("This is liquid waste");
         }
 
-        public override void NpcInteraction(NPC target)
+        public override void NPCInteraction(NPC target)
         {
             if (target.type == NPCID.GreenSlime || target.type == NPCID.BlueSlime || target.type == NPCID.PurpleSlime)
             {
@@ -45,6 +34,8 @@ namespace LiquidAPI.Test
             }
         }
 
-        
+        public override string name => "Liquid Waste";
+
+        public override Color liquidColor => Color.GreenYellow;
     }
 }

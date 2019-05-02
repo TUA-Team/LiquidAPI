@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using LiquidAPI.ID;
+﻿using LiquidAPI.ID;
 using LiquidAPI.LiquidMod;
 using Terraria;
 using Terraria.ObjectData;
@@ -38,7 +33,7 @@ namespace LiquidAPI.Hooks
 			Main.liquid[Liquid.numLiquid].delay = 0;
 			liquid.SetSkipLiquid(false);
 			Liquid.numLiquid++;
-			if (Main.netMode == 2)
+			if (Main.netMode == NetmodeID.Server)
 			{
 				Liquid.NetSendLiquid(x, y);
 			}
@@ -64,7 +59,7 @@ namespace LiquidAPI.Hooks
 			if (flag)
 			{
 				WorldGen.KillTile(x, y, false, false, false);
-				if (Main.netMode == 2)
+				if (Main.netMode == NetmodeID.Server)
 				{
 					NetMessage.SendData(17, -1, -1, null, 0, (float)x, (float)y, 0f, 0, 0, 0);
 				}

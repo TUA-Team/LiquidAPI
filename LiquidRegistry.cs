@@ -4,7 +4,6 @@ using LiquidAPI.Hooks;
 using LiquidAPI.LiquidMod;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
-using Terraria.GameContent.Liquid;
 
 namespace LiquidAPI
 {
@@ -107,7 +106,7 @@ namespace LiquidAPI
 
 		public static void NPCInteraction(byte index, NPC target)
 		{
-			liquidList[index].NpcInteraction(target);
+			liquidList[index].NPCInteraction(target);
 		}
 
 		public static void ItemInteraction(byte index, Item item)

@@ -12,31 +12,22 @@ namespace LiquidAPI.LiquidMod
     //The following code is a modified version of DataCore from Project_Logic 0.5.0.1 provided by Rartrin
     public class LiquidCore : ModWorld
     {
-        private const string extension = "tua";//Should work without the leading period
-        private const byte MODE = 0;//Extra data
-        private const byte FORM = 3;//Saving format
+        private const string EXTENSION = "tua";//Should work without the leading period
+        private const byte 
+            MODE = 0, //Extra data
+            FORM = 3; //Saving format
 
-        public static LiquidCore grid = new LiquidCore();
+        public static readonly LiquidCore grid = new LiquidCore();
 
-        public static Bit[,] liquidGrid;//MAKE SURE YOU DEREFERENCE THIS ON UNLOAD
-
-        public override bool Autoload(ref string name) { return true; }
+        public static Bit[,] liquidGrid; // MAKE SURE YOU DEREFERENCE THIS ON UNLOAD
 
         public override void Initialize() { liquidGrid = new Bit[Main.maxTilesX, Main.maxTilesY]; }
-
-        public LiquidRef this[int x, int y]
-        {
-            get
-            {
-                return new LiquidRef(x, y);
-            }
-        }
 
         public override TagCompound Save()
         {
             try
             {
-                string path = Path.ChangeExtension(Main.ActiveWorldFileData.Path, extension); //Change current world path to the custom save one
+                string path = Path.ChangeExtension(Main.ActiveWorldFileData.Path, EXTENSION); //Change current world path to the custom save one
                 if (FileUtilities.Exists(path, false)) { FileUtilities.Copy(path, path + ".bak", false, true); } //also make a backup
                 Queue<byte> data = new Queue<byte>();
                 data.Enqueue(MODE);
@@ -63,7 +54,7 @@ namespace LiquidAPI.LiquidMod
         {
             try
             {
-                string path = Path.ChangeExtension(Main.ActiveWorldFileData.Path, extension);
+                string path = Path.ChangeExtension(Main.ActiveWorldFileData.Path, EXTENSION);
                 if (!FileUtilities.Exists(path, false)) { return; }
                 Queue<byte> data = new Queue<byte>(FileUtilities.ReadAllBytes(path, false));
                 byte mode = data.Dequeue();
@@ -77,6 +68,16 @@ namespace LiquidAPI.LiquidMod
                 }
             }
             catch { }
+        }
+
+        public override bool Autoload(ref string name) { return true; }
+
+        public LiquidRef this[int x, int y]
+        {
+            get
+            {
+                return new LiquidRef(x, y);
+            }
         }
     }
 }

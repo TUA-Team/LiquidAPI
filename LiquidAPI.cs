@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using LiquidAPI.Hooks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -17,7 +15,7 @@ namespace LiquidAPI
 	{
 		internal static LiquidAPI instance;
 
-		private const int initialLiquidTextureIndex = 12;
+		private const int INITIAL_LIQUID_TEXTURE_INDEX = 12;
 
 		public override void Load()
 		{
@@ -68,7 +66,7 @@ namespace LiquidAPI
 
 			LiquidRegistry.MassMethodSwap();
 
-			Array.Resize(ref Main.liquidTexture, initialLiquidTextureIndex);
+			Array.Resize(ref Main.liquidTexture, INITIAL_LIQUID_TEXTURE_INDEX);
 		}
 
 		private static void LoadModContent(Action<Mod> loadAction)

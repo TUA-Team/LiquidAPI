@@ -1,6 +1,7 @@
 ﻿using LiquidAPI.ID;
 using LiquidAPI.LiquidMod;
 using Terraria;
+using Terraria.ID;
 using Terraria.ObjectData;
 
 namespace LiquidAPI.Hooks

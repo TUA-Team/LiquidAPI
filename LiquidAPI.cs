@@ -34,8 +34,17 @@ namespace LiquidAPI
 			bucket = new ModBucket(2, new Color(215, 131, 8), "Honey");
 			AddItem(bucket.name, bucket.Clone());
 
-		    LiquidHooks.OldHoneyTexture = Main.liquidTexture[11];
-		    LiquidHooks.OldLavaTexture = Main.liquidTexture[1];
+		    LiquidHooks.OldHoneyTexture = new List<Texture2D>()
+		    {
+		        Main.liquidTexture[11] //default honey
+
+		    };
+		    LiquidHooks.OldLavaTexture = new List<Texture2D>()
+		    {
+		        Main.liquidTexture[1], //default lava
+                LiquidAPI.instance.GetTexture("Texture/Lava_Test/Cursed_Lava"),
+		        LiquidAPI.instance.GetTexture("Texture/Lava_Test/Ichor_Lava")
+            };
             List<Texture2D> OldWaterTextureList = new List<Texture2D>();
 		    for (int i = 0; i < 11; i++)
 		    {
@@ -112,15 +121,6 @@ namespace LiquidAPI
 			string texturePath = liquid.GetType().FullName.Replace(".", "/").Replace(this.Name + "/", "");
 			if (liquid.Autoload(ref texturePath))
 			{
-				// @Dradon y u do dis twice lulz
-				// it supposed to be in func call belowe butt dis no need
-				// an break honey textuar
-				//if (Main.netMode == 0)
-				//{
-					//Main.liquidTexture[Main.liquidTexture.Length - 1] = this.GetTexture(texturePath);
-					//LiquidRenderer.Instance.LiquidTextures[LiquidRenderer.Instance.LiquidTextures.Count - 1] =
-					//	this.GetTexture(texturePath);
-				//}
 				LiquidRegistry.getInstance().AddNewModLiquid(liquid, this.GetTexture(texturePath));
 			}
 		}

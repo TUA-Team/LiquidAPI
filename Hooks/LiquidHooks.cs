@@ -18,7 +18,8 @@ namespace LiquidAPI.Hooks
 			On.Terraria.Liquid.HoneyCheck += LiquidOnHoneyCheck;
 
 			// Rendering
-			On.Terraria.Main.oldDrawWater += MainOnOldDrawWater;
+			On.Terraria.Main.oldDrawWater += OldWaterDraw;
+		    On.Terraria.Main.DrawWater += Hooked_DrawWater;
 
 			// Liquid Renderer
 			On.Terraria.GameContent.Liquid.LiquidRenderer.Update +=

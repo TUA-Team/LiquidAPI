@@ -53,12 +53,12 @@
 
         public static byte operator /(Bit b1, Bit b2)
         {
-            return (byte)((int)b1.data / (int)b2.data);
+            return (byte)(b1.data / b2.data);
         }
 
         public static byte operator %(Bit b1, Bit b2)
         {
-            return (byte)((int)b1.data % (int)b2.data);
+            return (byte)(b1.data % b2.data);
         }
 
         public static byte operator &(Bit b1, Bit b2)

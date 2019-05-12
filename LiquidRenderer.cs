@@ -68,15 +68,25 @@ namespace LiquidAPI
 			0.95f
 		};
 
-		private static readonly byte[] WAVE_MASK_STRENGTH;
-		private static readonly byte[] VISCOSITY_MASK;
+		private static readonly byte[] WAVE_MASK_STRENGTH = new byte[]
+		{
+			0,
+			0,
+			0
+		};
+		private static readonly byte[] VISCOSITY_MASK = new byte[]
+		{
+			0,
+			200,
+			240
+		};
 
 		public static LiquidRenderer Instance;
 		public Dictionary<int, Texture2D> LiquidTextures = new Dictionary<int, Texture2D>();
 
 		//private Tile[,] _tiles = Main.tile;
-		private LiquidRenderer.LiquidCache[] _cache = new LiquidRenderer.LiquidCache[1];
-		private LiquidRenderer.LiquidDrawCache[] _drawCache = new LiquidRenderer.LiquidDrawCache[1];
+		private LiquidCache[] _cache = new LiquidCache[1];
+		private LiquidDrawCache[] _drawCache = new LiquidDrawCache[1];
 		private int _animationFrame;
 		private Rectangle _drawArea = new Rectangle(0, 0, 1, 1);
 		private UnifiedRandom _random = new UnifiedRandom();
@@ -95,17 +105,16 @@ namespace LiquidAPI
 
 		private unsafe void InternalPrepareDraw(Rectangle drawArea)
 		{
-			Rectangle rectangle =
-				new Rectangle(drawArea.X - 2, drawArea.Y - 2, drawArea.Width + 4, drawArea.Height + 4);
+			Rectangle rectangle = new Rectangle(drawArea.X - CACHE_PADDING, drawArea.Y - CACHE_PADDING, drawArea.Width + CACHE_PADDING_2, drawArea.Height + CACHE_PADDING_2);
 			this._drawArea = drawArea;
 			if (this._cache.Length < rectangle.Width * rectangle.Height + 1)
 			{
-				this._cache = new LiquidRenderer.LiquidCache[rectangle.Width * rectangle.Height + 1];
+				this._cache = new LiquidCache[rectangle.Width * rectangle.Height + 1];
 			}
 
 			if (this._drawCache.Length < drawArea.Width * drawArea.Height + 1)
 			{
-				this._drawCache = new LiquidRenderer.LiquidDrawCache[drawArea.Width * drawArea.Height + 1];
+				this._drawCache = new LiquidDrawCache[drawArea.Width * drawArea.Height + 1];
 			}
 
 			if (this._waveMask.Length < drawArea.Width * drawArea.Height)
@@ -113,23 +122,22 @@ namespace LiquidAPI
 				this._waveMask = new Color[drawArea.Width * drawArea.Height];
 			}
 
-			fixed (LiquidRenderer.LiquidCache* ptr = &this._cache[1])
+			fixed (LiquidCache* ptr = &this._cache[1])
 			{
-				LiquidRenderer.LiquidCache* ptr2 = ptr;
-				int num = rectangle.Height * 2 + 2;
-				ptr2 = ptr;
+				LiquidCache* ptr2 = ptr;
+				int num = rectangle.Height * 2 + CACHE_PADDING;
 				for (int i = rectangle.X; i < rectangle.X + rectangle.Width; i++)
 				{
 					for (int j = rectangle.Y; j < rectangle.Y + rectangle.Height; j++)
 					{
 						LiquidRef liquid = LiquidCore.grid[i, j];
 
-						ptr2->LiquidLevel = (float) liquid.Amount / 255f;
-						ptr2->IsHalfBrick = (liquid.Tile.halfBrick() && ptr2[-1].HasLiquid);
-						ptr2->IsSolid = (WorldGen.SolidOrSlopedTile(liquid.Tile) && !ptr2->IsHalfBrick);
-						ptr2->HasLiquid = liquid.HasLiquid();
+						ptr2->LiquidLevel = liquid.Amount / 255f;
+						ptr2->IsHalfBrick = liquid.Tile.halfBrick() && ptr2[-1].HasLiquid;
+						ptr2->IsSolid = WorldGen.SolidOrSlopedTile(liquid.Tile) && !ptr2->IsHalfBrick;
+						ptr2->HasLiquid = liquid.HasLiquid;
 						ptr2->VisibleLiquidLevel = 0f;
-						ptr2->HasWall = (liquid.Tile.wall != 0);
+						ptr2->HasWall = liquid.Tile.wall != 0;
 						ptr2->Type = liquid.Type;
 						if (ptr2->IsHalfBrick && !ptr2->HasLiquid)
 						{
@@ -142,9 +150,9 @@ namespace LiquidAPI
 
 				ptr2 = ptr;
 				ptr2 += num;
-				for (int k = 2; k < rectangle.Width - 2; k++)
+				for (int k = CACHE_PADDING; k < rectangle.Width - CACHE_PADDING; k++)
 				{
-					for (int l = 2; l < rectangle.Height - 2; l++)
+					for (int l = CACHE_PADDING; l < rectangle.Height - CACHE_PADDING; l++)
 					{
 						float num2 = 0f;
 						if (ptr2->IsHalfBrick && ptr2[-1].HasLiquid)
@@ -153,24 +161,21 @@ namespace LiquidAPI
 						}
 						else if (!ptr2->HasLiquid)
 						{
-							LiquidRenderer.LiquidCache liquidCache = ptr2[-rectangle.Height];
-							LiquidRenderer.LiquidCache liquidCache2 = ptr2[rectangle.Height];
-							LiquidRenderer.LiquidCache liquidCache3 = ptr2[-1];
-							LiquidRenderer.LiquidCache liquidCache4 = ptr2[1];
-							if (liquidCache.HasLiquid && liquidCache2.HasLiquid &&
-							    liquidCache.Type == liquidCache2.Type)
+							LiquidCache cacheL = ptr2[-rectangle.Height];
+							LiquidCache cacheR = ptr2[rectangle.Height];
+							LiquidCache cacheU = ptr2[-1];
+							LiquidCache cacheD = ptr2[1];
+							if (cacheL.HasLiquid && cacheR.HasLiquid && cacheL.Type == cacheR.Type)
 							{
-								num2 = liquidCache.LiquidLevel + liquidCache2.LiquidLevel;
-								ptr2->Type = liquidCache.Type;
+								num2 = cacheL.LiquidLevel + cacheR.LiquidLevel;
+								ptr2->Type = cacheL.Type;
 							}
 
-							if (liquidCache3.HasLiquid && liquidCache4.HasLiquid &&
-							    liquidCache3.Type == liquidCache4.Type)
+							if (cacheU.HasLiquid && cacheD.HasLiquid && cacheU.Type == cacheD.Type)
 							{
-								num2 = Math.Max(num2, liquidCache3.LiquidLevel + liquidCache4.LiquidLevel);
-								ptr2->Type = liquidCache3.Type;
+								num2 = Math.Max(num2, cacheU.LiquidLevel + cacheD.LiquidLevel);
+								ptr2->Type = cacheU.Type;
 							}
-
 							num2 *= 0.5f;
 						}
 						else
@@ -179,11 +184,11 @@ namespace LiquidAPI
 						}
 
 						ptr2->VisibleLiquidLevel = num2;
-						ptr2->HasVisibleLiquid = (num2 != 0f);
+						ptr2->HasVisibleLiquid = num2 != 0f;
 						ptr2++;
 					}
 
-					ptr2 += 4;
+					ptr2 += CACHE_PADDING_2;
 				}
 
 				ptr2 = ptr;
@@ -193,11 +198,13 @@ namespace LiquidAPI
 					{
 						if (ptr2->HasVisibleLiquid && !ptr2->IsSolid)
 						{
+							ModLiquid liquid=LiquidRegistry.liquidList[ptr2->Type];
 							ptr2->Opacity = 1f;
 							ptr2->VisibleType = ptr2->Type;
-							float num3 = 1f / (float) (LiquidRenderer.WATERFALL_LENGTH[(int) ptr2->Type] + 1);
+							byte waterfallLength=liquid.WaterfallLength;
+							float num3 = 1f / waterfallLength + 1;
 							float num4 = 1f;
-							for (int num5 = 1; num5 <= LiquidRenderer.WATERFALL_LENGTH[(int) ptr2->Type]; num5++)
+							for (int num5 = 1; num5 <= waterfallLength; num5++)
 							{
 								num4 -= num3;
 								if (ptr2[num5].IsSolid)
@@ -205,8 +212,7 @@ namespace LiquidAPI
 									break;
 								}
 
-								ptr2[num5].VisibleLiquidLevel = Math.Max(ptr2[num5].VisibleLiquidLevel,
-									ptr2->VisibleLiquidLevel * num4);
+								ptr2[num5].VisibleLiquidLevel = Math.Max(ptr2[num5].VisibleLiquidLevel,ptr2->VisibleLiquidLevel * num4);
 								ptr2[num5].Opacity = num4;
 								ptr2[num5].VisibleType = ptr2->Type;
 							}
@@ -230,9 +236,9 @@ namespace LiquidAPI
 
 				ptr2 = ptr;
 				ptr2 += num;
-				for (int num6 = 2; num6 < rectangle.Width - 2; num6++)
+				for (int num6 = CACHE_PADDING; num6 < rectangle.Width - CACHE_PADDING; num6++)
 				{
-					for (int num7 = 2; num7 < rectangle.Height - 2; num7++)
+					for (int num7 = CACHE_PADDING; num7 < rectangle.Height - CACHE_PADDING; num7++)
 					{
 						if (!ptr2->HasVisibleLiquid || ptr2->IsSolid)
 						{
@@ -243,47 +249,44 @@ namespace LiquidAPI
 						}
 						else
 						{
-							LiquidRenderer.LiquidCache liquidCache = ptr2[-1];
-							LiquidRenderer.LiquidCache liquidCache2 = ptr2[1];
-							LiquidRenderer.LiquidCache liquidCache3 = ptr2[-rectangle.Height];
-							LiquidRenderer.LiquidCache liquidCache4 = ptr2[rectangle.Height];
-							float num8 = 0f;
-							float num9 = 1f;
-							float num10 = 0f;
-							float num11 = 1f;
+							LiquidCache cacheU = ptr2[-1];
+							LiquidCache cacheD = ptr2[1];
+							LiquidCache cacheL = ptr2[-rectangle.Height];
+							LiquidCache cacheR = ptr2[rectangle.Height];
+							float leftWall = 0f;
+							float rightWall = 1f;
+							float topWall = 0f;
+							float bottomWall = 1f;
 							float visibleLiquidLevel = ptr2->VisibleLiquidLevel;
-							if (!liquidCache.HasVisibleLiquid)
+							if (!cacheU.HasVisibleLiquid)
 							{
-								num10 += liquidCache2.VisibleLiquidLevel * (1f - visibleLiquidLevel);
+								topWall += cacheD.VisibleLiquidLevel * (1f - visibleLiquidLevel);
 							}
 
-							if (!liquidCache2.HasVisibleLiquid && !liquidCache2.IsSolid && !liquidCache2.IsHalfBrick)
+							if (!cacheD.HasVisibleLiquid && !cacheD.IsSolid && !cacheD.IsHalfBrick)
 							{
-								num11 -= liquidCache.VisibleLiquidLevel * (1f - visibleLiquidLevel);
+								bottomWall -= cacheU.VisibleLiquidLevel * (1f - visibleLiquidLevel);
 							}
 
-							if (!liquidCache3.HasVisibleLiquid && !liquidCache3.IsSolid && !liquidCache3.IsHalfBrick)
+							if (!cacheL.HasVisibleLiquid && !cacheL.IsSolid && !cacheL.IsHalfBrick)
 							{
-								num8 += liquidCache4.VisibleLiquidLevel * (1f - visibleLiquidLevel);
+								leftWall += cacheR.VisibleLiquidLevel * (1f - visibleLiquidLevel);
 							}
 
-							if (!liquidCache4.HasVisibleLiquid && !liquidCache4.IsSolid && !liquidCache4.IsHalfBrick)
+							if (!cacheR.HasVisibleLiquid && !cacheR.IsSolid && !cacheR.IsHalfBrick)
 							{
-								num9 -= liquidCache3.VisibleLiquidLevel * (1f - visibleLiquidLevel);
+								rightWall -= cacheL.VisibleLiquidLevel * (1f - visibleLiquidLevel);
 							}
 
-							ptr2->LeftWall = num8;
-							ptr2->RightWall = num9;
-							ptr2->BottomWall = num11;
-							ptr2->TopWall = num10;
+							ptr2->LeftWall = leftWall;
+							ptr2->RightWall = rightWall;
+							ptr2->BottomWall = bottomWall;
+							ptr2->TopWall = topWall;
+							ptr2->HasTopEdge = (!cacheU.HasVisibleLiquid && !cacheU.IsSolid) || topWall != 0f;
+							ptr2->HasBottomEdge = (!cacheD.HasVisibleLiquid && !cacheD.IsSolid) || bottomWall != 1f;
+							ptr2->HasLeftEdge = (!cacheL.HasVisibleLiquid && !cacheL.IsSolid) || leftWall != 0f;
+							ptr2->HasRightEdge = (!cacheR.HasVisibleLiquid && !cacheR.IsSolid) || rightWall != 1f;
 							Point zero = Point.Zero;
-							ptr2->HasTopEdge = ((!liquidCache.HasVisibleLiquid && !liquidCache.IsSolid) || num10 != 0f);
-							ptr2->HasBottomEdge =
-								((!liquidCache2.HasVisibleLiquid && !liquidCache2.IsSolid) || num11 != 1f);
-							ptr2->HasLeftEdge =
-								((!liquidCache3.HasVisibleLiquid && !liquidCache3.IsSolid) || num8 != 0f);
-							ptr2->HasRightEdge =
-								((!liquidCache4.HasVisibleLiquid && !liquidCache4.IsSolid) || num9 != 1f);
 							if (!ptr2->HasLeftEdge)
 							{
 								if (ptr2->HasRightEdge)
@@ -317,8 +320,7 @@ namespace LiquidAPI
 								}
 							}
 
-							if (zero.Y == 16 && (ptr2->HasLeftEdge ^ ptr2->HasRightEdge) &&
-							    (num7 + rectangle.Y) % 2 == 0)
+							if (zero.Y == 16 && (ptr2->HasLeftEdge ^ ptr2->HasRightEdge) && (num7 + rectangle.Y) % 2 == 0)
 							{
 								zero.Y += 16;
 							}
@@ -329,21 +331,21 @@ namespace LiquidAPI
 						ptr2++;
 					}
 
-					ptr2 += 4;
+					ptr2 += CACHE_PADDING;
 				}
 
 				ptr2 = ptr;
 				ptr2 += num;
-				for (int num12 = 2; num12 < rectangle.Width - 2; num12++)
+				for (int num12 = CACHE_PADDING; num12 < rectangle.Width - CACHE_PADDING; num12++)
 				{
-					for (int num13 = 2; num13 < rectangle.Height - 2; num13++)
+					for (int num13 = CACHE_PADDING; num13 < rectangle.Height - CACHE_PADDING; num13++)
 					{
 						if (ptr2->HasVisibleLiquid)
 						{
-							LiquidRenderer.LiquidCache liquidCache = ptr2[-1];
-							LiquidRenderer.LiquidCache liquidCache2 = ptr2[1];
-							LiquidRenderer.LiquidCache liquidCache3 = ptr2[-rectangle.Height];
-							LiquidRenderer.LiquidCache liquidCache4 = ptr2[rectangle.Height];
+							LiquidCache liquidCache = ptr2[-1];
+							LiquidCache liquidCache2 = ptr2[1];
+							LiquidCache liquidCache3 = ptr2[-rectangle.Height];
+							LiquidCache liquidCache4 = ptr2[rectangle.Height];
 							ptr2->VisibleLeftWall = ptr2->LeftWall;
 							ptr2->VisibleRightWall = ptr2->RightWall;
 							ptr2->VisibleTopWall = ptr2->TopWall;
@@ -352,14 +354,12 @@ namespace LiquidAPI
 							{
 								if (ptr2->HasLeftEdge)
 								{
-									ptr2->VisibleLeftWall =
-										(ptr2->LeftWall * 2f + liquidCache.LeftWall + liquidCache2.LeftWall) * 0.25f;
+									ptr2->VisibleLeftWall = (ptr2->LeftWall * 2f + liquidCache.LeftWall + liquidCache2.LeftWall) * 0.25f;
 								}
 
 								if (ptr2->HasRightEdge)
 								{
-									ptr2->VisibleRightWall =
-										(ptr2->RightWall * 2f + liquidCache.RightWall + liquidCache2.RightWall) * 0.25f;
+									ptr2->VisibleRightWall = (ptr2->RightWall * 2f + liquidCache.RightWall + liquidCache2.RightWall) * 0.25f;
 								}
 							}
 
@@ -367,15 +367,12 @@ namespace LiquidAPI
 							{
 								if (ptr2->HasTopEdge)
 								{
-									ptr2->VisibleTopWall =
-										(ptr2->TopWall * 2f + liquidCache3.TopWall + liquidCache4.TopWall) * 0.25f;
+									ptr2->VisibleTopWall = (ptr2->TopWall * 2f + liquidCache3.TopWall + liquidCache4.TopWall) * 0.25f;
 								}
 
 								if (ptr2->HasBottomEdge)
 								{
-									ptr2->VisibleBottomWall =
-										(ptr2->BottomWall * 2f + liquidCache3.BottomWall + liquidCache4.BottomWall) *
-										0.25f;
+									ptr2->VisibleBottomWall = (ptr2->BottomWall * 2f + liquidCache3.BottomWall + liquidCache4.BottomWall) * 0.25f;
 								}
 							}
 						}
@@ -383,21 +380,21 @@ namespace LiquidAPI
 						ptr2++;
 					}
 
-					ptr2 += 4;
+					ptr2 += CACHE_PADDING;
 				}
 
 				ptr2 = ptr;
 				ptr2 += num;
-				for (int num14 = 2; num14 < rectangle.Width - 2; num14++)
+				for (int num14 = CACHE_PADDING; num14 < rectangle.Width - CACHE_PADDING; num14++)
 				{
-					for (int num15 = 2; num15 < rectangle.Height - 2; num15++)
+					for (int num15 = CACHE_PADDING; num15 < rectangle.Height - CACHE_PADDING; num15++)
 					{
 						if (ptr2->HasLiquid)
 						{
-							LiquidRenderer.LiquidCache liquidCache = ptr2[-1];
-							LiquidRenderer.LiquidCache liquidCache2 = ptr2[1];
-							LiquidRenderer.LiquidCache liquidCache3 = ptr2[-rectangle.Height];
-							LiquidRenderer.LiquidCache liquidCache4 = ptr2[rectangle.Height];
+							LiquidCache liquidCache = ptr2[-1];
+							LiquidCache liquidCache2 = ptr2[1];
+							LiquidCache liquidCache3 = ptr2[-rectangle.Height];
+							LiquidCache liquidCache4 = ptr2[rectangle.Height];
 							if (ptr2->HasTopEdge && !ptr2->HasBottomEdge && (ptr2->HasLeftEdge ^ ptr2->HasRightEdge))
 							{
 								if (ptr2->HasRightEdge)
@@ -429,29 +426,27 @@ namespace LiquidAPI
 						ptr2++;
 					}
 
-					ptr2 += 4;
+					ptr2 += CACHE_PADDING;
 				}
 
 				ptr2 = ptr;
 				ptr2 += num;
-				for (int num16 = 2; num16 < rectangle.Width - 2; num16++)
+				for (int num16 = CACHE_PADDING; num16 < rectangle.Width - CACHE_PADDING; num16++)
 				{
-					for (int num17 = 2; num17 < rectangle.Height - 2; num17++)
+					for (int num17 = CACHE_PADDING; num17 < rectangle.Height - CACHE_PADDING; num17++)
 					{
 						if (ptr2->HasLiquid)
 						{
-							LiquidRenderer.LiquidCache liquidCache = ptr2[-1];
-							LiquidRenderer.LiquidCache liquidCache2 = ptr2[1];
-							LiquidRenderer.LiquidCache liquidCache3 = ptr2[-rectangle.Height];
-							LiquidRenderer.LiquidCache liquidCache4 = ptr2[rectangle.Height];
+							LiquidCache liquidCache = ptr2[-1];
+							LiquidCache liquidCache2 = ptr2[1];
+							LiquidCache liquidCache3 = ptr2[-rectangle.Height];
+							LiquidCache liquidCache4 = ptr2[rectangle.Height];
 							if (!ptr2->HasBottomEdge && !ptr2->HasLeftEdge && !ptr2->HasTopEdge && !ptr2->HasRightEdge)
 							{
 								if (liquidCache3.HasTopEdge && liquidCache.HasLeftEdge)
 								{
-									ptr2->FrameOffset.X =
-										Math.Max(4, (int) (16f - liquidCache.VisibleLeftWall * 16f)) - 4;
-									ptr2->FrameOffset.Y =
-										48 + Math.Max(4, (int) (16f - liquidCache3.VisibleTopWall * 16f)) - 4;
+									ptr2->FrameOffset.X = Math.Max(4, (int) (16 - liquidCache.VisibleLeftWall * 16)) - 4;
+									ptr2->FrameOffset.Y = 48 + Math.Max(4, (int) (16 - liquidCache3.VisibleTopWall * 16)) - 4;
 									ptr2->VisibleLeftWall = 0f;
 									ptr2->VisibleTopWall = 0f;
 									ptr2->VisibleRightWall = 1f;
@@ -459,10 +454,8 @@ namespace LiquidAPI
 								}
 								else if (liquidCache4.HasTopEdge && liquidCache.HasRightEdge)
 								{
-									ptr2->FrameOffset.X =
-										32 - Math.Min(16, (int) (liquidCache.VisibleRightWall * 16f) - 4);
-									ptr2->FrameOffset.Y =
-										48 + Math.Max(4, (int) (16f - liquidCache4.VisibleTopWall * 16f)) - 4;
+									ptr2->FrameOffset.X = 32 - Math.Min(16, (int) (liquidCache.VisibleRightWall * 16) - 4);
+									ptr2->FrameOffset.Y = 48 + Math.Max(4, (int) (16 - liquidCache4.VisibleTopWall * 16)) - 4;
 									ptr2->VisibleLeftWall = 0f;
 									ptr2->VisibleTopWall = 0f;
 									ptr2->VisibleRightWall = 1f;
@@ -474,20 +467,20 @@ namespace LiquidAPI
 						ptr2++;
 					}
 
-					ptr2 += 4;
+					ptr2 += CACHE_PADDING;
 				}
 
 				ptr2 = ptr;
 				ptr2 += num;
-				fixed (LiquidRenderer.LiquidDrawCache* ptr3 = &this._drawCache[0])
+				fixed (LiquidDrawCache* ptr3 = &this._drawCache[0])
 				{
 					fixed (Color* ptr4 = &this._waveMask[0])
 					{
-						LiquidRenderer.LiquidDrawCache* ptr5 = ptr3;
+						LiquidDrawCache* ptr5 = ptr3;
 						Color* ptr6 = ptr4;
-						for (int num18 = 2; num18 < rectangle.Width - 2; num18++)
+						for (int num18 = CACHE_PADDING; num18 < rectangle.Width - CACHE_PADDING; num18++)
 						{
-							for (int num19 = 2; num19 < rectangle.Height - 2; num19++)
+							for (int num19 = CACHE_PADDING; num19 < rectangle.Height - CACHE_PADDING; num19++)
 							{
 								if (ptr2->HasVisibleLiquid)
 								{
@@ -501,26 +494,25 @@ namespace LiquidAPI
 									}
 
 									ptr5->IsVisible = (ptr2->HasWall || !ptr2->IsHalfBrick || !ptr2->HasLiquid);
-									ptr5->SourceRectangle = new Rectangle(
+									ptr5->SourceRectangle = new Rectangle
+									(
 										(int) (16f - num21 * 16f) + ptr2->FrameOffset.X,
 										(int) (16f - num23 * 16f) + ptr2->FrameOffset.Y,
-										(int) Math.Ceiling((double) ((num21 - num20) * 16f)),
-										(int) Math.Ceiling((double) ((num23 - num22) * 16f)));
-									ptr5->IsSurfaceLiquid =
-										(ptr2->FrameOffset.X == 16 && ptr2->FrameOffset.Y == 0 &&
-										 (double) (num19 + rectangle.Y) > Main.worldSurface - 40.0);
+										(int) Math.Ceiling((num21 - num20) * 16f),
+										(int) Math.Ceiling((num23 - num22) * 16f)
+									);
+									ptr5->IsSurfaceLiquid = (ptr2->FrameOffset.X == 16 && ptr2->FrameOffset.Y == 0 && (num19 + rectangle.Y) > Main.worldSurface - 40.0);
 									ptr5->Opacity = ptr2->Opacity;
-									ptr5->LiquidOffset = new Vector2((float) Math.Floor((double) (num20 * 16f)),
-										(float) Math.Floor((double) (num22 * 16f)));
+									ptr5->LiquidOffset = new Vector2((float) Math.Floor(num20 * 16),(float) Math.Floor(num22 * 16));
 									ptr5->Type = ptr2->VisibleType;
 									ptr5->HasWall = ptr2->HasWall;
-									byte b = LiquidRenderer.WAVE_MASK_STRENGTH[(int) ptr2->VisibleType];
+									byte b = LiquidRegistry.liquidList[ptr2->VisibleType].WaveMaskStrength;
 									byte b2 = (byte) (b >> 1);
 									ptr6->R = b2;
 									ptr6->G = b2;
-									ptr6->B = LiquidRenderer.VISCOSITY_MASK[(int) ptr2->VisibleType];
+									ptr6->B = LiquidRegistry.liquidList[ptr2->VisibleType].ViscosityMask;
 									ptr6->A = b;
-									LiquidRenderer.LiquidCache* ptr7 = ptr2 - 1;
+									LiquidCache* ptr7 = ptr2 - 1;
 									if (num19 != 2 && !ptr7->HasVisibleLiquid && !ptr7->IsSolid && !ptr7->IsHalfBrick)
 									{
 										*(ptr6 - 1) = *ptr6;
@@ -529,12 +521,12 @@ namespace LiquidAPI
 								else
 								{
 									ptr5->IsVisible = false;
-									int num24 = (!ptr2->IsSolid && !ptr2->IsHalfBrick) ? 4 : 3;
-									byte b3 = LiquidRenderer.WAVE_MASK_STRENGTH[num24];
+									bool flag = !ptr2->IsSolid && !ptr2->IsHalfBrick;
+									byte b3 = flag?(byte)0:(byte)255;
 									byte b4 = (byte) (b3 >> 1);
 									ptr6->R = b4;
 									ptr6->G = b4;
-									ptr6->B = LiquidRenderer.VISCOSITY_MASK[num24];
+									ptr6->B = 0;
 									ptr6->A = b3;
 								}
 
@@ -543,7 +535,7 @@ namespace LiquidAPI
 								ptr6++;
 							}
 
-							ptr2 += 4;
+							ptr2 += CACHE_PADDING;
 						}
 					}
 				}
@@ -557,28 +549,21 @@ namespace LiquidAPI
 						{
 							if (this._random.Next(700) == 0)
 							{
-								Dust.NewDust(new Vector2((float) (num25 * 16), (float) (num26 * 16)), 16, 16, 35, 0f,
-									0f, 0, Color.White, 1f);
+								Dust.NewDust(new Vector2(num25 * 16,num26 * 16), 16, 16, 35, 0f,0f, 0, Color.White, 1f);
 							}
 
 							if (this._random.Next(350) == 0)
 							{
-								int num27 = Dust.NewDust(new Vector2((float) (num25 * 16), (float) (num26 * 16)), 16, 8,
-									35, 0f, 0f, 50, Color.White, 1.5f);
-								Main.dust[num27].velocity *= 0.8f;
-								Dust expr_1205_cp_0 = Main.dust[num27];
-								expr_1205_cp_0.velocity.X = expr_1205_cp_0.velocity.X * 2f;
-								Dust expr_1223_cp_0 = Main.dust[num27];
-								expr_1223_cp_0.velocity.Y =
-									expr_1223_cp_0.velocity.Y - (float) this._random.Next(1, 7) * 0.1f;
+								Dust dust=Main.dust[Dust.NewDust(new Vector2(num25 * 16,num26 * 16), 16, 8, 35, 0f, 0f, 50, Color.White, 1.5f)];
+								dust.velocity *= 0.8f;
+								dust.velocity.X *= 2f;
+								dust.velocity.Y -= this._random.Next(1, 7) * 0.1f;
 								if (this._random.Next(10) == 0)
 								{
-									Dust expr_125F_cp_0 = Main.dust[num27];
-									expr_125F_cp_0.velocity.Y =
-										expr_125F_cp_0.velocity.Y * (float) this._random.Next(2, 5);
+									dust.velocity.Y *= this._random.Next(2, 5);
 								}
 
-								Main.dust[num27].noGravity = true;
+								dust.noGravity = true;
 							}
 						}
 
@@ -587,20 +572,16 @@ namespace LiquidAPI
 				}
 			}
 
-			if (this.WaveFilters != null)
-			{
-				this.WaveFilters(this._waveMask, this.GetCachedDrawArea());
-			}
+			this.WaveFilters?.Invoke(this._waveMask,this.GetCachedDrawArea());
 		}
 
-		private unsafe void InternalDraw(SpriteBatch spriteBatch, Vector2 drawOffset, int waterStyle, float globalAlpha,
-			bool isBackgroundDraw)
+		private unsafe void InternalDraw(SpriteBatch spriteBatch, Vector2 drawOffset, int waterStyle, float globalAlpha, bool isBackgroundDraw)
 		{
 			Rectangle drawArea = this._drawArea;
 			Main.tileBatch.Begin();
-			fixed (LiquidRenderer.LiquidDrawCache* ptr = &this._drawCache[0])
+			fixed (LiquidDrawCache* ptr = &this._drawCache[0])
 			{
-				LiquidRenderer.LiquidDrawCache* ptr2 = ptr;
+				LiquidDrawCache* ptr2 = ptr;
 				for (int i = drawArea.X; i < drawArea.X + drawArea.Width; i++)
 				{
 					for (int j = drawArea.Y; j < drawArea.Y + drawArea.Height; j++)
@@ -618,29 +599,25 @@ namespace LiquidAPI
 							}
 
 							Vector2 liquidOffset = ptr2->LiquidOffset;
-							float num = ptr2->Opacity *
-							            (isBackgroundDraw ? 1f : LiquidRenderer.DEFAULT_OPACITY[(int) ptr2->Type]);
-							int num2 = (int) ptr2->Type;
-							if (num2 == 0)
+							float opacity = ptr2->Opacity * (isBackgroundDraw ? 1f : LiquidRegistry.liquidList[ptr2->Type].DefaultOpacity);
+							int type = ptr2->Type;
+							if (type == 0)
 							{
-								num2 = waterStyle;
-								num *= (isBackgroundDraw ? 1f : globalAlpha);
+								type = waterStyle;
+								opacity *= (isBackgroundDraw ? 1f : globalAlpha);
 							}
-							else if (num2 == 2)
+							else if (type >= 2)
 							{
-								num2 = 11;
+								type += 9;
 							}
 
-							num = Math.Min(1f, num);
-							VertexColors colors;
-							Lighting.GetColor4Slice_New(i, j, out colors, 1f);
-							colors.BottomLeftColor *= num;
-							colors.BottomRightColor *= num;
-							colors.TopLeftColor *= num;
-							colors.TopRightColor *= num;
-							Main.tileBatch.Draw(this.LiquidTextures[num2],
-								new Vector2((float) (i << 4), (float) (j << 4)) + drawOffset + liquidOffset,
-								new Rectangle?(sourceRectangle), colors, Vector2.Zero, 1f, SpriteEffects.None);
+							opacity = Math.Min(1f, opacity);
+							Lighting.GetColor4Slice_New(i, j, out VertexColors colors, 1f);
+							colors.BottomLeftColor *= opacity;
+							colors.BottomRightColor *= opacity;
+							colors.TopLeftColor *= opacity;
+							colors.TopRightColor *= opacity;
+							Main.tileBatch.Draw(this.LiquidTextures[type],new Vector2(i << 4, j << 4) + drawOffset + liquidOffset,sourceRectangle, colors, Vector2.Zero, 1f, SpriteEffects.None);
 						}
 
 						ptr2++;
@@ -656,8 +633,7 @@ namespace LiquidAPI
 			x -= this._drawArea.X;
 			y -= this._drawArea.Y;
 			int num = x * this._drawArea.Height + y;
-			return num < 0 || num >= this._drawCache.Length ||
-			       (this._drawCache[num].IsVisible && !this._drawCache[num].IsSurfaceLiquid);
+			return num < 0 || num >= this._drawCache.Length || (this._drawCache[num].IsVisible && !this._drawCache[num].IsSurfaceLiquid);
 		}
 
 		public float GetVisibleLiquid(int x, int y)
@@ -715,23 +691,12 @@ namespace LiquidAPI
 		{
 			if (texture == null || texture.Width < this._drawArea.Height || texture.Height < this._drawArea.Width)
 			{
-				Console.WriteLine("WaveMaskData texture recreated. {0}x{1}", this._drawArea.Height,
-					this._drawArea.Width);
-				if (texture != null)
-				{
-					try
-					{
-						texture.Dispose();
-					}
-					catch { }
-				}
-
-				texture = new Texture2D(Main.instance.GraphicsDevice, this._drawArea.Height, this._drawArea.Width,
-					false, SurfaceFormat.Color);
+				Console.WriteLine($"WaveMaskData texture recreated. {this._drawArea.Height}x{this._drawArea.Width}");
+				try{texture?.Dispose();}catch{}
+				texture = new Texture2D(Main.instance.GraphicsDevice, this._drawArea.Height, this._drawArea.Width, false, SurfaceFormat.Color);
 			}
 
-			texture.SetData<Color>(0, new Rectangle?(new Rectangle(0, 0, this._drawArea.Height, this._drawArea.Width)),
-				this._waveMask, 0, this._drawArea.Width * this._drawArea.Height);
+			texture.SetData(0, new Rectangle(0, 0, this._drawArea.Height, this._drawArea.Width), this._waveMask, 0, this._drawArea.Width * this._drawArea.Height);
 		}
 
 		public Rectangle GetCachedDrawArea()
@@ -739,25 +704,16 @@ namespace LiquidAPI
 			return this._drawArea;
 		}
 
-		public void Draw(SpriteBatch spriteBatch, Vector2 drawOffset, int waterStyle, float alpha,
-			bool isBackgroundDraw)
+		public void Draw(SpriteBatch spriteBatch, Vector2 drawOffset, int waterStyle, float alpha, bool isBackgroundDraw)
 		{
 			this.InternalDraw(spriteBatch, drawOffset, waterStyle, alpha, isBackgroundDraw);
 		}
 
 		static LiquidRenderer()
 		{
-			// Note: this type is marked as 'beforefieldinit'.
-			byte[] array = new byte[5];
-			array[3] = 255;
-			LiquidRenderer.WAVE_MASK_STRENGTH = array;
-			byte[] array2 = new byte[5];
-			array2[1] = 200;
-			array2[2] = 240;
-			LiquidRenderer.VISCOSITY_MASK = array2;
-#if SERVER //client initialization has been moved to LoadContent to prevent FNA deadlocks
-			LiquidRenderer.Instance = new LiquidRenderer();
-#endif
+			#if SERVER //client initialization has been moved to LoadContent to prevent FNA deadlocks
+			Instance = new LiquidRenderer();
+			#endif
 		}
 	}
 }

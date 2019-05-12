@@ -9,9 +9,10 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>LiquidAPI</RootNamespace>
     <AssemblyName>LiquidAPI</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -62,6 +63,9 @@
     </Reference>
     <Reference Include="TerrariaHooks">
       <HintPath>..\..\references\TerrariaHooks.dll</HintPath>
+    </Reference>
+    <Reference Include="Terraria_tML">
+      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Terraria\Terraria_tML.exe</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

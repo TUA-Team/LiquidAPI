@@ -11,7 +11,6 @@ namespace LiquidAPI.Hooks
 
 			// Utilities
 			On.Terraria.Liquid.AddWater += AddWater;
-			On.Terraria.LiquidBuffer.AddBuffer += LiquidBufferOnAddBuffer;
 
 			// Interaction
 			On.Terraria.Liquid.LavaCheck += LiquidOnLavaCheck;

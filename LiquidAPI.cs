@@ -106,9 +106,8 @@ namespace LiquidAPI
 		}
 		private void AutoloadLiquid(Mod mod, Type type)
 		{
-			Color[] color = (Color[])typeof(MapHelper).GetField("colorLookup", BindingFlags.Static | BindingFlags.NonPublic).GetValue(null);
 			ModLiquid liquid = (ModLiquid)Activator.CreateInstance(type);
-			liquid.mod = mod;
+			liquid.Mod = mod;
 			string texturePath = liquid.GetType().FullName.Replace(".", "/").Replace(this.Name + "/", "");
 			if (liquid.Autoload(ref texturePath))
 			{

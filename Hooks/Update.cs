@@ -1,8 +1,8 @@
 ﻿using System;
-using LiquidAPI.ID;
-using LiquidAPI.LiquidMod;
 using Terraria;
 using Terraria.ID;
+using LiquidAPI.ID;
+using LiquidAPI.LiquidMod;
 
 namespace LiquidAPI.Hooks
 {
@@ -17,8 +17,7 @@ namespace LiquidAPI.Hooks
 			LiquidRef liquidDown = LiquidCore.grid[self.x, self.y + 1];
 			LiquidRef liquidSelf = LiquidCore.grid[self.x, self.y];
 
-			if (liquidSelf.Tile.nactive() && Main.tileSolid[(int) liquidSelf.Tile.type] &&
-			    !Main.tileSolidTop[(int) liquidSelf.Tile.type])
+			if (liquidSelf.Tile.nactive() && Main.tileSolid[liquidSelf.Tile.type] && !Main.tileSolidTop[liquidSelf.Tile.type])
 			{
 				self.kill = 9;
 				return;
@@ -130,8 +129,8 @@ namespace LiquidAPI.Hooks
 				liquidDown.Amount += (byte) num;
 				liquidDown.Type = liquidSelf.Type;
 				Liquid.AddWater(self.x, self.y + 1);
-				liquidDown.SetSkipLiquid(true);
-				liquidSelf.SetSkipLiquid(true);
+				liquidDown.SkipLiquid=true;
+				liquidSelf.SkipLiquid=true;
 				if (liquidSelf.Amount > 250)
 				{
 					liquidSelf.Amount = 255;

@@ -1,7 +1,6 @@
-﻿using LiquidAPI.ID;
+﻿using Terraria;
+using Terraria.ID;
 using LiquidAPI.LiquidMod;
-using Terraria;
-using Terraria.ObjectData;
 
 namespace LiquidAPI.Hooks
 {
@@ -9,13 +8,8 @@ namespace LiquidAPI.Hooks
 	{
 		public static void AddWater(On.Terraria.Liquid.orig_AddWater org, int x, int y)
 		{
-			LiquidRef liquid = LiquidCore.grid[x, y];
-			if (liquid?.Tile == null ||
-			    liquid.CheckingLiquid() ||
-			    x >= Main.maxTilesX - 5 ||
-			    y >= Main.maxTilesY - 5 ||
-			    x < 5 || y < 5 ||
-			    liquid.Amount == 0)
+			Tile tile = Main.tile[x, y];
+			if (!WorldGen.InWorld(x,y,5) || tile == null || tile.checkingLiquid() || tile.liquid == 0)
 			{
 				return;
 			}
@@ -26,54 +20,31 @@ namespace LiquidAPI.Hooks
 				return;
 			}
 
-			liquid.SetCheckingLiquid(true);
-			Main.liquid[Liquid.numLiquid].kill = 0;
-			Main.liquid[Liquid.numLiquid].x = x;
-			Main.liquid[Liquid.numLiquid].y = y;
-			Main.liquid[Liquid.numLiquid].delay = 0;
-			liquid.SetSkipLiquid(false);
-			Liquid.numLiquid++;
+			tile.checkingLiquid(true);
+			tile.skipLiquid(false);
+			Liquid liquid=Main.liquid[Liquid.numLiquid++];
+			liquid.kill = 0;
+			liquid.x = x;
+			liquid.y = y;
+			liquid.delay = 0;
 			if (Main.netMode == NetmodeID.Server)
 			{
 				Liquid.NetSendLiquid(x, y);
 			}
 
-			if (!liquid.Tile.active() || WorldGen.gen)
+			if (!tile.active() || WorldGen.gen)
 			{
 				return;
 			}
 
-			bool flag = false;
-			if (LiquidCore.liquidGrid[x, y].data == LiquidID.lava)
+			if (LiquidRegistry.liquidList[LiquidCore.liquidGrid[x, y].data].CanKillTile(x,y))
 			{
-				if (TileObjectData.CheckLavaDeath(liquid.Tile))
-				{
-					flag = true;
-				}
-			}
-			else if (TileObjectData.CheckWaterDeath(liquid.Tile))
-			{
-				flag = true;
-			}
-
-			if (flag)
-			{
-				WorldGen.KillTile(x, y, false, false, false);
+				WorldGen.KillTile(x, y);
 				if (Main.netMode == NetmodeID.Server)
 				{
-					NetMessage.SendData(17, -1, -1, null, 0, (float)x, (float)y, 0f, 0, 0, 0);
+					NetMessage.SendData(MessageID.TileChange, -1, -1, null, 0, x, y);
 				}
 			}
-		}
-
-		private static void LiquidBufferOnAddBuffer(On.Terraria.LiquidBuffer.orig_AddBuffer orig, int x, int y)
-		{
-			if (LiquidBuffer.numLiquidBuffer == 9999 || LiquidCore.grid[x, y].CheckingLiquid())
-				return;
-			LiquidCore.grid[x, y].SetCheckingLiquid(true);
-			Main.liquidBuffer[LiquidBuffer.numLiquidBuffer].x = x;
-			Main.liquidBuffer[LiquidBuffer.numLiquidBuffer].y = y;
-			++LiquidBuffer.numLiquidBuffer;
 		}
 	}
 }

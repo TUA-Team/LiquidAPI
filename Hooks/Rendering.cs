@@ -14,8 +14,7 @@ namespace LiquidAPI.Hooks
 	    public static Texture2D OldLavaTexture;
 	    public static List<Texture2D> OldWaterTexture; 
     
-		private static void MainOnOldDrawWater(On.Terraria.Main.orig_oldDrawWater orig, Terraria.Main self,
-			bool bg = false, int Style = 0, float Alpha = 1f)
+		private static void MainOnOldDrawWater(On.Terraria.Main.orig_oldDrawWater orig, Main self, bool bg = false, int Style = 0, float Alpha = 1f)
 		{
 		    Texture2D liquidTexture = OldWaterTexture[Style];
 			float num = 0f;
@@ -23,19 +22,13 @@ namespace LiquidAPI.Hooks
 			float num3 = 99999f;
 			int num4 = -1;
 			int num5 = -1;
-			Vector2 zero = new Vector2((float) Main.offScreenRange, (float) Main.offScreenRange);
-			if (Main.drawToScreen)
-			{
-				zero = Vector2.Zero;
-			}
+			Vector2 zero = Main.drawToScreen?Vector2.Zero:new Vector2(Main.offScreenRange,Main.offScreenRange);
 
 			int num6 = (int) (255f * (1f - Main.gfxQuality) + 40f * Main.gfxQuality);
-			float arg_5D_0 = Main.gfxQuality;
-			float arg_63_0 = Main.gfxQuality;
 			int num7 = (int) ((Main.screenPosition.X - zero.X) / 16f - 1f);
-			int num8 = (int) ((Main.screenPosition.X + (float) Main.screenWidth + zero.X) / 16f) + 2;
+			int num8 = (int) ((Main.screenPosition.X +  Main.screenWidth + zero.X) / 16f) + 2;
 			int num9 = (int) ((Main.screenPosition.Y - zero.Y) / 16f - 1f);
-			int num10 = (int) ((Main.screenPosition.Y + (float) Main.screenHeight + zero.Y) / 16f) + 5;
+			int num10 = (int) ((Main.screenPosition.Y +  Main.screenHeight + zero.Y) / 16f) + 5;
 			if (num7 < 5)
 			{
 				num7 = 5;
@@ -64,12 +57,10 @@ namespace LiquidAPI.Hooks
 					LiquidRef liquidUp = LiquidCore.grid[j, i + 1];
 					LiquidRef liquidDown = LiquidCore.grid[j, i - 1];
 
-                    if (liquid.Amount > 0 &&
-					    (!liquid.Tile.nactive() || !Main.tileSolid[liquid.Tile.type] ||
-					     Main.tileSolidTop[liquid.Tile.type]) && (Lighting.Brightness(j, i) > 0f || bg))
+                    if (liquid.Amount > 0 && (!liquid.Tile.nactive() || !Main.tileSolid[liquid.Tile.type] || Main.tileSolidTop[liquid.Tile.type]) && (Lighting.Brightness(j, i) > 0f || bg))
 					{
-						Microsoft.Xna.Framework.Color color = Lighting.GetColor(j, i);
-						float num11 = (float) (256 - (int) liquid.Amount);
+						Color color = Lighting.GetColor(j, i);
+						float num11 = 256 - liquid.Amount;
 						num11 /= 32f;
 						int num12 = 0;
 						if (liquid.Type == LiquidID.lava)
@@ -79,14 +70,12 @@ namespace LiquidAPI.Hooks
 								goto IL_E7F;
 							}
 
-							float num13 = Math.Abs((float) (j * 16 + 8) -
-							                       (Main.screenPosition.X + (float) (Main.screenWidth / 2)));
-							float num14 = Math.Abs((float) (i * 16 + 8) -
-							                       (Main.screenPosition.Y + (float) (Main.screenHeight / 2)));
-							if (num13 < (float) (Main.screenWidth * 2) && num14 < (float) (Main.screenHeight * 2))
+							float num13 = Math.Abs(j * 16 + 8 - (Main.screenPosition.X + (Main.screenWidth / 2)));
+							float num14 = Math.Abs(i * 16 + 8 - (Main.screenPosition.Y + (Main.screenHeight / 2)));
+							if (num13 <  (Main.screenWidth * 2) && num14 <  (Main.screenHeight * 2))
 							{
-								float num15 = (float) Math.Sqrt((double) (num13 * num13 + num14 * num14));
-								float num16 = 1f - num15 / ((float) Main.screenWidth * 0.75f);
+								float num15 = (float) Math.Sqrt(num13 * num13 + num14 * num14);
+								float num16 = 1f - num15 / ( Main.screenWidth * 0.75f);
 								if (num16 > 0f)
 								{
 									num += num16;
@@ -113,7 +102,7 @@ namespace LiquidAPI.Hooks
 						}
 					    else if(liquid.Type != LiquidID.water)
 						{
-						    liquidTexture = LiquidRegistry.getInstance()[liquid.Type].texture;
+						    liquidTexture = LiquidRegistry.getInstance()[liquid.Type].Texture;
 						}
 
 					    if (num12 == 0)
@@ -134,23 +123,20 @@ namespace LiquidAPI.Hooks
 								num17 *= Alpha;
 							}
 
-							Vector2 value = new Vector2((float) (j * 16), (float) (i * 16 + (int) num11 * 2));
-							Microsoft.Xna.Framework.Rectangle value2 =
-								new Microsoft.Xna.Framework.Rectangle(0, 0, 16, 16 - (int) num11 * 2);
+							Vector2 value = new Vector2(j * 16,i * 16 + (int) num11 * 2);
+							Rectangle value2 = new Rectangle(0, 0, 16, 16 - (int) num11 * 2);
 
-							if (liquidUp.Amount < 245 &&
-							    (!liquidUp.Tile.nactive() || !Main.tileSolid[liquidUp.Tile.type] ||
-							     Main.tileSolidTop[liquidUp.Tile.type]))
+							if (liquidUp.Amount < 245 && (!liquidUp.Tile.nactive() || !Main.tileSolid[liquidUp.Tile.type] || Main.tileSolidTop[liquidUp.Tile.type]))
 							{
-								float num18 = (float) (256 - (int) liquidUp.Amount);
+								float num18 = 256 - liquidUp.Amount;
 								num18 /= 32f;
 								num17 = 0.5f * (8f - num11) / 4f;
-								if ((double) num17 > 0.55)
+								if (num17 > 0.55f)
 								{
 									num17 = 0.55f;
 								}
 
-								if ((double) num17 < 0.35)
+								if (num17 < 0.35f)
 								{
 									num17 = 0.35f;
 								}
@@ -165,55 +151,48 @@ namespace LiquidAPI.Hooks
 
 									if (liquidDown.Amount > 0 && liquidDown.Amount > 0)
 									{
-										value2 = new Microsoft.Xna.Framework.Rectangle(0, 4, 16, 16);
+										value2 = new Rectangle(0, 4, 16, 16);
 										num17 = 0.5f;
 									}
 									else if (liquidDown.Amount > 0)
 									{
-										value = new Vector2((float) (j * 16), (float) (i * 16 + 4));
-										value2 = new Microsoft.Xna.Framework.Rectangle(0, 4, 16, 12);
+										value = new Vector2(j * 16,i * 16 + 4);
+										value2 = new Rectangle(0, 4, 16, 12);
 										num17 = 0.5f;
 									}
 									else if (liquidUp.Amount > 0)
 									{
-										value = new Vector2((float) (j * 16),
-											(float) (i * 16 + (int) num11 * 2 + (int) num18 * 2));
-										value2 = new Microsoft.Xna.Framework.Rectangle(0, 4, 16, 16 - (int) num11 * 2);
+										value = new Vector2(j * 16,i * 16 + (int) num11 * 2 + (int) num18 * 2);
+										value2 = new Rectangle(0, 4, 16, 16 - (int) num11 * 2);
 									}
 									else
 									{
-										value = new Vector2((float) (j * 16 + (int) num19),
-											(float) (i * 16 + (int) num19 * 2 + (int) num18 * 2));
-										value2 = new Microsoft.Xna.Framework.Rectangle(0, 4, 16 - (int) num19 * 2,
-											16 - (int) num19 * 2);
+										value = new Vector2(j * 16 + (int) num19,i * 16 + (int) num19 * 2 + (int) num18 * 2);
+										value2 = new Rectangle(0, 4, 16 - (int) num19 * 2, 16 - (int) num19 * 2);
 									}
 								}
 								else
 								{
 									num17 = 0.5f;
-									value2 = new Microsoft.Xna.Framework.Rectangle(0, 4, 16,
-										16 - (int) num11 * 2 + (int) num18 * 2);
+									value2 = new Rectangle(0, 4, 16, 16 - (int) num11 * 2 + (int) num18 * 2);
 								}
 							}
 							else if (liquidDown.Amount > 32)
 							{
-								value2 = new Microsoft.Xna.Framework.Rectangle(0, 4, value2.Width, value2.Height);
+								value2 = new Rectangle(0, 4, value2.Width, value2.Height);
 							}
 							else if (num11 < 1f && liquidDown.Tile.nactive() &&
 							         Main.tileSolid[liquidDown.Tile.type] &&
 							         !Main.tileSolidTop[liquidDown.Tile.type])
 							{
-								value = new Vector2((float) (j * 16), (float) (i * 16));
-								value2 = new Microsoft.Xna.Framework.Rectangle(0, 4, 16, 16);
+								value = new Vector2(j * 16,i * 16);
+								value2 = new Rectangle(0, 4, 16, 16);
 							}
 							else
 							{
 								bool flag = true;
 								int num20 = i + 1;
-								while (num20 < i + 6 &&
-								       (!LiquidCore.grid[j, num20].Tile.nactive() ||
-								        !Main.tileSolid[LiquidCore.grid[j, num20].Tile.type] ||
-								        Main.tileSolidTop[LiquidCore.grid[j, num20].Tile.type]))
+								while (num20 < i + 6 && (!LiquidCore.grid[j, num20].Tile.nactive() || !Main.tileSolid[LiquidCore.grid[j, num20].Tile.type] || Main.tileSolidTop[LiquidCore.grid[j, num20].Tile.type]))
 								{
 									if (LiquidCore.grid[j, num20].Amount < 200)
 									{
@@ -227,39 +206,37 @@ namespace LiquidAPI.Hooks
 								if (!flag)
 								{
 									num17 = 0.5f;
-									value2 = new Microsoft.Xna.Framework.Rectangle(0, 4, 16, 16);
+									value2 = new Rectangle(0, 4, 16, 16);
 								}
-								else if (liquidDown.HasLiquid())
+								else if (liquidDown.HasLiquid)
 								{
-									value2 = new Microsoft.Xna.Framework.Rectangle(0, 2, value2.Width, value2.Height);
+									value2 = new Rectangle(0, 2, value2.Width, value2.Height);
 								}
 							}
 
 							if ((color.R > 20 || color.B > 20 || color.G > 20) && value2.Y < 4)
 							{
-								int num21 = (int) color.R;
-								if ((int) color.G > num21)
+								int num21 = color.R;
+								if (color.G > num21)
 								{
-									num21 = (int) color.G;
+									num21 = color.G;
 								}
 
-								if ((int) color.B > num21)
+								if (color.B > num21)
 								{
-									num21 = (int) color.B;
+									num21 = color.B;
 								}
 
 								num21 /= 30;
 								if (Main.rand.Next(20000) < num21)
 								{
-									Microsoft.Xna.Framework.Color newColor =
-										new Microsoft.Xna.Framework.Color(255, 255, 255);
+									Color newColor = new Color(255, 255, 255);
 									if (liquid.Type == LiquidID.honey)
 									{
-										newColor = new Microsoft.Xna.Framework.Color(255, 255, 50);
+										newColor = new Color(255, 255, 50);
 									}
 
-									int num22 = Dust.NewDust(new Vector2((float) (j * 16), value.Y - 2f), 16, 8, 43, 0f,
-										0f, 254, newColor, 0.75f);
+									int num22 = Dust.NewDust(new Vector2(j * 16, value.Y - 2f), 16, 8, 43, 0f, 0f, 254, newColor, 0.75f);
 									Main.dust[num22].velocity *= 0f;
 								}
 							}
@@ -285,45 +262,28 @@ namespace LiquidAPI.Hooks
 								{
 									if (liquid.Amount > 200 && Main.rand.Next(700) == 0)
 									{
-										Dust.NewDust(new Vector2((float) (j * 16), (float) (i * 16)), 16, 16, 35, 0f,
-											0f, 0, default(Microsoft.Xna.Framework.Color), 1f);
+										Dust.NewDust(new Vector2(j * 16,i * 16), 16, 16, 35, 0f, 0f, 0, default(Color), 1f);
 									}
 
 									if (value2.Y == 0 && Main.rand.Next(350) == 0)
 									{
-										int num23 = Dust.NewDust(
-											new Vector2((float) (j * 16), (float) (i * 16) + num11 * 2f - 8f), 16, 8,
-											35, 0f, 0f, 50, default(Microsoft.Xna.Framework.Color), 1.5f);
-										Main.dust[num23].velocity *= 0.8f;
-										Dust expr_9CA_cp_0 = Main.dust[num23];
-										expr_9CA_cp_0.velocity.X = expr_9CA_cp_0.velocity.X * 2f;
-										Dust expr_9E8_cp_0 = Main.dust[num23];
-										expr_9E8_cp_0.velocity.Y =
-											expr_9E8_cp_0.velocity.Y - (float) Main.rand.Next(1, 7) * 0.1f;
+										Dust dust=Main.dust[Dust.NewDust(new Vector2(j * 16,(i * 16) + num11 * 2f - 8f), 16, 8, 35, 0f, 0f, 50, default(Color), 1.5f)];
+										dust.velocity *= 0.8f;
+										dust.velocity.X *= 2f;
+										dust.velocity.Y -= Main.rand.Next(1, 7) * 0.1f;
 										if (Main.rand.Next(10) == 0)
 										{
-											Dust expr_A22_cp_0 = Main.dust[num23];
-											expr_A22_cp_0.velocity.Y =
-												expr_A22_cp_0.velocity.Y * (float) Main.rand.Next(2, 5);
+											dust.velocity.Y *= Main.rand.Next(2, 5);
 										}
-
-										Main.dust[num23].noGravity = true;
+										dust.noGravity = true;
 									}
 								}
 							}
-
-							float num24 = (float) color.R * num17;
-							float num25 = (float) color.G * num17;
-							float num26 = (float) color.B * num17;
-							float num27 = (float) color.A * num17;
-							color = new Microsoft.Xna.Framework.Color((int) ((byte) num24), (int) ((byte) num25),
-								(int) ((byte) num26), (int) ((byte) num27));
+							color *= num17;
 							if (Lighting.NotRetro && !bg)
 							{
-								Microsoft.Xna.Framework.Color color2 = color;
-								if (num12 != 1 && ((double) color2.R > (double) num6 * 0.6 ||
-								                   (double) color2.G > (double) num6 * 0.65 ||
-								                   (double) color2.B > (double) num6 * 0.7))
+								Color color2 = color;
+								if (num12 != 1 && (color2.R >  num6 * 0.6f || color2.G >  num6 * 0.65f || color2.B >  num6 * 0.7f))
 								{
 									for (int k = 0; k < 4; k++)
 									{
@@ -331,66 +291,56 @@ namespace LiquidAPI.Hooks
 										int num29 = 0;
 										int width = 8;
 										int height = 8;
-										Microsoft.Xna.Framework.Color color3 = color2;
-										Microsoft.Xna.Framework.Color color4 = Lighting.GetColor(j, i);
-										if (k == 0)
+										Color color4;
+										switch(k)
 										{
-											color4 = Lighting.GetColor(j - 1, i - 1);
-											if (value2.Height < 8)
+											case 0:
 											{
-												height = value2.Height;
+												color4 = Lighting.GetColor(j - 1, i - 1);
+												if (value2.Height < 8)
+												{
+													height = value2.Height;
+												}
+												break;
 											}
-										}
 
-										if (k == 1)
-										{
-											color4 = Lighting.GetColor(j + 1, i - 1);
-											num28 = 8;
-											if (value2.Height < 8)
+											case 1:
 											{
-												height = value2.Height;
+												color4 = Lighting.GetColor(j + 1, i - 1);
+												num28 = 8;
+												if (value2.Height < 8)
+												{
+													height = value2.Height;
+												}
+												break;
 											}
+
+											case 2:
+											{
+												color4 = Lighting.GetColor(j - 1, i + 1);
+												num29 = 8;
+												height = 8 - (16 - value2.Height);
+												break;
+											}
+
+											case 3:
+											{
+												color4 = Lighting.GetColor(j + 1, i + 1);
+												num28 = 8;
+												num29 = 8;
+												height = 8 - (16 - value2.Height);
+												break;
+											}
+											default:continue;
 										}
 
-										if (k == 2)
-										{
-											color4 = Lighting.GetColor(j - 1, i + 1);
-											num29 = 8;
-											height = 8 - (16 - value2.Height);
-										}
-
-										if (k == 3)
-										{
-											color4 = Lighting.GetColor(j + 1, i + 1);
-											num28 = 8;
-											num29 = 8;
-											height = 8 - (16 - value2.Height);
-										}
-
-										num24 = (float) color4.R * num17;
-										num25 = (float) color4.G * num17;
-										num26 = (float) color4.B * num17;
-										num27 = (float) color4.A * num17;
-										color4 = new Microsoft.Xna.Framework.Color((int) ((byte) num24),
-											(int) ((byte) num25), (int) ((byte) num26), (int) ((byte) num27));
-										color3.R = (byte) ((color2.R * 3 + color4.R * 2) / 5);
-										color3.G = (byte) ((color2.G * 3 + color4.G * 2) / 5);
-										color3.B = (byte) ((color2.B * 3 + color4.B * 2) / 5);
-										color3.A = (byte) ((color2.A * 3 + color4.A * 2) / 5);
-										Main.spriteBatch.Draw(Main.liquidTexture[num12],
-											value - Main.screenPosition + new Vector2((float) num28, (float) num29) +
-											zero,
-											new Microsoft.Xna.Framework.Rectangle?(
-												new Microsoft.Xna.Framework.Rectangle(value2.X + num28,
-													value2.Y + num29, width, height)), color3, 0f, default(Vector2), 1f,
-											SpriteEffects.None, 0f);
+										Color color3 = Color.Lerp(color2,color4 * num17,0.4f);
+										Main.spriteBatch.Draw(Main.liquidTexture[num12],value - Main.screenPosition + new Vector2(num28, num29) +zero,new Rectangle(value2.X + num28,value2.Y + num29, width, height), color3, 0f, default(Vector2), 1f,SpriteEffects.None, 0f);
 									}
 								}
 								else
 								{
-									Main.spriteBatch.Draw(liquidTexture, value - Main.screenPosition + zero,
-										new Microsoft.Xna.Framework.Rectangle?(value2), color, 0f, default(Vector2), 1f,
-										SpriteEffects.None, 0f);
+									Main.spriteBatch.Draw(liquidTexture, value - Main.screenPosition + zero,value2, color, 0f, default(Vector2), 1f,SpriteEffects.None, 0f);
 								}
 							}
 							else
@@ -400,37 +350,26 @@ namespace LiquidAPI.Hooks
 									value2.X += (int) (Main.wFrame * 18f);
 								}
 
-								Main.spriteBatch.Draw(liquidTexture, value - Main.screenPosition + zero,
-									new Microsoft.Xna.Framework.Rectangle?(value2), color, 0f, default(Vector2), 1f,
-									SpriteEffects.None, 0f);
+								Main.spriteBatch.Draw(liquidTexture, value - Main.screenPosition + zero,value2, color, 0f, default(Vector2), 1f,SpriteEffects.None, 0f);
 							}
 
 							if (liquidUp.Tile.halfBrick())
 							{
-								color = Lighting.GetColor(j, i + 1);
-								num24 = (float) color.R * num17;
-								num25 = (float) color.G * num17;
-								num26 = (float) color.B * num17;
-								num27 = (float) color.A * num17;
-								color = new Microsoft.Xna.Framework.Color((int) ((byte) num24), (int) ((byte) num25),
-									(int) ((byte) num26), (int) ((byte) num27));
-								value = new Vector2((float) (j * 16), (float) (i * 16 + 16));
-								Main.spriteBatch.Draw(liquidTexture, value - Main.screenPosition + zero,
-									new Microsoft.Xna.Framework.Rectangle?(
-										new Microsoft.Xna.Framework.Rectangle(0, 4, 16, 8)), color, 0f,
-									default(Vector2), 1f, SpriteEffects.None, 0f);
+								color = Lighting.GetColor(j, i + 1) * num17;
+								value = new Vector2(j * 16,i * 16 + 16);
+								Main.spriteBatch.Draw(liquidTexture, value - Main.screenPosition + zero,new Rectangle(0, 4, 16, 8), color, 0f,default(Vector2), 1f, SpriteEffects.None, 0f);
 							}
 						}
 					}
 
-					IL_E7F: ;
+					IL_E7F:;
 				}
 			}
 
 			if (!Main.drewLava)
 			{
-				Main.ambientLavaX = (float) num4;
-				Main.ambientLavaY = (float) num5;
+				Main.ambientLavaX = num4;
+				Main.ambientLavaY = num5;
 				Main.ambientLavaStrength = num;
 			}
 

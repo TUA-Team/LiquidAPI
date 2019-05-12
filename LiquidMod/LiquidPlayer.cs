@@ -50,7 +50,7 @@ namespace LiquidAPI.LiquidMod
 					{
 						LiquidRef liquid = LiquidCore.grid[x, y];
 
-						if (liquid.HasLiquid())
+						if (liquid.HasLiquid)
 						{
 							Vector2 vector2 = new Vector2(x * 16, y * 16);
 

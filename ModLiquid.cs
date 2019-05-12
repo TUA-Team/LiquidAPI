@@ -1,10 +1,12 @@
-﻿using LiquidAPI.LiquidMod;
+﻿using LiquidAPI.ID;
+using LiquidAPI.LiquidMod;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.Graphics;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.ObjectData;
 // ReSharper disable InconsistentNaming
 
 namespace LiquidAPI
@@ -14,17 +16,28 @@ namespace LiquidAPI
 		public bool gravity = true;
 		public int customDelay = 1; //Default value, aka 
 
-	    internal int liquidIndex;
+		internal int liquidIndex;
+
+		public Mod Mod{get;internal set;}
+
+		public virtual Color LiquidColor=>Color.White;
+
+		public virtual string Name=>GetType().Name;
+
+		public virtual Texture2D Texture=>ModContent.GetTexture(this.GetType().FullName.Replace(".", "/"));
+		public virtual Texture2D OldTexture=>ModContent.GetTexture(this.GetType().FullName.Replace(".", "/"));
+
+		public virtual byte WaterfallLength=>10;
+		public virtual float DefaultOpacity=>0.6f;
+		public virtual byte WaveMaskStrength=>0;
+		public virtual byte ViscosityMask=>0;
 
 		/// <summary>
 		/// Take an array that contain legacy style texture and 1.3.4+ texture style
 		/// </summary>
 		/// <param name="name"></param>
 		/// <returns></returns>
-		public virtual bool Autoload(ref string name)
-		{
-			return true;
-		}
+		public virtual bool Autoload(ref string name)=>true;
 
 		public virtual void Update() { }
 
@@ -74,10 +87,7 @@ namespace LiquidAPI
 			return true;
 		}*/
 
-		public virtual float SetLiquidOpacity()
-		{
-			return 1;
-		}
+		public virtual float LiquidOpacity=>1f;
 
 		public virtual void PreDrawValueSet(ref bool bg, ref int style, ref float Alpha) { }
 
@@ -99,40 +109,32 @@ namespace LiquidAPI
 
 		public virtual void HoneyInteraction(int x, int y) { }
 
-		internal void AddModBucket()
+		public virtual bool CanKillTile(int x,int y)
 		{
-			ModBucket bucket = new ModBucket(liquidIndex, liquidColor, name);
-			mod.AddItem(bucket.name, bucket.Clone());
+			if (LiquidCore.liquidGrid[x, y].data == LiquidID.lava)
+			{
+				return TileObjectData.CheckLavaDeath(Main.tile[x,y]);
+			}
+			return TileObjectData.CheckWaterDeath(Main.tile[x,y]);
 		}
 
-	    public virtual Color liquidColor
-	    {
-	        get { return Color.White; }
-	    }
-
-	    public Mod mod { get; internal set; }
-
-	    public virtual string name { get; }
-
-	    public Liquid liquid { get; } = new Liquid();
-
-	    public virtual Texture2D texture
-	    {
-	        get { return ModContent.GetTexture(this.GetType().FullName.Replace(".", "/")); }
-	    }
-
-	    public virtual Texture2D oldTexture
-	    {
-	        get { return ModContent.GetTexture(this.GetType().FullName.Replace(".", "/")); }
-	    }
-    }
+		internal void AddModBucket()
+		{
+			ModBucket bucket = new ModBucket(liquidIndex, LiquidColor, Name);
+			Mod.AddItem(bucket.name, bucket.Clone());
+		}
+	}
 
 	public class ModBucket : ModItem
 	{
-		private readonly Color liquidColor;
-		internal string name;
+		private readonly Color liquidColor=Color.Transparent;
+		internal string name="Empty";
 
-		public ModBucket() { }
+		private readonly int liquidType=-1;
+
+		public override string Texture => "LiquidAPI/ModBucket";
+
+		public ModBucket(){}
 
 		public ModBucket(int liquid, Color color, string liquidName)
 		{
@@ -155,8 +157,8 @@ namespace LiquidAPI
 		public override bool UseItem(Player player)
 		{
 			LiquidRef liquid = LiquidCore.grid[Player.tileTargetX, Player.tileTargetY];
-			
-			if (!liquid.HasLiquid() || liquid.Type == liquidType)
+
+			if (!liquid.HasLiquid || liquid.Type == liquidType)
 			{
 
 				//Item newItem = Main.item[Item.NewItem(player.position, item.type)];
@@ -192,15 +194,5 @@ namespace LiquidAPI
 			Texture2D liquidTexture = LiquidAPI.instance.GetTexture("Texture/Bucket/liquid");
 			spriteBatch.Draw(liquidTexture, item.position, liquidColor);
 		}
-
-		public override bool OnPickup(Player player)
-		{
-			return base.OnPickup(player);
-		}
-
-	    private int liquidType { get; set; }
-
-	    public override string Texture => "LiquidAPI/ModBucket";
-	    public override bool CloneNewInstances => true;
-    }
+	}
 }

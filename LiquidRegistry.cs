@@ -28,7 +28,7 @@ namespace LiquidAPI
 
 		public void AddNewModLiquid(ModLiquid liquid, Texture2D texture = null)
 		{
-			Texture2D usedTexture = texture ?? liquid.texture;
+			Texture2D usedTexture = texture ?? liquid.Texture;
 			Array.Resize(ref Main.liquidTexture, Main.liquidTexture.Length + 1);
 			liquid.liquidIndex = initialLiquidIndex;
 			initialLiquidIndex++;
@@ -46,14 +46,9 @@ namespace LiquidAPI
 			
 		}
 
-        public ModLiquid this[int i] {
-            get
-            {
-                return liquidList[i];
-            }
-        }
+		public ModLiquid this[int i]=>liquidList[i];
 
-	    public static void MassMethodSwap()
+		public static void MassMethodSwap()
 		{
 			//LiquidSwapping.MethodSwap();
 			//WaterDrawInjection.MethodSwap();
@@ -86,7 +81,7 @@ namespace LiquidAPI
 			}
 		}
 
-		public static float setOpacity(LiquidRef liquid)
+		public static float setOpacity(in LiquidRef liquid)
 		{
 			/*for (byte by = 0; by < LiquidRegistry.liquidList.Count; by = (byte) (by + 1))
 			{

@@ -44,19 +44,24 @@ namespace LiquidAPI.Hooks
 	        }
 	    }
 
+	    public static void Hooked_drawWaters(On.Terraria.Main.orig_drawWaters orig, Main self, bool bg = false,
+	        int styleOverride = -1, bool allowUpdate = true)
+	    {
+	        drawWaters(bg,styleOverride, allowUpdate);
+	    }
+
         public static void drawWaters(bool bg = false, int styleOverride = -1, bool allowUpdate = true)
         {
-            lavaStyle = 0;
             if (!bg)
             {
-                if (Main.bgStyle == 1)
+                lavaStyle = 0;
+                switch (Main.bgStyle)
                 {
-                    Main.waterStyle = 1;
-
-                }
-                else if (Main.bgStyle == 5)
-                {
-                    if (Main.evilTiles > Main.holyTiles)
+                    case 1:
+                        Main.waterStyle = 1;
+                        lavaStyle = 1;
+                        break;
+                    case 5 when Main.evilTiles > Main.holyTiles:
                     {
                         if (Main.bloodTiles > Main.evilTiles)
                         {
@@ -68,61 +73,68 @@ namespace LiquidAPI.Hooks
                             Main.waterStyle = 1;
                             lavaStyle = 1;
                         }
+
+                        break;
                     }
-                    else if (Main.bloodTiles > Main.holyTiles)
-                    {
+                    case 5 when Main.bloodTiles > Main.holyTiles:
                         Main.waterStyle = 10;
                         lavaStyle = 2;
-                    }
-                    else
-                    {
+                        break;
+                    case 5:
                         Main.waterStyle = 3;
-                    }
-                }
-                else if (Main.bgStyle == 5 && Main.bloodTiles > Main.holyTiles)
-                {
-                    Main.waterStyle = 9;
-                    lavaStyle = 2;
-                }
-                else if (Main.bgStyle == 3)
-                {
-                    Main.waterStyle = 2;
-                }
-                else if (Main.bgStyle == 8)
-                {
-                    Main.waterStyle = 9;
-                    lavaStyle = 2;
-                }
-                else if (Main.bgStyle == 6)
-                {
-                    Main.waterStyle = 3;
-                }
-                else if (Main.bgStyle == 7)
-                {
-                    Main.waterStyle = 4;
-                }
-                else if (Main.bgStyle == 2)
-                {
-                    Main.waterStyle = 5;
-                }
-                else if ((double)(Main.screenPosition.Y / 16f) > Main.rockLayer + 40.0)
-                {
-                    if (Main.shroomTiles > 300)
+                        break;
+                    default:
                     {
-                        Main.waterStyle = 6;
+                        switch (Main.bgStyle)
+                        {
+                            case 5 when Main.bloodTiles > Main.holyTiles:
+                                Main.waterStyle = 9;
+                                lavaStyle = 2;
+                                break;
+                            case 3:
+                                Main.waterStyle = 2;
+                                break;
+                            case 8:
+                                Main.waterStyle = 9;
+                                lavaStyle = 2;
+                                break;
+                            case 6:
+                                Main.waterStyle = 3;
+                                break;
+                            case 7:
+                                Main.waterStyle = 4;
+                                break;
+                            case 2:
+                                Main.waterStyle = 5;
+                                break;
+                            default:
+                            {
+                                if ((double)(Main.screenPosition.Y / 16f) > Main.rockLayer + 40.0)
+                                {
+                                    if (Main.shroomTiles > 300)
+                                    {
+                                        Main.waterStyle = 6;
+                                    }
+                                    else
+                                    {
+                                        Main.waterStyle = 7;
+                                    }
+                                }
+                                else if ((double)(Main.screenPosition.Y / 16f) > Main.worldSurface)
+                                {
+                                    Main.waterStyle = 6;
+                                }
+                                else
+                                {
+                                    Main.waterStyle = 0;
+                                }
+
+                                break;
+                            }
+                        }
+
+                        break;
                     }
-                    else
-                    {
-                        Main.waterStyle = 7;
-                    }
-                }
-                else if ((double)(Main.screenPosition.Y / 16f) > Main.worldSurface)
-                {
-                    Main.waterStyle = 6;
-                }
-                else
-                {
-                    Main.waterStyle = 0;
                 }
                 WaterStyleLoader.ChooseWaterStyle(ref Main.waterStyle);
                 if (Main.bgStyle != 4 && Main.bloodMoon && !Main.dayTime)
@@ -133,536 +145,560 @@ namespace LiquidAPI.Hooks
                 {
                     Main.waterStyle = Main.fountainColor;
                 }
-                if (Main.waterStyle == 0)
+                switch (Main.waterStyle)
                 {
-                    Main.liquidAlpha[2] -= 0.2f;
-                    if (Main.liquidAlpha[2] < 0f)
+                    case 0:
                     {
-                        Main.liquidAlpha[2] = 0f;
+                        Main.liquidAlpha[2] -= 0.2f;
+                        if (Main.liquidAlpha[2] < 0f)
+                        {
+                            Main.liquidAlpha[2] = 0f;
+                        }
+                        Main.liquidAlpha[3] -= 0.2f;
+                        if (Main.liquidAlpha[3] < 0f)
+                        {
+                            Main.liquidAlpha[3] = 0f;
+                        }
+                        Main.liquidAlpha[4] -= 0.2f;
+                        if (Main.liquidAlpha[4] < 0f)
+                        {
+                            Main.liquidAlpha[4] = 0f;
+                        }
+                        Main.liquidAlpha[5] -= 0.2f;
+                        if (Main.liquidAlpha[5] < 0f)
+                        {
+                            Main.liquidAlpha[5] = 0f;
+                        }
+                        Main.liquidAlpha[6] -= 0.2f;
+                        if (Main.liquidAlpha[6] < 0f)
+                        {
+                            Main.liquidAlpha[6] = 0f;
+                        }
+                        Main.liquidAlpha[7] -= 0.2f;
+                        if (Main.liquidAlpha[7] < 0f)
+                        {
+                            Main.liquidAlpha[7] = 0f;
+                        }
+                        Main.liquidAlpha[8] -= 0.2f;
+                        if (Main.liquidAlpha[8] < 0f)
+                        {
+                            Main.liquidAlpha[8] = 0f;
+                        }
+                        Main.liquidAlpha[9] -= 0.2f;
+                        if (Main.liquidAlpha[9] < 0f)
+                        {
+                            Main.liquidAlpha[9] = 0f;
+                        }
+                        Main.liquidAlpha[10] -= 0.2f;
+                        if (Main.liquidAlpha[10] < 0f)
+                        {
+                            Main.liquidAlpha[10] = 0f;
+                        }
+                        Main.liquidAlpha[0] += 0.2f;
+                        if (Main.liquidAlpha[0] > 1f)
+                        {
+                            Main.liquidAlpha[0] = 1f;
+                        }
+
+                        break;
                     }
-                    Main.liquidAlpha[3] -= 0.2f;
-                    if (Main.liquidAlpha[3] < 0f)
+                    case 1:
                     {
-                        Main.liquidAlpha[3] = 0f;
+                        Main.liquidAlpha[0] -= 0.2f;
+                        if (Main.liquidAlpha[0] < 0f)
+                        {
+                            Main.liquidAlpha[0] = 0f;
+                        }
+                        Main.liquidAlpha[3] -= 0.2f;
+                        if (Main.liquidAlpha[3] < 0f)
+                        {
+                            Main.liquidAlpha[3] = 0f;
+                        }
+                        Main.liquidAlpha[4] -= 0.2f;
+                        if (Main.liquidAlpha[4] < 0f)
+                        {
+                            Main.liquidAlpha[4] = 0f;
+                        }
+                        Main.liquidAlpha[5] -= 0.2f;
+                        if (Main.liquidAlpha[5] < 0f)
+                        {
+                            Main.liquidAlpha[5] = 0f;
+                        }
+                        Main.liquidAlpha[6] -= 0.2f;
+                        if (Main.liquidAlpha[6] < 0f)
+                        {
+                            Main.liquidAlpha[6] = 0f;
+                        }
+                        Main.liquidAlpha[7] -= 0.2f;
+                        if (Main.liquidAlpha[7] < 0f)
+                        {
+                            Main.liquidAlpha[7] = 0f;
+                        }
+                        Main.liquidAlpha[8] -= 0.2f;
+                        if (Main.liquidAlpha[8] < 0f)
+                        {
+                            Main.liquidAlpha[8] = 0f;
+                        }
+                        Main.liquidAlpha[9] -= 0.2f;
+                        if (Main.liquidAlpha[9] < 0f)
+                        {
+                            Main.liquidAlpha[9] = 0f;
+                        }
+                        Main.liquidAlpha[10] -= 0.2f;
+                        if (Main.liquidAlpha[10] < 0f)
+                        {
+                            Main.liquidAlpha[10] = 0f;
+                        }
+                        Main.liquidAlpha[2] += 0.2f;
+                        if (Main.liquidAlpha[2] > 1f)
+                        {
+                            Main.liquidAlpha[2] = 1f;
+                        }
+
+                        break;
                     }
-                    Main.liquidAlpha[4] -= 0.2f;
-                    if (Main.liquidAlpha[4] < 0f)
+                    case 2:
                     {
-                        Main.liquidAlpha[4] = 0f;
+                        Main.liquidAlpha[0] -= 0.2f;
+                        if (Main.liquidAlpha[0] < 0f)
+                        {
+                            Main.liquidAlpha[0] = 0f;
+                        }
+                        Main.liquidAlpha[2] -= 0.2f;
+                        if (Main.liquidAlpha[2] < 0f)
+                        {
+                            Main.liquidAlpha[2] = 0f;
+                        }
+                        Main.liquidAlpha[4] -= 0.2f;
+                        if (Main.liquidAlpha[4] < 0f)
+                        {
+                            Main.liquidAlpha[4] = 0f;
+                        }
+                        Main.liquidAlpha[5] -= 0.2f;
+                        if (Main.liquidAlpha[5] < 0f)
+                        {
+                            Main.liquidAlpha[5] = 0f;
+                        }
+                        Main.liquidAlpha[6] -= 0.2f;
+                        if (Main.liquidAlpha[6] < 0f)
+                        {
+                            Main.liquidAlpha[6] = 0f;
+                        }
+                        Main.liquidAlpha[7] -= 0.2f;
+                        if (Main.liquidAlpha[7] < 0f)
+                        {
+                            Main.liquidAlpha[7] = 0f;
+                        }
+                        Main.liquidAlpha[8] -= 0.2f;
+                        if (Main.liquidAlpha[8] < 0f)
+                        {
+                            Main.liquidAlpha[8] = 0f;
+                        }
+                        Main.liquidAlpha[9] -= 0.2f;
+                        if (Main.liquidAlpha[9] < 0f)
+                        {
+                            Main.liquidAlpha[9] = 0f;
+                        }
+                        Main.liquidAlpha[10] -= 0.2f;
+                        if (Main.liquidAlpha[10] < 0f)
+                        {
+                            Main.liquidAlpha[10] = 0f;
+                        }
+                        Main.liquidAlpha[3] += 0.2f;
+                        if (Main.liquidAlpha[3] > 1f)
+                        {
+                            Main.liquidAlpha[3] = 1f;
+                        }
+
+                        break;
                     }
-                    Main.liquidAlpha[5] -= 0.2f;
-                    if (Main.liquidAlpha[5] < 0f)
+                    case 3:
                     {
-                        Main.liquidAlpha[5] = 0f;
+                        Main.liquidAlpha[0] -= 0.2f;
+                        if (Main.liquidAlpha[0] < 0f)
+                        {
+                            Main.liquidAlpha[0] = 0f;
+                        }
+                        Main.liquidAlpha[2] -= 0.2f;
+                        if (Main.liquidAlpha[2] < 0f)
+                        {
+                            Main.liquidAlpha[2] = 0f;
+                        }
+                        Main.liquidAlpha[3] -= 0.2f;
+                        if (Main.liquidAlpha[3] < 0f)
+                        {
+                            Main.liquidAlpha[3] = 0f;
+                        }
+                        Main.liquidAlpha[5] -= 0.2f;
+                        if (Main.liquidAlpha[5] < 0f)
+                        {
+                            Main.liquidAlpha[5] = 0f;
+                        }
+                        Main.liquidAlpha[6] -= 0.2f;
+                        if (Main.liquidAlpha[6] < 0f)
+                        {
+                            Main.liquidAlpha[6] = 0f;
+                        }
+                        Main.liquidAlpha[7] -= 0.2f;
+                        if (Main.liquidAlpha[7] < 0f)
+                        {
+                            Main.liquidAlpha[7] = 0f;
+                        }
+                        Main.liquidAlpha[8] -= 0.2f;
+                        if (Main.liquidAlpha[8] < 0f)
+                        {
+                            Main.liquidAlpha[8] = 0f;
+                        }
+                        Main.liquidAlpha[9] -= 0.2f;
+                        if (Main.liquidAlpha[9] < 0f)
+                        {
+                            Main.liquidAlpha[9] = 0f;
+                        }
+                        Main.liquidAlpha[10] -= 0.2f;
+                        if (Main.liquidAlpha[10] < 0f)
+                        {
+                            Main.liquidAlpha[10] = 0f;
+                        }
+                        Main.liquidAlpha[4] += 0.2f;
+                        if (Main.liquidAlpha[4] > 1f)
+                        {
+                            Main.liquidAlpha[4] = 1f;
+                        }
+
+                        break;
                     }
-                    Main.liquidAlpha[6] -= 0.2f;
-                    if (Main.liquidAlpha[6] < 0f)
+                    case 4:
                     {
-                        Main.liquidAlpha[6] = 0f;
+                        Main.liquidAlpha[0] -= 0.2f;
+                        if (Main.liquidAlpha[0] < 0f)
+                        {
+                            Main.liquidAlpha[0] = 0f;
+                        }
+                        Main.liquidAlpha[2] -= 0.2f;
+                        if (Main.liquidAlpha[2] < 0f)
+                        {
+                            Main.liquidAlpha[2] = 0f;
+                        }
+                        Main.liquidAlpha[3] -= 0.2f;
+                        if (Main.liquidAlpha[3] < 0f)
+                        {
+                            Main.liquidAlpha[3] = 0f;
+                        }
+                        Main.liquidAlpha[4] -= 0.2f;
+                        if (Main.liquidAlpha[4] < 0f)
+                        {
+                            Main.liquidAlpha[4] = 0f;
+                        }
+                        Main.liquidAlpha[6] -= 0.2f;
+                        if (Main.liquidAlpha[6] < 0f)
+                        {
+                            Main.liquidAlpha[6] = 0f;
+                        }
+                        Main.liquidAlpha[7] -= 0.2f;
+                        if (Main.liquidAlpha[7] < 0f)
+                        {
+                            Main.liquidAlpha[7] = 0f;
+                        }
+                        Main.liquidAlpha[8] -= 0.2f;
+                        if (Main.liquidAlpha[8] < 0f)
+                        {
+                            Main.liquidAlpha[8] = 0f;
+                        }
+                        Main.liquidAlpha[9] -= 0.2f;
+                        if (Main.liquidAlpha[9] < 0f)
+                        {
+                            Main.liquidAlpha[9] = 0f;
+                        }
+                        Main.liquidAlpha[10] -= 0.2f;
+                        if (Main.liquidAlpha[10] < 0f)
+                        {
+                            Main.liquidAlpha[10] = 0f;
+                        }
+                        Main.liquidAlpha[5] += 0.2f;
+                        if (Main.liquidAlpha[5] > 1f)
+                        {
+                            Main.liquidAlpha[5] = 1f;
+                        }
+
+                        break;
                     }
-                    Main.liquidAlpha[7] -= 0.2f;
-                    if (Main.liquidAlpha[7] < 0f)
+                    case 5:
                     {
-                        Main.liquidAlpha[7] = 0f;
+                        Main.liquidAlpha[0] -= 0.2f;
+                        if (Main.liquidAlpha[0] < 0f)
+                        {
+                            Main.liquidAlpha[0] = 0f;
+                        }
+                        Main.liquidAlpha[2] -= 0.2f;
+                        if (Main.liquidAlpha[2] < 0f)
+                        {
+                            Main.liquidAlpha[2] = 0f;
+                        }
+                        Main.liquidAlpha[3] -= 0.2f;
+                        if (Main.liquidAlpha[3] < 0f)
+                        {
+                            Main.liquidAlpha[3] = 0f;
+                        }
+                        Main.liquidAlpha[4] -= 0.2f;
+                        if (Main.liquidAlpha[4] < 0f)
+                        {
+                            Main.liquidAlpha[4] = 0f;
+                        }
+                        Main.liquidAlpha[5] -= 0.2f;
+                        if (Main.liquidAlpha[5] < 0f)
+                        {
+                            Main.liquidAlpha[5] = 0f;
+                        }
+                        Main.liquidAlpha[7] -= 0.2f;
+                        if (Main.liquidAlpha[7] < 0f)
+                        {
+                            Main.liquidAlpha[7] = 0f;
+                        }
+                        Main.liquidAlpha[8] -= 0.2f;
+                        if (Main.liquidAlpha[8] < 0f)
+                        {
+                            Main.liquidAlpha[8] = 0f;
+                        }
+                        Main.liquidAlpha[9] -= 0.2f;
+                        if (Main.liquidAlpha[9] < 0f)
+                        {
+                            Main.liquidAlpha[9] = 0f;
+                        }
+                        Main.liquidAlpha[10] -= 0.2f;
+                        if (Main.liquidAlpha[10] < 0f)
+                        {
+                            Main.liquidAlpha[10] = 0f;
+                        }
+                        Main.liquidAlpha[6] += 0.2f;
+                        if (Main.liquidAlpha[6] > 1f)
+                        {
+                            Main.liquidAlpha[6] = 1f;
+                        }
+
+                        break;
                     }
-                    Main.liquidAlpha[8] -= 0.2f;
-                    if (Main.liquidAlpha[8] < 0f)
+                    case 6:
                     {
-                        Main.liquidAlpha[8] = 0f;
+                        Main.liquidAlpha[0] -= 0.2f;
+                        if (Main.liquidAlpha[0] < 0f)
+                        {
+                            Main.liquidAlpha[0] = 0f;
+                        }
+                        Main.liquidAlpha[2] -= 0.2f;
+                        if (Main.liquidAlpha[2] < 0f)
+                        {
+                            Main.liquidAlpha[2] = 0f;
+                        }
+                        Main.liquidAlpha[3] -= 0.2f;
+                        if (Main.liquidAlpha[3] < 0f)
+                        {
+                            Main.liquidAlpha[3] = 0f;
+                        }
+                        Main.liquidAlpha[4] -= 0.2f;
+                        if (Main.liquidAlpha[4] < 0f)
+                        {
+                            Main.liquidAlpha[4] = 0f;
+                        }
+                        Main.liquidAlpha[5] -= 0.2f;
+                        if (Main.liquidAlpha[5] < 0f)
+                        {
+                            Main.liquidAlpha[5] = 0f;
+                        }
+                        Main.liquidAlpha[6] -= 0.2f;
+                        if (Main.liquidAlpha[6] < 0f)
+                        {
+                            Main.liquidAlpha[6] = 0f;
+                        }
+                        Main.liquidAlpha[8] -= 0.2f;
+                        if (Main.liquidAlpha[8] < 0f)
+                        {
+                            Main.liquidAlpha[8] = 0f;
+                        }
+                        Main.liquidAlpha[9] -= 0.2f;
+                        if (Main.liquidAlpha[9] < 0f)
+                        {
+                            Main.liquidAlpha[9] = 0f;
+                        }
+                        Main.liquidAlpha[10] -= 0.2f;
+                        if (Main.liquidAlpha[10] < 0f)
+                        {
+                            Main.liquidAlpha[10] = 0f;
+                        }
+                        Main.liquidAlpha[7] += 0.2f;
+                        if (Main.liquidAlpha[7] > 1f)
+                        {
+                            Main.liquidAlpha[7] = 1f;
+                        }
+
+                        break;
                     }
-                    Main.liquidAlpha[9] -= 0.2f;
-                    if (Main.liquidAlpha[9] < 0f)
+                    case 7:
                     {
-                        Main.liquidAlpha[9] = 0f;
+                        Main.liquidAlpha[0] -= 0.2f;
+                        if (Main.liquidAlpha[0] < 0f)
+                        {
+                            Main.liquidAlpha[0] = 0f;
+                        }
+                        Main.liquidAlpha[2] -= 0.2f;
+                        if (Main.liquidAlpha[2] < 0f)
+                        {
+                            Main.liquidAlpha[2] = 0f;
+                        }
+                        Main.liquidAlpha[3] -= 0.2f;
+                        if (Main.liquidAlpha[3] < 0f)
+                        {
+                            Main.liquidAlpha[3] = 0f;
+                        }
+                        Main.liquidAlpha[4] -= 0.2f;
+                        if (Main.liquidAlpha[4] < 0f)
+                        {
+                            Main.liquidAlpha[4] = 0f;
+                        }
+                        Main.liquidAlpha[5] -= 0.2f;
+                        if (Main.liquidAlpha[5] < 0f)
+                        {
+                            Main.liquidAlpha[5] = 0f;
+                        }
+                        Main.liquidAlpha[6] -= 0.2f;
+                        if (Main.liquidAlpha[6] < 0f)
+                        {
+                            Main.liquidAlpha[6] = 0f;
+                        }
+                        Main.liquidAlpha[7] -= 0.2f;
+                        if (Main.liquidAlpha[7] < 0f)
+                        {
+                            Main.liquidAlpha[7] = 0f;
+                        }
+                        Main.liquidAlpha[9] -= 0.2f;
+                        if (Main.liquidAlpha[9] < 0f)
+                        {
+                            Main.liquidAlpha[9] = 0f;
+                        }
+                        Main.liquidAlpha[10] -= 0.2f;
+                        if (Main.liquidAlpha[10] < 0f)
+                        {
+                            Main.liquidAlpha[10] = 0f;
+                        }
+                        Main.liquidAlpha[8] += 0.2f;
+                        if (Main.liquidAlpha[8] > 1f)
+                        {
+                            Main.liquidAlpha[8] = 1f;
+                        }
+
+                        break;
                     }
-                    Main.liquidAlpha[10] -= 0.2f;
-                    if (Main.liquidAlpha[10] < 0f)
+                    case 8:
                     {
-                        Main.liquidAlpha[10] = 0f;
+                        Main.liquidAlpha[0] -= 0.2f;
+                        if (Main.liquidAlpha[0] < 0f)
+                        {
+                            Main.liquidAlpha[0] = 0f;
+                        }
+                        Main.liquidAlpha[2] -= 0.2f;
+                        if (Main.liquidAlpha[2] < 0f)
+                        {
+                            Main.liquidAlpha[2] = 0f;
+                        }
+                        Main.liquidAlpha[3] -= 0.2f;
+                        if (Main.liquidAlpha[3] < 0f)
+                        {
+                            Main.liquidAlpha[3] = 0f;
+                        }
+                        Main.liquidAlpha[4] -= 0.2f;
+                        if (Main.liquidAlpha[4] < 0f)
+                        {
+                            Main.liquidAlpha[4] = 0f;
+                        }
+                        Main.liquidAlpha[5] -= 0.2f;
+                        if (Main.liquidAlpha[5] < 0f)
+                        {
+                            Main.liquidAlpha[5] = 0f;
+                        }
+                        Main.liquidAlpha[6] -= 0.2f;
+                        if (Main.liquidAlpha[6] < 0f)
+                        {
+                            Main.liquidAlpha[6] = 0f;
+                        }
+                        Main.liquidAlpha[7] -= 0.2f;
+                        if (Main.liquidAlpha[7] < 0f)
+                        {
+                            Main.liquidAlpha[7] = 0f;
+                        }
+                        Main.liquidAlpha[8] -= 0.2f;
+                        if (Main.liquidAlpha[8] < 0f)
+                        {
+                            Main.liquidAlpha[8] = 0f;
+                        }
+                        Main.liquidAlpha[10] -= 0.2f;
+                        if (Main.liquidAlpha[10] < 0f)
+                        {
+                            Main.liquidAlpha[10] = 0f;
+                        }
+                        Main.liquidAlpha[9] += 0.2f;
+                        if (Main.liquidAlpha[9] > 1f)
+                        {
+                            Main.liquidAlpha[9] = 1f;
+                        }
+
+                        break;
                     }
-                    Main.liquidAlpha[0] += 0.2f;
-                    if (Main.liquidAlpha[0] > 1f)
+                    case 9:
                     {
-                        Main.liquidAlpha[0] = 1f;
+                        Main.liquidAlpha[0] -= 0.2f;
+                        if (Main.liquidAlpha[0] < 0f)
+                        {
+                            Main.liquidAlpha[0] = 0f;
+                        }
+                        Main.liquidAlpha[2] -= 0.2f;
+                        if (Main.liquidAlpha[2] < 0f)
+                        {
+                            Main.liquidAlpha[2] = 0f;
+                        }
+                        Main.liquidAlpha[3] -= 0.2f;
+                        if (Main.liquidAlpha[3] < 0f)
+                        {
+                            Main.liquidAlpha[3] = 0f;
+                        }
+                        Main.liquidAlpha[4] -= 0.2f;
+                        if (Main.liquidAlpha[4] < 0f)
+                        {
+                            Main.liquidAlpha[4] = 0f;
+                        }
+                        Main.liquidAlpha[5] -= 0.2f;
+                        if (Main.liquidAlpha[5] < 0f)
+                        {
+                            Main.liquidAlpha[5] = 0f;
+                        }
+                        Main.liquidAlpha[6] -= 0.2f;
+                        if (Main.liquidAlpha[6] < 0f)
+                        {
+                            Main.liquidAlpha[6] = 0f;
+                        }
+                        Main.liquidAlpha[7] -= 0.2f;
+                        if (Main.liquidAlpha[7] < 0f)
+                        {
+                            Main.liquidAlpha[7] = 0f;
+                        }
+                        Main.liquidAlpha[8] -= 0.2f;
+                        if (Main.liquidAlpha[8] < 0f)
+                        {
+                            Main.liquidAlpha[8] = 0f;
+                        }
+                        Main.liquidAlpha[9] -= 0.2f;
+                        if (Main.liquidAlpha[9] < 0f)
+                        {
+                            Main.liquidAlpha[9] = 0f;
+                        }
+                        Main.liquidAlpha[10] += 0.2f;
+                        if (Main.liquidAlpha[10] > 1f)
+                        {
+                            Main.liquidAlpha[10] = 1f;
+                        }
+
+                        break;
                     }
                 }
-                if (Main.waterStyle == 1)
-                {
-                    Main.liquidAlpha[0] -= 0.2f;
-                    if (Main.liquidAlpha[0] < 0f)
-                    {
-                        Main.liquidAlpha[0] = 0f;
-                    }
-                    Main.liquidAlpha[3] -= 0.2f;
-                    if (Main.liquidAlpha[3] < 0f)
-                    {
-                        Main.liquidAlpha[3] = 0f;
-                    }
-                    Main.liquidAlpha[4] -= 0.2f;
-                    if (Main.liquidAlpha[4] < 0f)
-                    {
-                        Main.liquidAlpha[4] = 0f;
-                    }
-                    Main.liquidAlpha[5] -= 0.2f;
-                    if (Main.liquidAlpha[5] < 0f)
-                    {
-                        Main.liquidAlpha[5] = 0f;
-                    }
-                    Main.liquidAlpha[6] -= 0.2f;
-                    if (Main.liquidAlpha[6] < 0f)
-                    {
-                        Main.liquidAlpha[6] = 0f;
-                    }
-                    Main.liquidAlpha[7] -= 0.2f;
-                    if (Main.liquidAlpha[7] < 0f)
-                    {
-                        Main.liquidAlpha[7] = 0f;
-                    }
-                    Main.liquidAlpha[8] -= 0.2f;
-                    if (Main.liquidAlpha[8] < 0f)
-                    {
-                        Main.liquidAlpha[8] = 0f;
-                    }
-                    Main.liquidAlpha[9] -= 0.2f;
-                    if (Main.liquidAlpha[9] < 0f)
-                    {
-                        Main.liquidAlpha[9] = 0f;
-                    }
-                    Main.liquidAlpha[10] -= 0.2f;
-                    if (Main.liquidAlpha[10] < 0f)
-                    {
-                        Main.liquidAlpha[10] = 0f;
-                    }
-                    Main.liquidAlpha[2] += 0.2f;
-                    if (Main.liquidAlpha[2] > 1f)
-                    {
-                        Main.liquidAlpha[2] = 1f;
-                    }
-                }
-                if (Main.waterStyle == 2)
-                {
-                    Main.liquidAlpha[0] -= 0.2f;
-                    if (Main.liquidAlpha[0] < 0f)
-                    {
-                        Main.liquidAlpha[0] = 0f;
-                    }
-                    Main.liquidAlpha[2] -= 0.2f;
-                    if (Main.liquidAlpha[2] < 0f)
-                    {
-                        Main.liquidAlpha[2] = 0f;
-                    }
-                    Main.liquidAlpha[4] -= 0.2f;
-                    if (Main.liquidAlpha[4] < 0f)
-                    {
-                        Main.liquidAlpha[4] = 0f;
-                    }
-                    Main.liquidAlpha[5] -= 0.2f;
-                    if (Main.liquidAlpha[5] < 0f)
-                    {
-                        Main.liquidAlpha[5] = 0f;
-                    }
-                    Main.liquidAlpha[6] -= 0.2f;
-                    if (Main.liquidAlpha[6] < 0f)
-                    {
-                        Main.liquidAlpha[6] = 0f;
-                    }
-                    Main.liquidAlpha[7] -= 0.2f;
-                    if (Main.liquidAlpha[7] < 0f)
-                    {
-                        Main.liquidAlpha[7] = 0f;
-                    }
-                    Main.liquidAlpha[8] -= 0.2f;
-                    if (Main.liquidAlpha[8] < 0f)
-                    {
-                        Main.liquidAlpha[8] = 0f;
-                    }
-                    Main.liquidAlpha[9] -= 0.2f;
-                    if (Main.liquidAlpha[9] < 0f)
-                    {
-                        Main.liquidAlpha[9] = 0f;
-                    }
-                    Main.liquidAlpha[10] -= 0.2f;
-                    if (Main.liquidAlpha[10] < 0f)
-                    {
-                        Main.liquidAlpha[10] = 0f;
-                    }
-                    Main.liquidAlpha[3] += 0.2f;
-                    if (Main.liquidAlpha[3] > 1f)
-                    {
-                        Main.liquidAlpha[3] = 1f;
-                    }
-                }
-                if (Main.waterStyle == 3)
-                {
-                    Main.liquidAlpha[0] -= 0.2f;
-                    if (Main.liquidAlpha[0] < 0f)
-                    {
-                        Main.liquidAlpha[0] = 0f;
-                    }
-                    Main.liquidAlpha[2] -= 0.2f;
-                    if (Main.liquidAlpha[2] < 0f)
-                    {
-                        Main.liquidAlpha[2] = 0f;
-                    }
-                    Main.liquidAlpha[3] -= 0.2f;
-                    if (Main.liquidAlpha[3] < 0f)
-                    {
-                        Main.liquidAlpha[3] = 0f;
-                    }
-                    Main.liquidAlpha[5] -= 0.2f;
-                    if (Main.liquidAlpha[5] < 0f)
-                    {
-                        Main.liquidAlpha[5] = 0f;
-                    }
-                    Main.liquidAlpha[6] -= 0.2f;
-                    if (Main.liquidAlpha[6] < 0f)
-                    {
-                        Main.liquidAlpha[6] = 0f;
-                    }
-                    Main.liquidAlpha[7] -= 0.2f;
-                    if (Main.liquidAlpha[7] < 0f)
-                    {
-                        Main.liquidAlpha[7] = 0f;
-                    }
-                    Main.liquidAlpha[8] -= 0.2f;
-                    if (Main.liquidAlpha[8] < 0f)
-                    {
-                        Main.liquidAlpha[8] = 0f;
-                    }
-                    Main.liquidAlpha[9] -= 0.2f;
-                    if (Main.liquidAlpha[9] < 0f)
-                    {
-                        Main.liquidAlpha[9] = 0f;
-                    }
-                    Main.liquidAlpha[10] -= 0.2f;
-                    if (Main.liquidAlpha[10] < 0f)
-                    {
-                        Main.liquidAlpha[10] = 0f;
-                    }
-                    Main.liquidAlpha[4] += 0.2f;
-                    if (Main.liquidAlpha[4] > 1f)
-                    {
-                        Main.liquidAlpha[4] = 1f;
-                    }
-                }
-                if (Main.waterStyle == 4)
-                {
-                    Main.liquidAlpha[0] -= 0.2f;
-                    if (Main.liquidAlpha[0] < 0f)
-                    {
-                        Main.liquidAlpha[0] = 0f;
-                    }
-                    Main.liquidAlpha[2] -= 0.2f;
-                    if (Main.liquidAlpha[2] < 0f)
-                    {
-                        Main.liquidAlpha[2] = 0f;
-                    }
-                    Main.liquidAlpha[3] -= 0.2f;
-                    if (Main.liquidAlpha[3] < 0f)
-                    {
-                        Main.liquidAlpha[3] = 0f;
-                    }
-                    Main.liquidAlpha[4] -= 0.2f;
-                    if (Main.liquidAlpha[4] < 0f)
-                    {
-                        Main.liquidAlpha[4] = 0f;
-                    }
-                    Main.liquidAlpha[6] -= 0.2f;
-                    if (Main.liquidAlpha[6] < 0f)
-                    {
-                        Main.liquidAlpha[6] = 0f;
-                    }
-                    Main.liquidAlpha[7] -= 0.2f;
-                    if (Main.liquidAlpha[7] < 0f)
-                    {
-                        Main.liquidAlpha[7] = 0f;
-                    }
-                    Main.liquidAlpha[8] -= 0.2f;
-                    if (Main.liquidAlpha[8] < 0f)
-                    {
-                        Main.liquidAlpha[8] = 0f;
-                    }
-                    Main.liquidAlpha[9] -= 0.2f;
-                    if (Main.liquidAlpha[9] < 0f)
-                    {
-                        Main.liquidAlpha[9] = 0f;
-                    }
-                    Main.liquidAlpha[10] -= 0.2f;
-                    if (Main.liquidAlpha[10] < 0f)
-                    {
-                        Main.liquidAlpha[10] = 0f;
-                    }
-                    Main.liquidAlpha[5] += 0.2f;
-                    if (Main.liquidAlpha[5] > 1f)
-                    {
-                        Main.liquidAlpha[5] = 1f;
-                    }
-                }
-                if (Main.waterStyle == 5)
-                {
-                    Main.liquidAlpha[0] -= 0.2f;
-                    if (Main.liquidAlpha[0] < 0f)
-                    {
-                        Main.liquidAlpha[0] = 0f;
-                    }
-                    Main.liquidAlpha[2] -= 0.2f;
-                    if (Main.liquidAlpha[2] < 0f)
-                    {
-                        Main.liquidAlpha[2] = 0f;
-                    }
-                    Main.liquidAlpha[3] -= 0.2f;
-                    if (Main.liquidAlpha[3] < 0f)
-                    {
-                        Main.liquidAlpha[3] = 0f;
-                    }
-                    Main.liquidAlpha[4] -= 0.2f;
-                    if (Main.liquidAlpha[4] < 0f)
-                    {
-                        Main.liquidAlpha[4] = 0f;
-                    }
-                    Main.liquidAlpha[5] -= 0.2f;
-                    if (Main.liquidAlpha[5] < 0f)
-                    {
-                        Main.liquidAlpha[5] = 0f;
-                    }
-                    Main.liquidAlpha[7] -= 0.2f;
-                    if (Main.liquidAlpha[7] < 0f)
-                    {
-                        Main.liquidAlpha[7] = 0f;
-                    }
-                    Main.liquidAlpha[8] -= 0.2f;
-                    if (Main.liquidAlpha[8] < 0f)
-                    {
-                        Main.liquidAlpha[8] = 0f;
-                    }
-                    Main.liquidAlpha[9] -= 0.2f;
-                    if (Main.liquidAlpha[9] < 0f)
-                    {
-                        Main.liquidAlpha[9] = 0f;
-                    }
-                    Main.liquidAlpha[10] -= 0.2f;
-                    if (Main.liquidAlpha[10] < 0f)
-                    {
-                        Main.liquidAlpha[10] = 0f;
-                    }
-                    Main.liquidAlpha[6] += 0.2f;
-                    if (Main.liquidAlpha[6] > 1f)
-                    {
-                        Main.liquidAlpha[6] = 1f;
-                    }
-                }
-                if (Main.waterStyle == 6)
-                {
-                    Main.liquidAlpha[0] -= 0.2f;
-                    if (Main.liquidAlpha[0] < 0f)
-                    {
-                        Main.liquidAlpha[0] = 0f;
-                    }
-                    Main.liquidAlpha[2] -= 0.2f;
-                    if (Main.liquidAlpha[2] < 0f)
-                    {
-                        Main.liquidAlpha[2] = 0f;
-                    }
-                    Main.liquidAlpha[3] -= 0.2f;
-                    if (Main.liquidAlpha[3] < 0f)
-                    {
-                        Main.liquidAlpha[3] = 0f;
-                    }
-                    Main.liquidAlpha[4] -= 0.2f;
-                    if (Main.liquidAlpha[4] < 0f)
-                    {
-                        Main.liquidAlpha[4] = 0f;
-                    }
-                    Main.liquidAlpha[5] -= 0.2f;
-                    if (Main.liquidAlpha[5] < 0f)
-                    {
-                        Main.liquidAlpha[5] = 0f;
-                    }
-                    Main.liquidAlpha[6] -= 0.2f;
-                    if (Main.liquidAlpha[6] < 0f)
-                    {
-                        Main.liquidAlpha[6] = 0f;
-                    }
-                    Main.liquidAlpha[8] -= 0.2f;
-                    if (Main.liquidAlpha[8] < 0f)
-                    {
-                        Main.liquidAlpha[8] = 0f;
-                    }
-                    Main.liquidAlpha[9] -= 0.2f;
-                    if (Main.liquidAlpha[9] < 0f)
-                    {
-                        Main.liquidAlpha[9] = 0f;
-                    }
-                    Main.liquidAlpha[10] -= 0.2f;
-                    if (Main.liquidAlpha[10] < 0f)
-                    {
-                        Main.liquidAlpha[10] = 0f;
-                    }
-                    Main.liquidAlpha[7] += 0.2f;
-                    if (Main.liquidAlpha[7] > 1f)
-                    {
-                        Main.liquidAlpha[7] = 1f;
-                    }
-                }
-                if (Main.waterStyle == 7)
-                {
-                    Main.liquidAlpha[0] -= 0.2f;
-                    if (Main.liquidAlpha[0] < 0f)
-                    {
-                        Main.liquidAlpha[0] = 0f;
-                    }
-                    Main.liquidAlpha[2] -= 0.2f;
-                    if (Main.liquidAlpha[2] < 0f)
-                    {
-                        Main.liquidAlpha[2] = 0f;
-                    }
-                    Main.liquidAlpha[3] -= 0.2f;
-                    if (Main.liquidAlpha[3] < 0f)
-                    {
-                        Main.liquidAlpha[3] = 0f;
-                    }
-                    Main.liquidAlpha[4] -= 0.2f;
-                    if (Main.liquidAlpha[4] < 0f)
-                    {
-                        Main.liquidAlpha[4] = 0f;
-                    }
-                    Main.liquidAlpha[5] -= 0.2f;
-                    if (Main.liquidAlpha[5] < 0f)
-                    {
-                        Main.liquidAlpha[5] = 0f;
-                    }
-                    Main.liquidAlpha[6] -= 0.2f;
-                    if (Main.liquidAlpha[6] < 0f)
-                    {
-                        Main.liquidAlpha[6] = 0f;
-                    }
-                    Main.liquidAlpha[7] -= 0.2f;
-                    if (Main.liquidAlpha[7] < 0f)
-                    {
-                        Main.liquidAlpha[7] = 0f;
-                    }
-                    Main.liquidAlpha[9] -= 0.2f;
-                    if (Main.liquidAlpha[9] < 0f)
-                    {
-                        Main.liquidAlpha[9] = 0f;
-                    }
-                    Main.liquidAlpha[10] -= 0.2f;
-                    if (Main.liquidAlpha[10] < 0f)
-                    {
-                        Main.liquidAlpha[10] = 0f;
-                    }
-                    Main.liquidAlpha[8] += 0.2f;
-                    if (Main.liquidAlpha[8] > 1f)
-                    {
-                        Main.liquidAlpha[8] = 1f;
-                    }
-                }
-                if (Main.waterStyle == 8)
-                {
-                    Main.liquidAlpha[0] -= 0.2f;
-                    if (Main.liquidAlpha[0] < 0f)
-                    {
-                        Main.liquidAlpha[0] = 0f;
-                    }
-                    Main.liquidAlpha[2] -= 0.2f;
-                    if (Main.liquidAlpha[2] < 0f)
-                    {
-                        Main.liquidAlpha[2] = 0f;
-                    }
-                    Main.liquidAlpha[3] -= 0.2f;
-                    if (Main.liquidAlpha[3] < 0f)
-                    {
-                        Main.liquidAlpha[3] = 0f;
-                    }
-                    Main.liquidAlpha[4] -= 0.2f;
-                    if (Main.liquidAlpha[4] < 0f)
-                    {
-                        Main.liquidAlpha[4] = 0f;
-                    }
-                    Main.liquidAlpha[5] -= 0.2f;
-                    if (Main.liquidAlpha[5] < 0f)
-                    {
-                        Main.liquidAlpha[5] = 0f;
-                    }
-                    Main.liquidAlpha[6] -= 0.2f;
-                    if (Main.liquidAlpha[6] < 0f)
-                    {
-                        Main.liquidAlpha[6] = 0f;
-                    }
-                    Main.liquidAlpha[7] -= 0.2f;
-                    if (Main.liquidAlpha[7] < 0f)
-                    {
-                        Main.liquidAlpha[7] = 0f;
-                    }
-                    Main.liquidAlpha[8] -= 0.2f;
-                    if (Main.liquidAlpha[8] < 0f)
-                    {
-                        Main.liquidAlpha[8] = 0f;
-                    }
-                    Main.liquidAlpha[10] -= 0.2f;
-                    if (Main.liquidAlpha[10] < 0f)
-                    {
-                        Main.liquidAlpha[10] = 0f;
-                    }
-                    Main.liquidAlpha[9] += 0.2f;
-                    if (Main.liquidAlpha[9] > 1f)
-                    {
-                        Main.liquidAlpha[9] = 1f;
-                    }
-                }
-                if (Main.waterStyle == 9)
-                {
-                    Main.liquidAlpha[0] -= 0.2f;
-                    if (Main.liquidAlpha[0] < 0f)
-                    {
-                        Main.liquidAlpha[0] = 0f;
-                    }
-                    Main.liquidAlpha[2] -= 0.2f;
-                    if (Main.liquidAlpha[2] < 0f)
-                    {
-                        Main.liquidAlpha[2] = 0f;
-                    }
-                    Main.liquidAlpha[3] -= 0.2f;
-                    if (Main.liquidAlpha[3] < 0f)
-                    {
-                        Main.liquidAlpha[3] = 0f;
-                    }
-                    Main.liquidAlpha[4] -= 0.2f;
-                    if (Main.liquidAlpha[4] < 0f)
-                    {
-                        Main.liquidAlpha[4] = 0f;
-                    }
-                    Main.liquidAlpha[5] -= 0.2f;
-                    if (Main.liquidAlpha[5] < 0f)
-                    {
-                        Main.liquidAlpha[5] = 0f;
-                    }
-                    Main.liquidAlpha[6] -= 0.2f;
-                    if (Main.liquidAlpha[6] < 0f)
-                    {
-                        Main.liquidAlpha[6] = 0f;
-                    }
-                    Main.liquidAlpha[7] -= 0.2f;
-                    if (Main.liquidAlpha[7] < 0f)
-                    {
-                        Main.liquidAlpha[7] = 0f;
-                    }
-                    Main.liquidAlpha[8] -= 0.2f;
-                    if (Main.liquidAlpha[8] < 0f)
-                    {
-                        Main.liquidAlpha[8] = 0f;
-                    }
-                    Main.liquidAlpha[9] -= 0.2f;
-                    if (Main.liquidAlpha[9] < 0f)
-                    {
-                        Main.liquidAlpha[9] = 0f;
-                    }
-                    Main.liquidAlpha[10] += 0.2f;
-                    if (Main.liquidAlpha[10] > 1f)
-                    {
-                        Main.liquidAlpha[10] = 1f;
-                    }
-                }
+
                 WaterStyleLoader.UpdateLiquidAlphas();
             }
             Main.drewLava = false;
@@ -891,18 +927,10 @@ namespace LiquidAPI.Hooks
 	    private static void MainOnOldDrawWater(Terraria.Main self,
 			bool bg = false, int Style = 0, float Alpha = 1f)
 	    {
-	        Texture2D liquidTexture = OldWaterTexture[0];
+	        Texture2D liquidTexture = OldWaterTexture[Style];
             if(Style > 1)
 	            Style--;
-            try
-		    {
-                
-		        liquidTexture = OldWaterTexture[Style];
-            }
-		    catch (Exception e)
-		    {
-                Console.WriteLine(e);
-		    }
+
 			float num = 0f;
 			float num2 = 99999f;
 			float num3 = 99999f;
@@ -957,63 +985,57 @@ namespace LiquidAPI.Hooks
 						float num11 = (float) (256 - (int) liquid.Amount);
 						num11 /= 32f;
 						int num12 = 0;
-					    switch (liquid.Type)
+					    if (liquid.Type == LiquidID.lava)
 					    {
-					        case LiquidID.lava:
-					            if (Main.drewLava)
+					        if (Main.drewLava)
+					        {
+					            goto IL_E7F;
+					        }
+
+					        float num13 = Math.Abs(j * 16 + 8 - (Main.screenPosition.X + (Main.screenWidth / 2)));
+					        float num14 = Math.Abs(i * 16 + 8 - (Main.screenPosition.Y + (Main.screenHeight / 2)));
+					        if (num13 < (Main.screenWidth * 2) && num14 < (Main.screenHeight * 2))
+					        {
+					            float num15 = (float)Math.Sqrt(num13 * num13 + num14 * num14);
+					            float num16 = 1f - num15 / (Main.screenWidth * 0.75f);
+					            if (num16 > 0f)
 					            {
-					                break;
+					                num += num16;
 					            }
+					        }
 
-					            float num13 = Math.Abs((float) (j * 16 + 8) -
-					                                   (Main.screenPosition.X + (float) (Main.screenWidth / 2)));
-					            float num14 = Math.Abs((float) (i * 16 + 8) -
-					                                   (Main.screenPosition.Y + (float) (Main.screenHeight / 2)));
-					            if (num13 < (float) (Main.screenWidth * 2) && num14 < (float) (Main.screenHeight * 2))
-					            {
-					                float num15 = (float) Math.Sqrt((double) (num13 * num13 + num14 * num14));
-					                float num16 = 1f - num15 / ((float) Main.screenWidth * 0.75f);
-					                if (num16 > 0f)
-					                {
-					                    num += num16;
-					                }
-					            }
+					        if (num13 < num2)
+					        {
+					            num2 = num13;
+					            num4 = j * 16 + 8;
+					        }
 
-					            if (num13 < num2)
-					            {
-					                num2 = num13;
-					                num4 = j * 16 + 8;
-					            }
+					        if (num14 < num3)
+					        {
+					            num3 = num13;
+					            num5 = i * 16 + 8;
+					        }
 
-					            if (num14 < num3)
-					            {
-					                num3 = num13;
-					                num5 = i * 16 + 8;
-					            }
-
-					            liquidTexture = OldLavaTexture[lavaStyle];
-					            break;
-					        case LiquidID.honey:
-					            liquidTexture = OldHoneyTexture[honeyStyle];
-					            break;
-
-					        default:
-                                if(liquid.Type != LiquidID.water)
-					                liquidTexture = LiquidRegistry.getInstance()[liquid.Type].texture;
-					            break;
+					        liquidTexture = OldLavaTexture[lavaStyle];
 					    }
-					    if (Main.drewLava)
+					    else if (liquid.Type == LiquidID.honey)
 					    {
-					        break;
+					        liquidTexture = OldHoneyTexture[honeyStyle];
+					    }
+					    else if (liquid.Type != LiquidID.water)
+					    {
+					        liquidTexture = LiquidRegistry.getInstance()[liquid.Type].oldTexture;
 					    }
 
 
-                        if (num12 == 0)
+                        if (liquid.Type == LiquidID.water)
 						{
 							num12 = Style;
+						    liquidTexture = OldWaterTexture[num12];
+
 						}
 
-						if (num12 <= 10 && !Main.drewLava)
+						if (num12 <= 10 || !Main.drewLava)
 						{
 							float num17 = 0.5f;
 							if (bg)
@@ -1213,7 +1235,7 @@ namespace LiquidAPI.Hooks
 							if (Lighting.NotRetro && !bg)
 							{
 								Microsoft.Xna.Framework.Color color2 = color;
-								if (num12 != 1 && ((double) color2.R > (double) num6 * 0.6 ||
+								if (((double) color2.R > (double) num6 * 0.6 ||
 								                   (double) color2.G > (double) num6 * 0.65 ||
 								                   (double) color2.B > (double) num6 * 0.7))
 								{
@@ -1269,7 +1291,7 @@ namespace LiquidAPI.Hooks
 										color3.G = (byte) ((color2.G * 3 + color4.G * 2) / 5);
 										color3.B = (byte) ((color2.B * 3 + color4.B * 2) / 5);
 										color3.A = (byte) ((color2.A * 3 + color4.A * 2) / 5);
-										Main.spriteBatch.Draw(Main.liquidTexture[num12],
+										Main.spriteBatch.Draw(liquidTexture,
 											value - Main.screenPosition + new Vector2((float) num28, (float) num29) +
 											zero,
 											new Microsoft.Xna.Framework.Rectangle?(

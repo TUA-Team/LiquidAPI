@@ -20,6 +20,7 @@ namespace LiquidAPI.Hooks
 			// Rendering
 			On.Terraria.Main.oldDrawWater += OldWaterDraw;
 		    On.Terraria.Main.DrawWater += Hooked_DrawWater;
+		    On.Terraria.Main.drawWaters += Hooked_drawWaters;
 
 			// Liquid Renderer
 			On.Terraria.GameContent.Liquid.LiquidRenderer.Update +=

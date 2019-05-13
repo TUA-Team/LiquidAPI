@@ -30,8 +30,7 @@ namespace LiquidAPI
 		{
 			Texture2D usedTexture = texture ?? liquid.Texture;
 			Array.Resize(ref Main.liquidTexture, Main.liquidTexture.Length + 1);
-			liquid.liquidIndex = initialLiquidIndex;
-			initialLiquidIndex++;
+			liquid.Type = initialLiquidIndex++;
 			liquidList.Add(3, liquid);
 			if (Main.netMode == 0)
 			{

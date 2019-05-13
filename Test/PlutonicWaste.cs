@@ -12,8 +12,8 @@ namespace LiquidAPI.Test
 			style = 12;
 			Alpha = 0.2f;
 		}
-
-		public override float LiquidOpacity=>0.5f;
+		
+		public override float DefaultOpacity=>0.5f;
 
 		public override void PlayerInteraction(Player target)
 		{

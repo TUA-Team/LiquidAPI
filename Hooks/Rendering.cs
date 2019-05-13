@@ -63,7 +63,7 @@ namespace LiquidAPI.Hooks
 						float num11 = 256 - liquid.Amount;
 						num11 /= 32f;
 						int num12 = 0;
-						if (liquid.Type == LiquidID.lava)
+						if (liquid.TypeID == LiquidID.Lava)
 						{
 							if (Main.drewLava)
 							{
@@ -96,13 +96,13 @@ namespace LiquidAPI.Hooks
 
 						    liquidTexture = OldLavaTexture;
 						}
-						else if (liquid.Type == LiquidID.honey)
+						else if (liquid.TypeID == LiquidID.Honey)
 						{
 						    liquidTexture = OldHoneyTexture;
 						}
-					    else if(liquid.Type != LiquidID.water)
+					    else if(liquid.TypeID != LiquidID.Water)
 						{
-						    liquidTexture = LiquidRegistry.getInstance()[liquid.Type].Texture;
+						    liquidTexture = LiquidRegistry.getInstance()[liquid.TypeID].Texture;
 						}
 
 					    if (num12 == 0)
@@ -231,7 +231,7 @@ namespace LiquidAPI.Hooks
 								if (Main.rand.Next(20000) < num21)
 								{
 									Color newColor = new Color(255, 255, 255);
-									if (liquid.Type == LiquidID.honey)
+									if (liquid.TypeID == LiquidID.Honey)
 									{
 										newColor = new Color(255, 255, 50);
 									}
@@ -241,7 +241,7 @@ namespace LiquidAPI.Hooks
 								}
 							}
 
-							if (liquid.Type == LiquidID.honey)
+							if (liquid.TypeID == LiquidID.Honey)
 							{
 								num17 *= 1.6f;
 								if (num17 > 1f)
@@ -250,7 +250,7 @@ namespace LiquidAPI.Hooks
 								}
 							}
 
-							if (liquid.Type == LiquidID.lava)
+							if (liquid.TypeID == LiquidID.Lava)
 							{
 								num17 *= 1.8f;
 								if (num17 > 1f)

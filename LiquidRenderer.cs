@@ -138,7 +138,7 @@ namespace LiquidAPI
 						ptr2->HasLiquid = liquid.HasLiquid;
 						ptr2->VisibleLiquidLevel = 0f;
 						ptr2->HasWall = liquid.Tile.wall != 0;
-						ptr2->Type = liquid.Type;
+						ptr2->Type = liquid.TypeID;
 						if (ptr2->IsHalfBrick && !ptr2->HasLiquid)
 						{
 							ptr2->Type = ptr2[-1].Type;

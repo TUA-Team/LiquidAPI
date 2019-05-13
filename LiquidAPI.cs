@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using LiquidAPI.Hooks;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
-using Terraria.Map;
 using Terraria.ModLoader;
+using LiquidAPI.Hooks;
+using LiquidAPI.Vanilla;
 
 namespace LiquidAPI
 {
@@ -22,17 +21,15 @@ namespace LiquidAPI
             LiquidRenderer.Instance = new LiquidRenderer();
             instance = this;
 
-			ModBucket bucket = new ModBucket(-1, Color.Transparent, "Empty");
-			AddItem(bucket.name, bucket.Clone());
+			ModBucket emptyBucket = new ModBucket(null, Color.Transparent, "Empty");
+			AddItem(emptyBucket.name, emptyBucket.Clone());
 
-			bucket = new ModBucket(0, new Color(51, 107, 249), "Water");
-			AddItem(bucket.name, bucket.Clone());
-
-			bucket = new ModBucket(1, new Color(253, 62, 3), "Lava");
-			AddItem(bucket.name, bucket.Clone());
-
-			bucket = new ModBucket(2, new Color(215, 131, 8), "Honey");
-			AddItem(bucket.name, bucket.Clone());
+			ModLiquid waterLiquid = new Water();
+			ModLiquid lavaLiquid = new Lava();
+			ModLiquid honeyLiquid = new Honey();
+			waterLiquid.AddModBucket();
+			lavaLiquid.AddModBucket();
+			honeyLiquid.AddModBucket();
 
 		    LiquidHooks.OldHoneyTexture = Main.liquidTexture[11];
 		    LiquidHooks.OldLavaTexture = Main.liquidTexture[1];
@@ -47,7 +44,7 @@ namespace LiquidAPI
 		    }
 
 		    LiquidHooks.OldWaterTexture = OldWaterTextureList;
-		    LoadModContent(mod => { Autoload(mod); });
+		    LoadModContent(Autoload);
         }
 
 		public override void PostSetupContent()
@@ -71,10 +68,8 @@ namespace LiquidAPI
 
 		private static void LoadModContent(Action<Mod> loadAction)
 		{
-			for (int i = 0; i < ModLoader.Mods.Length; i++)
+			foreach(Mod mod in ModLoader.Mods)
 			{
-				Mod mod = ModLoader.Mods[i];
-
 			    try
 			    {
 			        loadAction(mod);
@@ -82,6 +77,7 @@ namespace LiquidAPI
 			    catch (Exception e)
 			    {
 			        Main.statusText = e.Message;
+					throw e;
 			    }
 			}
 		}
@@ -93,15 +89,9 @@ namespace LiquidAPI
 			{
 				return;
 			}
-
-			var array = mod.Code.DefinedTypes.OrderBy(type => type.FullName, StringComparer.InvariantCulture);
-			for (int i = 0; i < array.Count(); i++)
+			foreach(Type type in mod.Code.DefinedTypes.Where(type => type.IsSubclassOf(typeof(ModLiquid))).OrderBy(type => type.FullName))
 			{
-				var type =  array.ElementAt(i);
-				if (type.IsSubclassOf(typeof(ModLiquid)))
-				{
-					AutoloadLiquid(mod, type);
-				}
+				AutoloadLiquid(mod, type);
 			}
 		}
 		private void AutoloadLiquid(Mod mod, Type type)

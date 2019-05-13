@@ -10,7 +10,7 @@ namespace LiquidAPI.Test
 
 		public override Color LiquidColor => Color.White;
 
-		public override float LiquidOpacity=>1f;
+		public override float DefaultOpacity=>1f;
 
 		public override void PreDrawValueSet(ref bool bg, ref int style, ref float Alpha)
 		{

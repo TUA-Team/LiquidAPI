@@ -89,6 +89,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Test\PlutonicWaste.cs" />
     <Compile Include="Test\WeirdLiquid.cs" />
+    <Compile Include="Vanilla\Honey.cs" />
+    <Compile Include="Vanilla\Lava.cs" />
+    <Compile Include="Vanilla\Water.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="ModBucket.png" />

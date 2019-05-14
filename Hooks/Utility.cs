@@ -37,7 +37,7 @@ namespace LiquidAPI.Hooks
 				return;
 			}
 
-			if (LiquidRegistry.liquidList[LiquidCore.liquidGrid[x, y].data].CanKillTile(x,y))
+			if (LiquidRegistry.liquidList[LiquidWorld.liquidGrid[x, y].data].CanKillTile(x,y))
 			{
 				WorldGen.KillTile(x, y);
 				if (Main.netMode == NetmodeID.Server)

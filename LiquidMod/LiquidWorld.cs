@@ -1,28 +1,36 @@
 ﻿using System.Collections.Generic;
 using System.IO;
-using LiquidAPI.Data;
 using Terraria;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 using Terraria.Utilities;
+using LiquidAPI.Data;
 
 namespace LiquidAPI.LiquidMod
 {
-
 	//The following code is a modified version of DataCore from Project_Logic 0.5.0.1 provided by Rartrin
-	public class LiquidCore : ModWorld
+	public class LiquidWorld : ModWorld
 	{
 		private const string EXTENSION = "tua";//Should work without the leading period
-		private const byte 
-			MODE = 0, //Extra data
-			FORM = 3; //Saving format
+		private const byte MODE = 0; //Extra data
+		private const byte FORM = 3; //Saving format
 
-		public static LiquidCore grid = new LiquidCore();
+		public static LiquidWorld grid;
 
 		public static Bit[,] liquidGrid; // MAKE SURE YOU DEREFERENCE THIS ON UNLOAD
 
+		static LiquidWorld()
+		{
+			LiquidAPI.OnUnload+=()=>
+			{
+				grid=null;
+				liquidGrid=null;
+			};
+		}
+
 		public override void Initialize()
 		{
+			grid=this;
 			liquidGrid = new Bit[Main.maxTilesX, Main.maxTilesY];
 		}
 

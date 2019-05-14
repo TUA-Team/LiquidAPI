@@ -12,11 +12,11 @@ namespace LiquidAPI.Hooks
 
 		private static void LiquidOnLavaCheck(On.Terraria.Liquid.orig_LavaCheck orig, int x, int y)
 		{
-			LiquidRef liquidLeft = LiquidCore.grid[x - 1, y];
-			LiquidRef liquidRight = LiquidCore.grid[x + 1, y];
-			LiquidRef liquidDown = LiquidCore.grid[x, y - 1];
-			LiquidRef liquidUp = LiquidCore.grid[x, y + 1];
-			LiquidRef liquidSelf = LiquidCore.grid[x, y];
+			LiquidRef liquidLeft = LiquidWorld.grid[x - 1, y];
+			LiquidRef liquidRight = LiquidWorld.grid[x + 1, y];
+			LiquidRef liquidDown = LiquidWorld.grid[x, y - 1];
+			LiquidRef liquidUp = LiquidWorld.grid[x, y + 1];
+			LiquidRef liquidSelf = LiquidWorld.grid[x, y];
 
 			if (liquidLeft.Amount > 0 && liquidLeft.TypeID != LiquidID.Lava || liquidRight.Amount > 0 && liquidRight.TypeID != LiquidID.Lava || liquidDown.Amount > 0 && liquidDown.TypeID != LiquidID.Lava)
 			{
@@ -137,11 +137,11 @@ namespace LiquidAPI.Hooks
 
 		private static void LiquidOnHoneyCheck(On.Terraria.Liquid.orig_HoneyCheck orig, int x, int y)
 		{
-			LiquidRef liquidLeft = LiquidCore.grid[x - 1, y];
-			LiquidRef liquidRight = LiquidCore.grid[x + 1, y];
-			LiquidRef liquidDown = LiquidCore.grid[x, y - 1];
-			LiquidRef liquidUp = LiquidCore.grid[x, y + 1];
-			LiquidRef liquidSelf = LiquidCore.grid[x, y];
+			LiquidRef liquidLeft = LiquidWorld.grid[x - 1, y];
+			LiquidRef liquidRight = LiquidWorld.grid[x + 1, y];
+			LiquidRef liquidDown = LiquidWorld.grid[x, y - 1];
+			LiquidRef liquidUp = LiquidWorld.grid[x, y + 1];
+			LiquidRef liquidSelf = LiquidWorld.grid[x, y];
 
 			bool flag = false;
 

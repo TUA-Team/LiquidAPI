@@ -78,7 +78,7 @@
     <Compile Include="ID\LiquidID.cs" />
     <Compile Include="LiquidAPI.cs" />
     <Compile Include="Hooks\LiquidHooks.cs" />
-    <Compile Include="LiquidMod\LiquidCore.cs" />
+    <Compile Include="LiquidMod\LiquidWorld.cs" />
     <Compile Include="LiquidMod\LiquidGlobalItem.cs" />
     <Compile Include="LiquidMod\LiquidGlobalNPC.cs" />
     <Compile Include="LiquidMod\LiquidPlayer.cs" />

@@ -7,13 +7,19 @@ namespace LiquidAPI.Test
 {
 	class PlutonicWaste : ModLiquid
 	{
+		public override void SetDefaults()
+		{
+			DisplayName.SetDefault("Liquid Waste");
+			DefaultOpacity=0.5f;
+			LiquidColor=Color.GreenYellow;
+		}
+
 		public override void PreDrawValueSet(ref bool bg, ref int style, ref float Alpha)
 		{
 			style = 12;
 			Alpha = 0.2f;
 		}
 		
-		public override float DefaultOpacity=>0.5f;
 
 		public override void PlayerInteraction(Player target)
 		{
@@ -26,13 +32,8 @@ namespace LiquidAPI.Test
 			{
 				Vector2 position = target.Center;
 				target.active = false;
-				NPC.NewNPC((int) position.X, (int) position.Y,
-					ModLoader.GetMod("TUA").NPCType("MutatedSludge"));
+				NPC.NewNPC((int) position.X, (int) position.Y, ModLoader.GetMod("TUA").NPCType("MutatedSludge"));
 			}
 		}
-
-		public override string Name => "Liquid Waste";
-
-		public override Color LiquidColor => Color.GreenYellow;
 	}
 }

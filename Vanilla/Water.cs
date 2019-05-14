@@ -6,16 +6,17 @@ namespace LiquidAPI.Vanilla
 {
 	public class Water : ModLiquid
 	{
-		public override string Name => "Water";
-		public override Color LiquidColor => new Color(51, 107, 249);
-		//public override float LiquidOpacity=>0.5f;
+		public override bool Autoload(ref string name,ref string texture)=>false;
 
-		public override byte WaterfallLength=>10;
-		public override float DefaultOpacity=>0.6f;
-		public override byte WaveMaskStrength=>0;
-		public override byte ViscosityMask=>0;
-
-		public override bool Autoload(ref string name)=>false;
+		public override void SetDefaults()
+		{
+			DisplayName.SetDefault("Water");
+			LiquidColor = new Color(51, 107, 249);
+			WaterfallLength = 10;
+			DefaultOpacity = 0.6f;
+			WaveMaskStrength = 0;
+			ViscosityMask = 0;
+		}
 
 		public override bool CanKillTile(int x,int y) => TileObjectData.CheckWaterDeath(Main.tile[x,y]);
 	}

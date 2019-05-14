@@ -5,13 +5,12 @@ using Terraria.Graphics;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ObjectData;
-using LiquidAPI.ID;
 using LiquidAPI.LiquidMod;
 // ReSharper disable InconsistentNaming
 
 namespace LiquidAPI
 {
-	public class ModLiquid
+	public abstract class ModLiquid
 	{
 		public bool gravity = true;
 		public int customDelay = 1; //Default value, aka 
@@ -20,24 +19,28 @@ namespace LiquidAPI
 
 		public Mod Mod{get;internal set;}
 
-		public virtual Color LiquidColor=>Color.White;
+		public ModTranslation DisplayName{get;internal set;}
 
-		public virtual string Name=>GetType().Name;
+		public string Name{get;internal set;}
 
 		public virtual Texture2D Texture=>ModContent.GetTexture(this.GetType().FullName.Replace(".", "/"));
 		public virtual Texture2D OldTexture=>ModContent.GetTexture(this.GetType().FullName.Replace(".", "/"));
 
-		public virtual byte WaterfallLength=>10;
-		public virtual float DefaultOpacity=>1f;
-		public virtual byte WaveMaskStrength=>0;
-		public virtual byte ViscosityMask=>0;
+		public Color LiquidColor=Color.White;
+
+		public byte WaterfallLength=10;
+		public float DefaultOpacity=1f;
+		public byte WaveMaskStrength=0;
+		public byte ViscosityMask=0;
 
 		/// <summary>
-		/// Take an array that contain legacy style texture and 1.3.4+ texture style
+		/// Takes an array that contain legacy style texture and 1.3.4+ texture style
 		/// </summary>
 		/// <param name="name"></param>
 		/// <returns></returns>
-		public virtual bool Autoload(ref string name)=>true;
+		public virtual bool Autoload(ref string name,ref string texture)=>true;
+
+		public virtual void SetDefaults(){}
 
 		public virtual void Update() { }
 
@@ -114,30 +117,24 @@ namespace LiquidAPI
 
 		internal void AddModBucket()
 		{
-			ModBucket bucket = new ModBucket(this, LiquidColor, Name);
-			Mod.AddItem(bucket.name, bucket.Clone());
+			Mod.AddItem("Bucket"+Name, new ModBucket(this));
 		}
 	}
 
 	public class ModBucket : ModItem
 	{
-		private readonly Color liquidColor=Color.Transparent;
-		internal string name="Empty Bucket";
-
-		private readonly ModLiquid liquidType;
+		private readonly ModLiquid liquid;
 
 		public override string Texture => "LiquidAPI/ModBucket";
-
 		
 		public override bool Autoload(ref string name)=>false;
 
 		public ModBucket(){}
 
-		public ModBucket(ModLiquid liquid, Color color, string liquidName)
+		public ModBucket(ModLiquid liquid)
 		{
-			liquidType = liquid;
-			liquidColor = color;
-			name = liquidName + " Bucket";
+			this.liquid = liquid;
+			DisplayName.SetDefault((liquid?.DisplayName.GetDefault()??"Empty") + " Bucket");
 		}
 
 		public override void SetDefaults()
@@ -153,19 +150,19 @@ namespace LiquidAPI
 
 		public override bool UseItem(Player player)
 		{
-			if(liquidType==null){return false;}
-			LiquidRef liquid = LiquidCore.grid[Player.tileTargetX, Player.tileTargetY];
+			if(this.liquid==null){return false;}
+			LiquidRef tile = LiquidWorld.grid[Player.tileTargetX, Player.tileTargetY];
 
-			if (!liquid.HasLiquid || liquid.TypeID == liquidType.Type)
+			if (!tile.HasLiquid || tile.Type == this.liquid)
 			{
 
 				//Item newItem = Main.item[Item.NewItem(player.position, item.type)];
 				//ModBucket newBucket = newItem.modItem as ModBucket;
 				
-				liquid.TypeID = (byte)liquidType.Type;
-				liquid.Amount = 255;
+				tile.Type = this.liquid;
+				tile.Amount = 255;
 
-				WorldGen.SquareTileFrame(Player.tileTargetX, Player.tileTargetY, true);
+				WorldGen.SquareTileFrame(Player.tileTargetX,Player.tileTargetY, true);
 				//player.PutModItemInInventory(newBucket);
 				//item.stack--;
 			}
@@ -179,18 +176,20 @@ namespace LiquidAPI
 			item.useTime = 45;
 			item.useStyle = 4;
 
-			if (liquidType == null) return;
-
-			Texture2D liquidTexture = LiquidAPI.instance.GetTexture("Texture/Bucket/liquid");
-			spriteBatch.Draw(liquidTexture, position, null, liquidColor, 0f, origin, new Vector2(scale), SpriteEffects.None, 0);
+			if (liquid != null)
+			{
+				Texture2D liquidTexture = LiquidAPI.instance.GetTexture("Texture/Bucket/liquid");
+				spriteBatch.Draw(liquidTexture, position, null, liquid.LiquidColor, 0f, origin, new Vector2(scale), SpriteEffects.None, 0);
+			}
 		}
 
 		public override void PostDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, float rotation, float scale, int whoAmI)
 		{
-			if (liquidType == null) return;
-
-			Texture2D liquidTexture = LiquidAPI.instance.GetTexture("Texture/Bucket/liquid");
-			spriteBatch.Draw(liquidTexture, item.position, liquidColor);
+			if (liquid != null)
+			{
+				Texture2D liquidTexture = LiquidAPI.instance.GetTexture("Texture/Bucket/liquid");
+				spriteBatch.Draw(liquidTexture, item.position, liquid.LiquidColor);
+			}
 		}
 	}
 }

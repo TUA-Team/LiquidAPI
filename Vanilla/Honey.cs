@@ -4,15 +4,16 @@ namespace LiquidAPI.Vanilla
 {
 	public class Honey : ModLiquid
 	{
-		public override string Name => "Honey";
-		public override Color LiquidColor => new Color(215, 131, 8);
-		//public override float LiquidOpacity=>0.5f;
+		public override bool Autoload(ref string name,ref string texture)=>false;
 
-		public override byte WaterfallLength=>2;
-		public override float DefaultOpacity=>0.95f;
-		public override byte WaveMaskStrength=>0;
-		public override byte ViscosityMask=>240;
-
-		public override bool Autoload(ref string name)=>false;
+		public override void SetDefaults()
+		{
+			DisplayName.SetDefault("Honey");
+			LiquidColor = new Color(215, 131, 8);
+			WaterfallLength = 2;
+			DefaultOpacity = 0.95f;
+			WaveMaskStrength = 0;
+			ViscosityMask = 240;
+		}
 	}
 }

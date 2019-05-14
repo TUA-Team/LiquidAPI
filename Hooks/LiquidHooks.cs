@@ -4,7 +4,7 @@ namespace LiquidAPI.Hooks
 {
 	internal static partial class LiquidHooks
 	{
-		public static void MethodSwap()
+		public static void AddHooks()
 		{
 			// Update
 			On.Terraria.Liquid.Update += ModdedLiquidUpdate;

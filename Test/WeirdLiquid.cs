@@ -5,12 +5,12 @@ namespace LiquidAPI.Test
 {
 	class WeirdLiquid : ModLiquid
 	{
-
-		public override string Name => "Test liquid";
-
-		public override Color LiquidColor => Color.White;
-
-		public override float DefaultOpacity=>1f;
+		public override void SetDefaults()
+		{
+			DisplayName.SetDefault("Test liquid");
+			LiquidColor = Color.White;
+			DefaultOpacity = 1f;
+		}
 
 		public override void PreDrawValueSet(ref bool bg, ref int style, ref float Alpha)
 		{

@@ -53,9 +53,9 @@ namespace LiquidAPI.Hooks
 			{
 				for (int j = num7 - 2; j < num8 + 2; j++)
 				{
-					LiquidRef liquid = LiquidCore.grid[j, i];
-					LiquidRef liquidUp = LiquidCore.grid[j, i + 1];
-					LiquidRef liquidDown = LiquidCore.grid[j, i - 1];
+					LiquidRef liquid = LiquidWorld.grid[j, i];
+					LiquidRef liquidUp = LiquidWorld.grid[j, i + 1];
+					LiquidRef liquidDown = LiquidWorld.grid[j, i - 1];
 
                     if (liquid.Amount > 0 && (!liquid.Tile.nactive() || !Main.tileSolid[liquid.Tile.type] || Main.tileSolidTop[liquid.Tile.type]) && (Lighting.Brightness(j, i) > 0f || bg))
 					{
@@ -102,7 +102,7 @@ namespace LiquidAPI.Hooks
 						}
 					    else if(liquid.TypeID != LiquidID.Water)
 						{
-						    liquidTexture = LiquidRegistry.getInstance()[liquid.TypeID].Texture;
+						    liquidTexture = liquid.Type.Texture;
 						}
 
 					    if (num12 == 0)
@@ -192,9 +192,9 @@ namespace LiquidAPI.Hooks
 							{
 								bool flag = true;
 								int num20 = i + 1;
-								while (num20 < i + 6 && (!LiquidCore.grid[j, num20].Tile.nactive() || !Main.tileSolid[LiquidCore.grid[j, num20].Tile.type] || Main.tileSolidTop[LiquidCore.grid[j, num20].Tile.type]))
+								while (num20 < i + 6 && (!LiquidWorld.grid[j, num20].Tile.nactive() || !Main.tileSolid[LiquidWorld.grid[j, num20].Tile.type] || Main.tileSolidTop[LiquidWorld.grid[j, num20].Tile.type]))
 								{
-									if (LiquidCore.grid[j, num20].Amount < 200)
+									if (LiquidWorld.grid[j, num20].Amount < 200)
 									{
 										flag = false;
 										break;

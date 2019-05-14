@@ -11,21 +11,21 @@ namespace LiquidAPI.LiquidMod
 
 		public ModLiquid Type
 		{
-			get=>LiquidRegistry.liquidList[LiquidCore.liquidGrid[X,Y].data];
+			get=>LiquidRegistry.liquidList[LiquidWorld.liquidGrid[X,Y].data];
 			set
 			{
 				if(value==null)
 				{
-					LiquidCore.liquidGrid[X, Y].data=0;
+					LiquidWorld.liquidGrid[X, Y].data=0;
 					Main.tile[X,Y].liquid=0;
 				}
 				else
 				{
-					LiquidCore.liquidGrid[X, Y].data=(byte)value.Type;
+					LiquidWorld.liquidGrid[X, Y].data=(byte)value.Type;
 				}
 			}
 		}
-		public ref byte TypeID => ref LiquidCore.liquidGrid[X, Y].data;
+		public ref byte TypeID => ref LiquidWorld.liquidGrid[X, Y].data;
 
 		public ref byte Amount => ref Main.tile[X,Y].liquid;
 

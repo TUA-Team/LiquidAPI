@@ -11,11 +11,11 @@ namespace LiquidAPI.Hooks
 		public static void ModdedLiquidUpdate(On.Terraria.Liquid.orig_Update orig, Liquid self)
 		{
 			Main.tileSolid[TileID.Bubble] = true;
-			LiquidRef liquidLeft = LiquidCore.grid[self.x - 1, self.y];
-			LiquidRef liquidRight = LiquidCore.grid[self.x + 1, self.y];
-			LiquidRef liquidUp = LiquidCore.grid[self.x, self.y - 1];
-			LiquidRef liquidDown = LiquidCore.grid[self.x, self.y + 1];
-			LiquidRef liquidSelf = LiquidCore.grid[self.x, self.y];
+			LiquidRef liquidLeft = LiquidWorld.grid[self.x - 1, self.y];
+			LiquidRef liquidRight = LiquidWorld.grid[self.x + 1, self.y];
+			LiquidRef liquidUp = LiquidWorld.grid[self.x, self.y - 1];
+			LiquidRef liquidDown = LiquidWorld.grid[self.x, self.y + 1];
+			LiquidRef liquidSelf = LiquidWorld.grid[self.x, self.y];
 
 			if (liquidSelf.Tile.nactive() && Main.tileSolid[liquidSelf.Tile.type] && !Main.tileSolidTop[liquidSelf.Tile.type])
 			{
@@ -26,13 +26,10 @@ namespace LiquidAPI.Hooks
 			byte liquid = liquidSelf.Amount;
 			if (self.y > Main.maxTilesY - 200 && liquidSelf.TypeID == 0 && liquidSelf.Amount > 0)
 			{
-				byte b = 2;
-				if (liquidSelf.Amount < b)
+				if (liquidSelf.Amount >= 2)
 				{
-					b = liquidSelf.Amount;
+					liquidSelf.Amount -= 2;
 				}
-
-				liquidSelf.Amount -= b;
 			}
 
 			if (liquidSelf.Amount == 0)
@@ -46,13 +43,13 @@ namespace LiquidAPI.Hooks
 				Liquid.LavaCheck(self.x, self.y);
 				if (!Liquid.quickFall)
 				{
-					if (self.delay < 5)
+					if (self.delay > 0)
 					{
-						self.delay++;
+						self.delay--;
 						return;
 					}
 
-					self.delay = 0;
+					self.delay = 5;
 				}
 			}
 			else
@@ -82,13 +79,13 @@ namespace LiquidAPI.Hooks
 					Liquid.HoneyCheck(self.x, self.y);
 					if (!Liquid.quickFall)
 					{
-						if (self.delay < 10)
+						if (self.delay > 0)
 						{
-							self.delay++;
+							self.delay--;
 							return;
 						}
 
-						self.delay = 0;
+						self.delay = 10;
 					}
 				}
 				else
@@ -168,7 +165,7 @@ namespace LiquidAPI.Hooks
 					flag3 = false;
 				}
 				else if (Main.tile[self.x - 2, self.y].liquid > 0 &&
-				         LiquidCore.liquidGrid[self.x - 2, self.y].data != liquidSelf.TypeID)
+				         LiquidWorld.liquidGrid[self.x - 2, self.y].data != liquidSelf.TypeID)
 				{
 					flag3 = false;
 				}
@@ -193,7 +190,7 @@ namespace LiquidAPI.Hooks
 					flag4 = false;
 				}
 				else if (Main.tile[self.x + 2, self.y].liquid > 0 &&
-				         LiquidCore.liquidGrid[self.x + 2, self.y].data != liquidSelf.TypeID)
+				         LiquidWorld.liquidGrid[self.x + 2, self.y].data != liquidSelf.TypeID)
 				{
 					flag4 = false;
 				}
@@ -220,7 +217,7 @@ namespace LiquidAPI.Hooks
 						{
 							flag5 = false;
 						}
-						else if (LiquidCore.liquidGrid[self.x - 3, self.y].data != liquidSelf.TypeID)
+						else if (LiquidWorld.liquidGrid[self.x - 3, self.y].data != liquidSelf.TypeID)
 						{
 							flag5 = false;
 						}
@@ -235,7 +232,7 @@ namespace LiquidAPI.Hooks
 						{
 							flag6 = false;
 						}
-						else if (LiquidCore.liquidGrid[self.x + 3, self.y].data != liquidSelf.TypeID)
+						else if (LiquidWorld.liquidGrid[self.x + 3, self.y].data != liquidSelf.TypeID)
 						{
 							flag6 = false;
 						}
@@ -272,7 +269,7 @@ namespace LiquidAPI.Hooks
 								num3++;
 							}
 
-							LiquidCore.liquidGrid[self.x - 2, self.y].data = liquidSelf.TypeID;
+							LiquidWorld.liquidGrid[self.x - 2, self.y].data = liquidSelf.TypeID;
 							if (Main.tile[self.x - 2, self.y].liquid != (byte) num)
 							{
 								Main.tile[self.x - 2, self.y].liquid = (byte) num;
@@ -283,7 +280,7 @@ namespace LiquidAPI.Hooks
 								num3++;
 							}
 
-							LiquidCore.liquidGrid[self.x + 2, self.y].data = liquidSelf.TypeID;
+							LiquidWorld.liquidGrid[self.x + 2, self.y].data = liquidSelf.TypeID;
 							if (Main.tile[self.x + 2, self.y].liquid != (byte) num)
 							{
 								Main.tile[self.x + 2, self.y].liquid = (byte) num;
@@ -294,7 +291,7 @@ namespace LiquidAPI.Hooks
 								num3++;
 							}
 
-							LiquidCore.liquidGrid[self.x - 3, self.y].data = liquidSelf.TypeID;
+							LiquidWorld.liquidGrid[self.x - 3, self.y].data = liquidSelf.TypeID;
 							if (Main.tile[self.x - 3, self.y].liquid != (byte) num)
 							{
 								Main.tile[self.x - 3, self.y].liquid = (byte) num;
@@ -305,7 +302,7 @@ namespace LiquidAPI.Hooks
 								num3++;
 							}
 
-							LiquidCore.liquidGrid[self.x + 3, self.y].data = liquidSelf.TypeID;
+							LiquidWorld.liquidGrid[self.x + 3, self.y].data = liquidSelf.TypeID;
 							if (Main.tile[self.x + 3, self.y].liquid != (byte) num)
 							{
 								Main.tile[self.x + 3, self.y].liquid = (byte) num;
@@ -385,7 +382,7 @@ namespace LiquidAPI.Hooks
 								num4++;
 							}
 
-							LiquidCore.liquidGrid[self.x - 2, self.y].data = liquidSelf.TypeID;
+							LiquidWorld.liquidGrid[self.x - 2, self.y].data = liquidSelf.TypeID;
 							if (Main.tile[self.x - 2, self.y].liquid != (byte) num)
 							{
 								Main.tile[self.x - 2, self.y].liquid = (byte) num;
@@ -396,7 +393,7 @@ namespace LiquidAPI.Hooks
 								num4++;
 							}
 
-							LiquidCore.liquidGrid[self.x + 2, self.y].data = liquidSelf.TypeID;
+							LiquidWorld.liquidGrid[self.x + 2, self.y].data = liquidSelf.TypeID;
 							if (Main.tile[self.x + 2, self.y].liquid != (byte) num)
 							{
 								Main.tile[self.x + 2, self.y].liquid = (byte) num;
@@ -455,7 +452,7 @@ namespace LiquidAPI.Hooks
 							Liquid.AddWater(self.x + 1, self.y);
 						}
 
-						LiquidCore.liquidGrid[self.x - 2, self.y].data = liquidSelf.TypeID;
+						LiquidWorld.liquidGrid[self.x - 2, self.y].data = liquidSelf.TypeID;
 						if (Main.tile[self.x - 2, self.y].liquid != (byte) num || liquidSelf.Amount != (byte) num)
 						{
 							Main.tile[self.x - 2, self.y].liquid = (byte) num;
@@ -484,7 +481,7 @@ namespace LiquidAPI.Hooks
 							Liquid.AddWater(self.x + 1, self.y);
 						}
 
-						LiquidCore.liquidGrid[self.x + 2, self.y].data = liquidSelf.TypeID;
+						LiquidWorld.liquidGrid[self.x + 2, self.y].data = liquidSelf.TypeID;
 						if (Main.tile[self.x + 2, self.y].liquid != (byte) num || liquidSelf.Amount != (byte) num)
 						{
 							Main.tile[self.x + 2, self.y].liquid = (byte) num;

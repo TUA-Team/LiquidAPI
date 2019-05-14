@@ -6,16 +6,17 @@ namespace LiquidAPI.Vanilla
 {
 	public class Lava : ModLiquid
 	{
-		public override string Name => "Lava";
-		public override Color LiquidColor => new Color(253, 62, 3);
-		//public override float LiquidOpacity=>0.5f;
+		public override bool Autoload(ref string name,ref string texture)=>false;
 
-		public override byte WaterfallLength=>3;
-		public override float DefaultOpacity=>0.95f;
-		public override byte WaveMaskStrength=>0;
-		public override byte ViscosityMask=>200;
-
-		public override bool Autoload(ref string name)=>false;
+		public override void SetDefaults()
+		{
+			DisplayName.SetDefault("Lava");
+			LiquidColor = new Color(253, 62, 3);
+			WaterfallLength = 3;
+			DefaultOpacity = 0.95f;
+			WaveMaskStrength = 0;
+			ViscosityMask = 200;
+		}
 
 		public override bool CanKillTile(int x,int y)=>TileObjectData.CheckLavaDeath(Main.tile[x,y]);
 	}

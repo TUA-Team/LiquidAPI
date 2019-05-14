@@ -130,7 +130,7 @@ namespace LiquidAPI
 				{
 					for (int j = rectangle.Y; j < rectangle.Y + rectangle.Height; j++)
 					{
-						LiquidRef liquid = LiquidCore.grid[i, j];
+						LiquidRef liquid = LiquidWorld.grid[i, j];
 
 						ptr2->LiquidLevel = liquid.Amount / 255f;
 						ptr2->IsHalfBrick = liquid.Tile.halfBrick() && ptr2[-1].HasLiquid;

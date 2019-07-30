@@ -1,4 +1,4 @@
 @echo off
 set /p TMLServerPath=<tmlpath.user
 
-call "%TMLServerPath%" -build %*
+call "%TMLServerPath%" -build % -unsafe true*

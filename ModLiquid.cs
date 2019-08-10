@@ -1,4 +1,5 @@
-﻿using LiquidAPI.LiquidMod;
+﻿using System;
+using LiquidAPI.LiquidMod;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -134,12 +135,9 @@ namespace LiquidAPI
 
 		public ModBucket() { }
 
-		public ModBucket(int liquid, Color color, string liquidName)
-		{
-			liquidType = liquid;
-			liquidColor = color;
-			name = liquidName + " bucket";
-		}
+        public override bool CloneNewInstances => true;
+
+        public override bool Autoload(ref string name) => false;
 
 		public override void SetDefaults()
 		{
@@ -152,18 +150,30 @@ namespace LiquidAPI
 			item.consumable = true;
 		}
 
-		public override bool UseItem(Player player)
-		{
-			LiquidRef liquid = LiquidCore.grid[Player.tileTargetX, Player.tileTargetY];
-			
-			if (!liquid.HasLiquid() || liquid.Type == liquidType)
-			{
+        public ModBucket(ModLiquid liquid)
+        {
+            this.liquid = liquid;
+        }
 
-				//Item newItem = Main.item[Item.NewItem(player.position, item.type)];
-				//ModBucket newBucket = newItem.modItem as ModBucket;
-				
-				liquid.Type = (byte) liquidType;
-				liquid.Amount = 255;
+
+
+        public override void SetStaticDefaults()
+        {
+            if (liquid == null)
+                return;
+            DisplayName.SetDefault((liquid.DisplayName.GetDefault() ?? "Empty") + " Bucket");
+        }
+
+        public override void SetDefaults()
+        {
+            item.width = 24;
+            item.height = 22;
+            item.maxStack = 99;
+            item.useStyle = ItemUseStyleID.SwingThrow;
+            item.useTime = 100;
+            item.useAnimation = 1;
+            item.consumable = true;
+        }
 
 				WorldGen.SquareTileFrame(Player.tileTargetX, Player.tileTargetY, true);
 				//player.PutModItemInInventory(newBucket);

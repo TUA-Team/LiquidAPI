@@ -1,39 +1,49 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using LiquidAPI.Hooks;
 using LiquidAPI.LiquidMod;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.ID;
+using Terraria.ModLoader;
 
 namespace LiquidAPI
 {
-	class LiquidRegistry
+	public static class LiquidRegistry
 	{
-		private static LiquidRegistry instance;
 		internal static Dictionary<int, ModLiquid> liquidList = new Dictionary<int, ModLiquid>();
-		private static int initialLiquidIndex = 3;
+		private static int initialLiquidIndex = 0;//3;
 		private static int liquidTextureIndex = 12;
 
 		private const int vanillaMaxVanilla = 13;
 
-		public static LiquidRegistry getInstance()
+		static LiquidRegistry()
 		{
-			if (instance == null)
+			LiquidAPI.OnUnload+=()=>
 			{
-				instance = new LiquidRegistry();
-			}
-
-			return instance;
+				Array.Resize(ref Main.liquidTexture, vanillaMaxVanilla);
+				liquidList.Clear();
+				liquidList = null;
+			};
 		}
 
-		public void AddNewModLiquid(ModLiquid liquid, Texture2D texture = null)
+		public static void AddLiquid<TLiquid>(this Mod mod,string name,Texture2D texture = null) where TLiquid:ModLiquid,new()
 		{
-			Texture2D usedTexture = texture ?? liquid.texture;
+			mod.AddLiquid(name,new TLiquid(),texture);
+		}
+		public static void AddLiquid(this Mod mod,string name,ModLiquid liquid, Texture2D texture = null)
+		{
+			liquid.Mod=mod;
+			liquid.Name=name;
+			liquid.DisplayName = mod.CreateTranslation($"Mods.{mod.Name}.ItemName.{name}".Replace(" ","_"));
+			liquid.DisplayName.SetDefault(Regex.Replace(name, "([A-Z])", " $1").Trim());
+
+			Texture2D usedTexture = texture ?? liquid.Texture;
 			Array.Resize(ref Main.liquidTexture, Main.liquidTexture.Length + 1);
-			liquid.liquidIndex = initialLiquidIndex;
-			initialLiquidIndex++;
-			liquidList.Add(3, liquid);
-			if (Main.netMode == 0)
+			liquid.Type = initialLiquidIndex++;
+			liquidList.Add(liquid.Type, liquid);
+			if (Main.netMode == NetmodeID.SinglePlayer)
 			{
 				LiquidRenderer.Instance.LiquidTextures[LiquidRenderer.Instance.LiquidTextures.Count - 1] = usedTexture;
 			}
@@ -41,47 +51,28 @@ namespace LiquidAPI
 			liquid.AddModBucket();
 		}
 
-		private LiquidRegistry()
-		{
-			
-		}
+		public static ModLiquid GetLiquid(int i)=>liquidList[i];
 
-        public ModLiquid this[int i] {
-            get
-            {
-                return liquidList[i];
-            }
-        }
-
-	    public static void MassMethodSwap()
+		public static void AddHooks()
 		{
 			//LiquidSwapping.MethodSwap();
 			//WaterDrawInjection.MethodSwap();
 			//InternalLiquidDrawInjection.SwapMethod();
-			LiquidHooks.MethodSwap();
-		}
-
-		public void Unload()
-		{
-			Array.Resize(ref Main.liquidTexture, vanillaMaxVanilla);
-			liquidList.Clear();
-			liquidList = null;
+			LiquidHooks.AddHooks();
 		}
 
 		public static void PreDrawValue(ref bool bg, ref int style, ref float Alpha)
 		{
-			for (int i = 0; i < liquidList.Count; i++)
+			foreach(ModLiquid liquid in liquidList.Values)
 			{
-				ModLiquid liquid = liquidList[i];
 				liquid.PreDraw(Main.tileBatch);
 			}
 		}
 
 		public static void Update()
 		{
-			for (int i = 0; i < liquidList.Count; i++)
+			foreach(ModLiquid liquid in liquidList.Values)
 			{
-				ModLiquid liquid = liquidList[i];
 				liquid.Update();
 			}
 		}

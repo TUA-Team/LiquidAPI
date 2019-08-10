@@ -122,15 +122,15 @@ namespace LiquidAPI
 				{
 					for (int j = rectangle.Y; j < rectangle.Y + rectangle.Height; j++)
 					{
-						LiquidRef liquid = LiquidCore.grid[i, j];
+						LiquidRef liquid = LiquidWorld.grid[i, j];
 
 						ptr2->LiquidLevel = (float) liquid.Amount / 255f;
 						ptr2->IsHalfBrick = (liquid.Tile.halfBrick() && ptr2[-1].HasLiquid);
 						ptr2->IsSolid = (WorldGen.SolidOrSlopedTile(liquid.Tile) && !ptr2->IsHalfBrick);
-						ptr2->HasLiquid = liquid.HasLiquid();
+						ptr2->HasLiquid = liquid.HasLiquid;
 						ptr2->VisibleLiquidLevel = 0f;
 						ptr2->HasWall = (liquid.Tile.wall != 0);
-						ptr2->Type = liquid.Type;
+						ptr2->Type = liquid.TypeID;
 						if (ptr2->IsHalfBrick && !ptr2->HasLiquid)
 						{
 							ptr2->Type = ptr2[-1].Type;

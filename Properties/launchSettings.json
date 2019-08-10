@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "LiquidAPI": {
+      "commandName": "Executable",
+      "executablePath": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Terraria\\Terraria.exe",
+      "workingDirectory": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Terraria\\"
+    }
+  }
+}

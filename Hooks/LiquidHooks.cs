@@ -4,14 +4,13 @@ namespace LiquidAPI.Hooks
 {
 	internal static partial class LiquidHooks
 	{
-		public static void MethodSwap()
+		public static void AddHooks()
 		{
 			// Update
 			On.Terraria.Liquid.Update += ModdedLiquidUpdate;
 
 			// Utilities
 			On.Terraria.Liquid.AddWater += AddWater;
-			On.Terraria.LiquidBuffer.AddBuffer += LiquidBufferOnAddBuffer;
 
 			// Interaction
 			On.Terraria.Liquid.LavaCheck += LiquidOnLavaCheck;

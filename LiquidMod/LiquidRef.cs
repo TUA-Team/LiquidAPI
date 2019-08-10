@@ -2,79 +2,55 @@
 
 namespace LiquidAPI.LiquidMod
 {
-	public class LiquidRef
-	{
-		public int x;
-		public int y;
+    public readonly ref struct LiquidRef
+    {
+        public readonly int X;
+        public readonly int Y;
 
-		public Tile Tile => Main.tile[x, y];
+        public Tile Tile => Main.tile[X, Y];
 
-		public byte Type
-		{
-			get => LiquidCore.liquidGrid[x, y].data;
-			set => LiquidCore.liquidGrid[x, y].data = value;
-		}
+        public ModLiquid Type
+        {
+            get => LiquidRegistry.liquidList[LiquidWorld.liquidGrid[X, Y].data];
+            set
+            {
+                if (value == null)
+                {
+                    LiquidWorld.liquidGrid[X, Y].data = 0;
+                    Main.tile[X, Y].liquid = 0;
+                }
+                else
+                {
+                    LiquidWorld.liquidGrid[X, Y].data = (byte)value.Type;
+                }
+            }
+        }
+        public ref byte TypeID => ref LiquidWorld.liquidGrid[X, Y].data;
 
-		public byte Amount
-		{
-			get => Tile.liquid;
-			set => Tile.liquid = value;
-		}
+        public ref byte Amount => ref Main.tile[X, Y].liquid;
 
-		private bool _checkingLiquid;
-		private bool _skipLiquid;
+        public bool CheckingLiquid
+        {
+            get => Main.tile[X, Y].checkingLiquid();
+            set => Main.tile[X, Y].checkingLiquid(value);
+        }
 
-		public LiquidRef(int x, int y)
-		{
-			if (Main.tile[x, y] == null)
-			{
-				Main.tile[x, y] = new Tile();
-			}
+        public bool SkipLiquid
+        {
+            get => Main.tile[X, Y].skipLiquid();
+            set => Main.tile[X, Y].skipLiquid(value);
+        }
 
-			this.x = x;
-			this.y = y;
+        public bool HasLiquid => Amount > 0;
 
-			if (Tile.bTileHeader == 159)
-			{
-				LiquidCore.liquidGrid[x, y].data = 0;
-			}
-			else if (Tile.lava())
-			{
-				LiquidCore.liquidGrid[x, y].data = 1;
-			}
-			else if (Tile.honey())
-			{
-				LiquidCore.liquidGrid[x, y].data = 2;
-			}
-		}
-
-		public bool CheckingLiquid()
-		{
-			//return _checkingLiquid;
-			return Tile.checkingLiquid();
-		}
-
-		public void SetCheckingLiquid(bool flag)
-		{
-			//_checkingLiquid = flag;
-			Tile.checkingLiquid(flag);
-		}
-
-		public bool SkipLiquid()
-		{
-			//return _skipLiquid;
-			return Tile.skipLiquid();
-		}
-
-		public void SetSkipLiquid(bool flag)
-		{
-			//_skipLiquid = flag;
-			Tile.skipLiquid(flag);
-		}
-
-		public bool HasLiquid()
-		{
-			return Amount > 0;
-		}
-	}
+        public LiquidRef(int x, int y)
+        {
+            X = x;
+            Y = y;
+            if (Main.tile[x, y] == null)
+            {
+                Main.tile[x, y] = new Tile();
+            }
+        }
+    }
 }

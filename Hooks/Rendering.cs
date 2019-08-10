@@ -973,9 +973,9 @@ namespace LiquidAPI.Hooks
 			{
 				for (int j = num7 - 2; j < num8 + 2; j++)
 				{
-					LiquidRef liquid = LiquidCore.grid[j, i];
-					LiquidRef liquidUp = LiquidCore.grid[j, i + 1];
-					LiquidRef liquidDown = LiquidCore.grid[j, i - 1];
+					LiquidRef liquid = LiquidWorld.grid[j, i];
+					LiquidRef liquidUp = LiquidWorld.grid[j, i + 1];
+					LiquidRef liquidDown = LiquidWorld.grid[j, i - 1];
 
                     if (liquid.Amount > 0 &&
 					    (!liquid.Tile.nactive() || !Main.tileSolid[liquid.Tile.type] ||
@@ -985,7 +985,7 @@ namespace LiquidAPI.Hooks
 						float num11 = (float) (256 - (int) liquid.Amount);
 						num11 /= 32f;
 						int num12 = 0;
-					    if (liquid.Type == LiquidID.lava)
+					    if (liquid.TypeID == LiquidID.Lava)
 					    {
 					        if (Main.drewLava)
 					        {
@@ -1018,17 +1018,17 @@ namespace LiquidAPI.Hooks
 
 					        liquidTexture = OldLavaTexture[lavaStyle];
 					    }
-					    else if (liquid.Type == LiquidID.honey)
+					    else if (liquid.TypeID == LiquidID.Honey)
 					    {
 					        liquidTexture = OldHoneyTexture[honeyStyle];
 					    }
-					    else if (liquid.Type != LiquidID.water)
+					    else if (liquid.TypeID != LiquidID.Water)
 					    {
-					        liquidTexture = LiquidRegistry.getInstance()[liquid.Type].oldTexture;
+					        liquidTexture = LiquidRegistry.liquidList[liquid.TypeID].OldTexture;
 					    }
 
 
-                        if (liquid.Type == LiquidID.water)
+                        if (liquid.TypeID == LiquidID.Water)
 						{
 							num12 = Style;
 						    liquidTexture = OldWaterTexture[num12];
@@ -1124,12 +1124,9 @@ namespace LiquidAPI.Hooks
 							{
 								bool flag = true;
 								int num20 = i + 1;
-								while (num20 < i + 6 &&
-								       (!LiquidCore.grid[j, num20].Tile.nactive() ||
-								        !Main.tileSolid[LiquidCore.grid[j, num20].Tile.type] ||
-								        Main.tileSolidTop[LiquidCore.grid[j, num20].Tile.type]))
+								while (num20 < i + 6 && (!LiquidWorld.grid[j, num20].Tile.nactive() || !Main.tileSolid[LiquidWorld.grid[j, num20].Tile.type] || Main.tileSolidTop[LiquidWorld.grid[j, num20].Tile.type]))
 								{
-									if (LiquidCore.grid[j, num20].Amount < 200)
+									if (LiquidWorld.grid[j, num20].Amount < 200)
 									{
 										flag = false;
 										break;
@@ -1143,7 +1140,7 @@ namespace LiquidAPI.Hooks
 									num17 = 0.5f;
 									value2 = new Microsoft.Xna.Framework.Rectangle(0, 4, 16, 16);
 								}
-								else if (liquidDown.HasLiquid())
+								else if (liquidDown.HasLiquid)
 								{
 									value2 = new Microsoft.Xna.Framework.Rectangle(0, 2, value2.Width, value2.Height);
 								}
@@ -1167,7 +1164,7 @@ namespace LiquidAPI.Hooks
 								{
 									Microsoft.Xna.Framework.Color newColor =
 										new Microsoft.Xna.Framework.Color(255, 255, 255);
-									if (liquid.Type == LiquidID.honey)
+									if (liquid.TypeID == LiquidID.Honey)
 									{
 										newColor = new Microsoft.Xna.Framework.Color(255, 255, 50);
 									}
@@ -1178,7 +1175,7 @@ namespace LiquidAPI.Hooks
 								}
 							}
 
-							if (liquid.Type == LiquidID.honey)
+							if (liquid.TypeID == LiquidID.Honey)
 							{
 								num17 *= 1.6f;
 								if (num17 > 1f)
@@ -1187,7 +1184,7 @@ namespace LiquidAPI.Hooks
 								}
 							}
 
-							if (liquid.Type == LiquidID.lava)
+							if (liquid.TypeID == LiquidID.Lava)
 							{
 								num17 *= 1.8f;
 								if (num17 > 1f)

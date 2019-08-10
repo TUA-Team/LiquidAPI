@@ -2,8 +2,8 @@
 {
 	internal static class LiquidID
 	{
-		public const int water = 0;
-		public const int lava = 1;
-		public const int honey = 2;
+		public const int Water = 0;
+		public const int Lava = 1;
+		public const int Honey = 2;
 	}
 }

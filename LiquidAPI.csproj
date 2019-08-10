@@ -2,7 +2,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\..\references\tModLoader.targets" />
   <PropertyGroup>
-    <AssemblyName>Dummy</AssemblyName>
+    <AssemblyName>LiquidAPI</AssemblyName>
     <TargetFramework>net45</TargetFramework>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <LangVersion>latest</LangVersion>
@@ -12,8 +12,5 @@
   </PropertyGroup>
   <Target Name="BuildMod" AfterTargets="Build">
     <Exec Command="&quot;$(tMLBuildServerPath)&quot; -build $(ProjectDir) -eac $(TargetPath) -define $(DefineConstants) -unsafe $(AllowUnsafeBlocks)" />
-  </Target>
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="pushd $(ProjectDir)_scripts\&#xD;&#xA;&quot;tmlbuild.bat&quot; &quot;$(ProjectDir)\&quot; -eac &quot;$(TargetPath)&quot;&#xD;&#xA;popd" />
   </Target>
 </Project>

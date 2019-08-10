@@ -6,38 +6,53 @@ using Terraria;
 using Terraria.Graphics;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.ObjectData;
 // ReSharper disable InconsistentNaming
 
 namespace LiquidAPI
 {
-	public class ModLiquid
-	{
-		public bool gravity = true;
-		public int customDelay = 1; //Default value, aka 
+    public abstract class ModLiquid
+    {
+        public bool gravity = true;
+        public int customDelay = 1; //Default value, aka 
 
-	    internal int liquidIndex;
+        internal int Type;
 
-		/// <summary>
-		/// Take an array that contain legacy style texture and 1.3.4+ texture style
-		/// </summary>
-		/// <param name="name"></param>
-		/// <returns></returns>
-		public virtual bool Autoload(ref string name)
-		{
-			return true;
-		}
+        public Mod Mod { get; internal set; }
 
-		public virtual void Update() { }
+        public ModTranslation DisplayName { get; internal set; }
 
-		//Normally trigger if gravity is at false
-		/*public virtual bool CustomPhysic(int x, int y)
+        public string Name { get; internal set; }
+
+        public virtual Texture2D Texture => ModContent.GetTexture(this.GetType().FullName.Replace(".", "/"));
+        public virtual Texture2D OldTexture => ModContent.GetTexture(this.GetType().FullName.Replace(".", "/"));
+
+        public Color LiquidColor = Color.White;
+
+        public byte WaterfallLength = 10;
+        public float DefaultOpacity = 1f;
+        public byte WaveMaskStrength = 0;
+        public byte ViscosityMask = 0;
+
+        /// <summary>
+        /// Takes an array that contain legacy style texture and 1.3.4+ texture style
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public virtual bool Autoload(ref string name, ref string texture) => true;
+
+        public virtual void SetDefaults() { }
+
+        public virtual void Update() { }
+
+        //Normally trigger if gravity is at false
+        /*public virtual bool CustomPhysic(int x, int y)
 		{
 			LiquidRef liquidLeft = LiquidCore.grid[x - 1, y];
 			LiquidRef liquidRight = LiquidCore.grid[x + 1, y];
 			LiquidRef liquidUp = LiquidCore.grid[x, y - 1];
 			LiquidRef liquidDown = LiquidCore.grid[x, y + 1];
 			LiquidRef liquidSelf = LiquidCore.grid[x, y];
-
 			if (!Liquid.quickFall)
 			{
 				if (liquid.delay < 2)
@@ -45,95 +60,67 @@ namespace LiquidAPI
 					++liquid.delay;
 					return false;
 				}
-
 				liquid.delay = 0;
 				if (liquidLeft.liquidsType() == liquidSelf.liquidsType())
 				{
 					Liquid.AddWater(liquid.x, liquid.y);
 					//LiquidExtension.AddModdedLiquidAround(liquid.x, liquid.y);
 				}
-
 				if (liquidRight.liquidsType() == liquidSelf.liquidsType())
 				{
 					Liquid.AddWater(liquid.x, liquid.y);
 					//LiquidExtension.AddModdedLiquidAround(liquid.x, liquid.y);
 				}
-
 				if (liquidUp.liquidsType() == liquidSelf.liquidsType())
 				{
 					Liquid.AddWater(liquid.x, liquid.y);
 					//LiquidExtension.AddModdedLiquidAround(liquid.x, liquid.y);
 				}
-
 				if (liquidDown.liquidsType() == liquidSelf.liquidsType())
 				{
 					Liquid.AddWater(liquid.x, liquid.y);
 					//LiquidExtension.AddModdedLiquidAround(liquid.x, liquid.y);
 				}
 			}
-
 			return true;
 		}*/
 
-		public virtual float SetLiquidOpacity()
-		{
-			return 1;
-		}
+        public virtual void PreDrawValueSet(ref bool bg, ref int style, ref float Alpha) { }
 
-		public virtual void PreDrawValueSet(ref bool bg, ref int style, ref float Alpha) { }
+        public virtual void PreDraw(TileBatch batch) { }
 
-		public virtual void PreDraw(TileBatch batch) { }
+        public virtual void Draw(TileBatch batch) { }
 
-		public virtual void Draw(TileBatch batch) { }
+        public virtual void PostDraw(TileBatch batch) { }
 
-		public virtual void PostDraw(TileBatch batch) { }
+        public virtual void PlayerInteraction(Player target) { }
 
-		public virtual void PlayerInteraction(Player target) { }
+        public virtual void NPCInteraction(NPC target) { }
 
-		public virtual void NPCInteraction(NPC target) { }
+        public virtual void ItemInteraction(Item target) { }
 
-		public virtual void ItemInteraction(Item target) { }
+        public virtual void LiquidInteraction(int x, int y, ModLiquid target) { }
 
-		public virtual void LiquidInteraction(int x, int y, ModLiquid target) { }
+        public virtual void LavaInteraction(int x, int y) { }
 
-		public virtual void LavaInteraction(int x, int y) { }
+        public virtual void HoneyInteraction(int x, int y) { }
 
-		public virtual void HoneyInteraction(int x, int y) { }
+        public virtual bool CanKillTile(int x, int y)
+        {
+            return TileObjectData.CheckWaterDeath(Main.tile[x, y]);
+        }
 
-		internal void AddModBucket()
-		{
-			ModBucket bucket = new ModBucket(liquidIndex, liquidColor, name);
-			mod.AddItem(bucket.name, bucket.Clone());
-		}
-
-	    public virtual Color liquidColor
-	    {
-	        get { return Color.White; }
-	    }
-
-	    public Mod mod { get; internal set; }
-
-	    public virtual string name { get; }
-
-	    public Liquid liquid { get; } = new Liquid();
-
-	    public virtual Texture2D texture
-	    {
-	        get { return ModContent.GetTexture(this.GetType().FullName.Replace(".", "/")); }
-	    }
-
-	    public virtual Texture2D oldTexture
-	    {
-	        get { return ModContent.GetTexture(this.GetType().FullName.Replace(".", "/")); }
-	    }
+        internal void AddModBucket()
+        {
+            Mod.AddItem("Bucket" + Name, new ModBucket(this));
+        }
     }
 
-	public class ModBucket : ModItem
-	{
-		private readonly Color liquidColor;
-		internal string name;
+    public class ModBucket : ModItem
+    {
+        private readonly ModLiquid liquid;
 
-		public ModBucket() { }
+        public override string Texture => "LiquidAPI/ModBucket";
 
         public override bool CloneNewInstances => true;
 
@@ -180,37 +167,43 @@ namespace LiquidAPI
 				//item.stack--;
 			}
 
-			return true;
-		}
+            if (!tile.HasLiquid || tile.Type == this.liquid)
+            {
 
-		public override void PostDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale)
-		{
-			item.useAnimation = 45;
-			item.useTime = 45;
-			item.useStyle = 4;
+                //Item newItem = Main.item[Item.NewItem(player.position, item.type)];
+                //ModBucket newBucket = newItem.modItem as ModBucket;
 
-			if (liquidType == -1) return;
+                tile.Type = this.liquid;
+                tile.Amount = 255;
 
-			Texture2D liquidTexture = LiquidAPI.instance.GetTexture("Texture/Bucket/liquid");
-			spriteBatch.Draw(liquidTexture, position, null, liquidColor, 0.0f, origin, new Vector2(scale), SpriteEffects.None, 0);
-		}
+                WorldGen.SquareTileFrame(Player.tileTargetX, Player.tileTargetY, true);
+                //player.PutModItemInInventory(newBucket);
+                //item.stack--;
+            }
 
-		public override void PostDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, float rotation, float scale, int whoAmI)
-		{
-			if (liquidType == -1) return;
+            return true;
+        }
 
-			Texture2D liquidTexture = LiquidAPI.instance.GetTexture("Texture/Bucket/liquid");
-			spriteBatch.Draw(liquidTexture, item.position, liquidColor);
-		}
+        public override void PostDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale)
+        {
+            item.useAnimation = 45;
+            item.useTime = 45;
+            item.useStyle = 4;
 
-		public override bool OnPickup(Player player)
-		{
-			return base.OnPickup(player);
-		}
+            if (liquid != null)
+            {
+                Texture2D liquidTexture = LiquidAPI.instance.GetTexture("Texture/Bucket/liquid");
+                spriteBatch.Draw(liquidTexture, position, null, liquid.LiquidColor, 0f, origin, new Vector2(scale), SpriteEffects.None, 0);
+            }
+        }
 
-	    private int liquidType { get; set; }
-
-	    public override string Texture => "LiquidAPI/ModBucket";
-	    public override bool CloneNewInstances => true;
+        public override void PostDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, float rotation, float scale, int whoAmI)
+        {
+            if (liquid != null)
+            {
+                Texture2D liquidTexture = LiquidAPI.instance.GetTexture("Texture/Bucket/liquid");
+                spriteBatch.Draw(liquidTexture, item.position, liquid.LiquidColor);
+            }
+        }
     }
 }

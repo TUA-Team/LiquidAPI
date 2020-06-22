@@ -22,28 +22,28 @@ namespace LiquidAPI.Hooks
 
             if (liquidLeft.Amount > 0 && liquidLeft.TypeID != LiquidID.Lava || liquidRight.Amount > 0 && liquidRight.TypeID != LiquidID.Lava || liquidDown.Amount > 0 && liquidDown.TypeID != LiquidID.Lava)
             {
-                int num = 0;
+                int liquidAmount = 0;
                 if (!(liquidLeft.Type is Lava))
                 {
-                    num += liquidLeft.Amount;
+                    liquidAmount += liquidLeft.Amount;
                     liquidLeft.Amount = 0;
                 }
 
                 if (!(liquidRight.Type is Lava))
                 {
-                    num += liquidRight.Amount;
+                    liquidAmount += liquidRight.Amount;
                     liquidRight.Amount = 0;
                 }
 
                 if (!(liquidDown.Type is Lava))
                 {
-                    num += liquidDown.Amount;
+                    liquidAmount += liquidDown.Amount;
                     liquidDown.Amount = 0;
                 }
 
-                int type = (liquidLeft.Type is Honey || liquidRight.Type is Honey || liquidDown.Type is Honey) ? TileID.CrispyHoneyBlock : TileID.Obsidian;
+                int type = liquidSelf.Type.LiquidInteraction(liquidUp, liquidDown, liquidLeft, liquidRight, liquidSelf.X, liquidSelf.Y);
 
-                if (num >= 24)
+                if (liquidAmount >= 24)
                 {
                     if (liquidSelf.Tile.active() && Main.tileObsidianKill[liquidSelf.Tile.type])
                     {
@@ -109,12 +109,8 @@ namespace LiquidAPI.Hooks
                     }
                     else
                     {
-                        int type = TileID.Obsidian;
+                        int type = liquidSelf.Type.LiquidInteraction(liquidUp, liquidDown, liquidLeft, liquidRight, liquidSelf.X, liquidSelf.Y);
 
-                        if (liquidUp.TypeID == LiquidID.Honey)
-                        {
-                            type = TileID.CrispyHoneyBlock;
-                        }
                         liquidSelf.Amount = 0;
                         liquidSelf.Type = null;
 
@@ -193,10 +189,23 @@ namespace LiquidAPI.Hooks
                     return;
                 }
 
-                liquidSelf.Amount = 0;
-                liquidSelf.Type = null;
-
-                WorldGen.PlaceTile(x, y, TileID.HoneyBlock, true, true);
+                int type;
+                try
+                {
+                    if (liquidUp.Type == null || liquidDown.Type == null || liquidLeft.Type == null || liquidRight.Type == null)
+                    {
+                        type = TileID.HoneyBlock;
+                    }
+                    else
+                    {
+                        type = liquidSelf.Type.LiquidInteraction(liquidUp, liquidDown, liquidLeft, liquidRight, liquidSelf.X, liquidSelf.Y);
+                    }
+                }
+                catch
+                {
+                    type = TileID.HoneyBlock;
+                }
+                WorldGen.PlaceTile(x, y, type, true, true);
 
                 Main.PlaySound(flag ? SoundID.LiquidsHoneyLava : SoundID.LiquidsHoneyWater, new Vector2(x * 16 + 8, y * 16 + 8));
 

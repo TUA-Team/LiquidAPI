@@ -1,4 +1,6 @@
-﻿using Microsoft.Xna.Framework;
+﻿using LiquidAPI.LiquidMod;
+using LiquidAPI.Vanilla;
+using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -7,12 +9,14 @@ namespace LiquidAPI.Test
 {
 	class PlutonicWaste : ModLiquid
 	{
-		public override void SetDefaults()
+        public override Color LiquidColor => Color.GreenYellow;
+
+        public override void SetDefaults()
 		{
 			DisplayName.SetDefault("Liquid Waste");
 			DefaultOpacity=0.5f;
-			LiquidColor=Color.GreenYellow;
-		}
+            customDelay = 50;
+        }
 
 		public override void PreDrawValueSet(ref bool bg, ref int style, ref float Alpha)
 		{
@@ -29,5 +33,21 @@ namespace LiquidAPI.Test
 				NPC.NewNPC((int) position.X, (int) position.Y, ModLoader.GetMod("TUA").NPCType("MutatedSludge"));
 			}
 		}
-	}
+
+        public override int LiquidInteraction(LiquidRef liquidUp, LiquidRef liquidDown, LiquidRef liquidLeft, LiquidRef liquidRight, int x, int y)
+        {
+            if (liquidLeft.Type is Lava || liquidRight.Type is Lava || liquidDown.Type is Lava)
+            {
+                return TileID.Diamond;
+            } else if (liquidLeft.Type is Water || liquidRight.Type is Water || liquidDown.Type is Water)
+            {
+                return TileID.Hellstone;
+            } else if (liquidLeft.Type is WeirdLiquid || liquidRight.Type is WeirdLiquid || liquidDown.Type is WeirdLiquid)
+            {
+                return TileID.AdamantiteBeam;
+            }
+
+            return base.LiquidInteraction(liquidUp, liquidDown, liquidLeft, liquidRight, x, y);
+        }
+    }
 }

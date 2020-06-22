@@ -1,6 +1,7 @@
 ﻿using System;
 using LiquidAPI.ID;
 using LiquidAPI.LiquidMod;
+using LiquidAPI.Vanilla;
 using Terraria;
 using Terraria.ID;
 
@@ -76,7 +77,8 @@ namespace LiquidAPI.Hooks
 
                 if (liquidSelf.TypeID == LiquidID.Honey)
                 {
-                    Liquid.HoneyCheck(self.x, self.y);
+                    LiquidRegistry.ModLiquidCheck(liquidSelf.Type, self.x, self.y);
+                    //Liquid.HoneyCheck(self.x, self.y);
                     if (!Liquid.quickFall)
                     {
                         if (self.delay > 0)
@@ -90,26 +92,66 @@ namespace LiquidAPI.Hooks
                 }
                 else
                 {
-                    if (liquidLeft.TypeID == LiquidID.Honey)
+                    if (liquidLeft.TypeID != 0 && liquidLeft.TypeID == liquidSelf.TypeID)
                     {
                         Liquid.AddWater(self.x - 1, self.y);
                     }
 
-                    if (liquidRight.TypeID == LiquidID.Honey)
+                    if (liquidRight.TypeID != 0 && liquidRight.TypeID == liquidSelf.TypeID)
                     {
                         Liquid.AddWater(self.x + 1, self.y);
                     }
 
-                    if (liquidUp.TypeID == LiquidID.Honey)
+                    if (liquidUp.TypeID != 0 && liquidUp.TypeID == liquidSelf.TypeID)
                     {
                         Liquid.AddWater(self.x, self.y - 1);
                     }
 
-                    if (liquidDown.TypeID == LiquidID.Honey)
+                    if (liquidDown.TypeID != 0 && liquidDown.TypeID == liquidSelf.TypeID)
                     {
                         Liquid.AddWater(self.x, self.y + 1);
                     }
                 }
+
+                if (LiquidRegistry.liquidList.ContainsValue(liquidSelf.Type) && !(liquidSelf.Type is Water))
+                {
+                    LiquidRegistry.ModLiquidCheck(liquidSelf.Type, self.x, self.y);
+                    if (!Liquid.quickFall)
+                    {
+                        if (self.delay > 0)
+                        {
+                            self.delay--;
+                            return;
+                        }
+
+                        self.delay = 50;
+                    }
+                    else
+                    {
+                        if (liquidLeft.TypeID == liquidSelf.TypeID)
+                        {
+                            Liquid.AddWater(self.x - 1, self.y);
+                        }
+
+                        if (liquidRight.TypeID == liquidSelf.TypeID)
+                        {
+                            Liquid.AddWater(self.x + 1, self.y);
+                        }
+
+                        if (liquidUp.TypeID == liquidSelf.TypeID)
+                        {
+                            Liquid.AddWater(self.x, self.y - 1);
+                        }
+
+                        if (liquidDown.TypeID == liquidSelf.TypeID)
+                        {
+                            Liquid.AddWater(self.x, self.y + 1);
+                        }
+                    }
+                    
+                }
+
+                
             }
 
             if ((!liquidDown.Tile.nactive() || !Main.tileSolid[(int)liquidDown.Tile.type] ||

@@ -11,12 +11,12 @@ namespace LiquidAPI.LiquidMod
 
         public ModLiquid Type
         {
-            get => LiquidRegistry.liquidList[LiquidWorld.liquidGrid[X, Y].data];
+            get => LiquidRegistry.GetLiquid(LiquidWorld.liquidGrid[X, Y].data);
             set
             {
                 if (value == null)
                 {
-                    LiquidWorld.liquidGrid[X, Y].data = 0;
+                    LiquidWorld.liquidGrid[X, Y].data = 255;
                     Main.tile[X, Y].liquid = 0;
                 }
                 else
@@ -42,6 +42,7 @@ namespace LiquidAPI.LiquidMod
         }
 
         public bool HasLiquid => Amount > 0;
+        
 
         public LiquidRef(int x, int y)
         {

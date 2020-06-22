@@ -1,5 +1,7 @@
-﻿using Microsoft.Xna.Framework;
+﻿using LiquidAPI.LiquidMod;
+using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.ID;
 
 namespace LiquidAPI.Test
 {
@@ -8,11 +10,15 @@ namespace LiquidAPI.Test
 		public override void SetDefaults()
 		{
 			DisplayName.SetDefault("Test liquid");
-			LiquidColor = Color.White;
-			DefaultOpacity = 1f;
+            DefaultOpacity = 1f;
 		}
 
-		public override void PreDrawValueSet(ref bool bg, ref int style, ref float Alpha)
+        public override int LiquidInteraction(LiquidRef liquidUp, LiquidRef liquidDown, LiquidRef liquidLeft, LiquidRef liquidRight, int x, int y)
+        {
+            return TileID.IceBlock;
+        }
+
+        public override void PreDrawValueSet(ref bool bg, ref int style, ref float Alpha)
 		{
 			style = 12;
 			Alpha = 0.2f;

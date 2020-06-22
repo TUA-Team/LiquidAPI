@@ -2,8 +2,9 @@
   "profiles": {
     "LiquidAPI": {
       "commandName": "Executable",
-      "executablePath": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Terraria\\Terraria.exe",
-      "workingDirectory": "C:\\Program Files (x86)\\Steam\\steamapps\\common\\Terraria\\"
+      "executablePath": "D:\\steam game\\steamapps\\steamapps\\common\\tModLoader\\tModLoader.exe",
+      "commandLineArgs": "/unsafe",
+      "workingDirectory": "D:\\steam game\\steamapps\\steamapps\\common\\tModLoader"
     }
   }
 }

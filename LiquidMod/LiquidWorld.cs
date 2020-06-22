@@ -11,7 +11,7 @@ namespace LiquidAPI.LiquidMod
 	//The following code is a modified version of DataCore from Project_Logic 0.5.0.1 provided by Rartrin
 	public class LiquidWorld : ModWorld
 	{
-		private const string EXTENSION = "tua";//Should work without the leading period
+		private const string EXTENSION = "twliquid";//Should work without the leading period
 		private const byte MODE = 0; //Extra data
 		private const byte FORM = 3; //Saving format
 

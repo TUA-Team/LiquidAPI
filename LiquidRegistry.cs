@@ -1,8 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 using LiquidAPI.Hooks;
+using LiquidAPI.ID;
 using LiquidAPI.LiquidMod;
+using LiquidAPI.Vanilla;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
@@ -38,12 +42,16 @@ namespace LiquidAPI
 			liquid.Name=name;
 			liquid.DisplayName = mod.CreateTranslation($"Mods.{mod.Name}.ItemName.{name}".Replace(" ","_"));
 			liquid.DisplayName.SetDefault(Regex.Replace(name, "([A-Z])", " $1").Trim());
-
+            
 			Texture2D usedTexture = texture ?? liquid.Texture;
 			Array.Resize(ref Main.liquidTexture, Main.liquidTexture.Length + 1);
-			liquid.Type = initialLiquidIndex++;
+			Array.Resize(ref LiquidRenderer.DEFAULT_OPACITY, LiquidRenderer.DEFAULT_OPACITY.Length + 1);
+            Array.Resize(ref LiquidRenderer.WATERFALL_LENGTH, LiquidRenderer.WATERFALL_LENGTH.Length + 1);
+            LiquidRenderer.WATERFALL_LENGTH[LiquidRenderer.WATERFALL_LENGTH.Length - 1] = liquid.WaterfallLength;
+            LiquidRenderer.DEFAULT_OPACITY[LiquidRenderer.DEFAULT_OPACITY.Length - 1] = liquid.DefaultOpacity;
+            liquid.Type = initialLiquidIndex++;
 			liquidList.Add(liquid.Type, liquid);
-			if (Main.netMode == NetmodeID.SinglePlayer)
+			if (Main.netMode != NetmodeID.Server)
 			{
 				LiquidRenderer.Instance.LiquidTextures[LiquidRenderer.Instance.LiquidTextures.Count - 1] = usedTexture;
 			}
@@ -51,7 +59,15 @@ namespace LiquidAPI
 			liquid.AddModBucket();
 		}
 
-		public static ModLiquid GetLiquid(int i)=>liquidList[i];
+        public static ModLiquid GetLiquid(int i)
+        {
+            return liquidList.ContainsKey(i) ? liquidList[i] : null;
+        }
+
+        public static ModLiquid GetLiquid(Mod mod, string name)
+        {
+            return liquidList.Values.Single(i => i.Mod.Name == mod.Name && i.Name == name);
+        }
 
 		public static void AddHooks()
 		{
@@ -77,7 +93,7 @@ namespace LiquidAPI
 			}
 		}
 
-		public static float setOpacity(LiquidRef liquid)
+		public static float SetOpacity(LiquidRef liquid)
 		{
 			/*for (byte by = 0; by < LiquidRegistry.liquidList.Count; by = (byte) (by + 1))
 			{
@@ -117,5 +133,125 @@ namespace LiquidAPI
 				return liquidList[newIndex].CustomPhysic(x, y);
 			}
 		}*/
-	}
+        public static void ModLiquidCheck(ModLiquid liquidType, int x, int y)
+        {
+            LiquidRef liquidLeft = LiquidWorld.grid[x - 1, y];
+            LiquidRef liquidRight = LiquidWorld.grid[x + 1, y];
+            LiquidRef liquidDown = LiquidWorld.grid[x, y - 1];
+            LiquidRef liquidUp = LiquidWorld.grid[x, y + 1];
+            LiquidRef liquidSelf = LiquidWorld.grid[x, y];
+
+            if (liquidLeft.Amount > 0 && liquidLeft.TypeID != liquidType.Type || liquidRight.Amount > 0 && liquidRight.TypeID != liquidType.Type || liquidDown.Amount > 0 && liquidDown.TypeID != liquidType.Type)
+            {
+                int liquidAmount = 0;
+                if (!(liquidLeft.Type.GetType() == liquidType.Type.GetType()))
+                {
+                    liquidAmount += liquidLeft.Amount;
+                    liquidLeft.Amount = 0;
+                }
+
+                if (!(liquidRight.Type.GetType() == liquidType.Type.GetType()))
+                {
+                    liquidAmount += liquidRight.Amount;
+                    liquidRight.Amount = 0;
+                }
+
+                if (!(liquidDown.Type.GetType() == liquidType.Type.GetType()))
+                {
+                    liquidAmount += liquidDown.Amount;
+                    liquidDown.Amount = 0;
+                }
+
+                int type = liquidSelf.Type.LiquidInteraction(liquidUp, liquidDown, liquidLeft, liquidRight, liquidSelf.X, liquidSelf.Y);
+
+                if (liquidAmount >= 24)
+                {
+                    if (liquidSelf.Tile.active() && Main.tileObsidianKill[liquidSelf.Tile.type])
+                    {
+                        WorldGen.KillTile(x, y);
+                        if (Main.netMode == NetmodeID.Server)
+                        {
+                            NetMessage.SendData(MessageID.TileChange, -1, -1, null, 0, x, y);
+                        }
+                    }
+
+                    if (!liquidSelf.Tile.active())
+                    {
+                        liquidSelf.Amount = 0;
+                        liquidSelf.Type = null;
+
+                        Main.PlaySound(type == TileID.Obsidian ? SoundID.LiquidsWaterLava : SoundID.LiquidsHoneyLava, new Vector2(x * 16 + 8, y * 16 + 8));
+
+                        WorldGen.PlaceTile(x, y, type, true, true);
+                        WorldGen.SquareTileFrame(x, y);
+
+                        if (Main.netMode == NetmodeID.Server)
+                        {
+                            NetMessage.SendTileSquare(-1, x - 1, y - 1, 3, type == TileID.Obsidian ? TileChangeType.LavaWater : TileChangeType.HoneyLava);
+                        }
+                    }
+                }
+
+            }
+            else if (liquidUp.Amount > 0 && liquidUp.TypeID != liquidType.Type)
+            {
+                bool flag = liquidSelf.Tile.active() && TileID.Sets.ForceObsidianKill[liquidSelf.Tile.type] && !TileID.Sets.ForceObsidianKill[liquidUp.Tile.type];
+
+                if (Main.tileCut[liquidUp.Tile.type])
+                {
+                    WorldGen.KillTile(x, y + 1);
+
+                    if (Main.netMode == NetmodeID.Server)
+                    {
+                        NetMessage.SendData(MessageID.TileChange, -1, -1, null, 0, x, y + 1);
+                    }
+                }
+                else if (liquidUp.Tile.active())
+                {
+                    WorldGen.KillTile(x, y + 1);
+
+                    if (Main.netMode == NetmodeID.Server)
+                    {
+                        NetMessage.SendData(MessageID.TileChange, -1, -1, null, 0, x, y + 1);
+                    }
+                }
+
+                if (!liquidUp.Tile.active() | flag)
+                {
+                    if (liquidSelf.Amount < 24)
+                    {
+                        liquidSelf.Amount = 0;
+                        liquidSelf.Type = null;
+
+                        if (Main.netMode == NetmodeID.Server)
+                        {
+                            NetMessage.SendTileSquare(-1, x - 1, y, 3, TileChangeType.None);
+                        }
+                    }
+                    else
+                    {
+                        int type = liquidSelf.Type.LiquidInteraction(liquidUp, liquidDown, liquidLeft, liquidRight, liquidSelf.X, liquidSelf.Y);
+
+                        liquidSelf.Amount = 0;
+                        liquidSelf.Type = null;
+
+                        //liquidSelf.lava(false);
+                        liquidUp.Amount = 0;
+
+                        if (type == TileID.Obsidian)
+                        {
+                            Main.PlaySound(type == TileID.Obsidian ? SoundID.LiquidsWaterLava : SoundID.LiquidsHoneyLava, new Vector2(x * 16 + 8, y * 16 + 8));
+                        }
+                        WorldGen.PlaceTile(x, y + 1, type, true, true);
+                        WorldGen.SquareTileFrame(x, y + 1);
+
+                        if (Main.netMode == NetmodeID.Server)
+                        {
+                            NetMessage.SendTileSquare(-1, x - 1, y, 3, type == TileID.Obsidian ? TileChangeType.LavaWater : TileChangeType.HoneyLava);
+                        }
+                    }
+                }
+            }
+        }
+    }
 }

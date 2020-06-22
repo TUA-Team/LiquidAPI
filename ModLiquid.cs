@@ -23,16 +23,21 @@ namespace LiquidAPI
         public ModTranslation DisplayName { get; internal set; }
 
         public string Name { get; internal set; }
-
-        public virtual Texture2D Texture => ModContent.GetTexture(this.GetType().FullName.Replace(".", "/"));
+        
+        public virtual Texture2D Texture => ModContent.GetTexture(this.GetType().FullName.Replace(".", "/") + "Fancy");
         public virtual Texture2D OldTexture => ModContent.GetTexture(this.GetType().FullName.Replace(".", "/"));
 
-        public Color LiquidColor = Color.White;
+        public virtual Color LiquidColor => Color.White;
 
         public byte WaterfallLength = 10;
         public float DefaultOpacity = 1f;
         public byte WaveMaskStrength = 0;
         public byte ViscosityMask = 0;
+
+        internal ModLiquid()
+        {
+            Name = this.GetType().Name;
+        }
 
         /// <summary>
         /// Takes an array that contain legacy style texture and 1.3.4+ texture style
@@ -101,9 +106,10 @@ namespace LiquidAPI
 
         public virtual void LiquidInteraction(int x, int y, ModLiquid target) { }
 
-        public virtual void LavaInteraction(int x, int y) { }
-
-        public virtual void HoneyInteraction(int x, int y) { }
+        public virtual int LiquidInteraction(LiquidRef liquidUp, LiquidRef liquidDown, LiquidRef liquidLeft, LiquidRef liquidRight, int x, int y)
+        {
+            return TileID.Obsidian;
+        }
 
         public virtual bool CanKillTile(int x, int y)
         {
@@ -126,6 +132,13 @@ namespace LiquidAPI
 
         public override bool Autoload(ref string name) => false;
 
+        public override void SetStaticDefaults()
+        {
+            if (liquid == null)
+                return;
+            DisplayName.SetDefault((liquid.DisplayName.GetDefault() ?? "Empty") + " Bucket");
+        }
+
 		public override void SetDefaults()
 		{
 			item.width = 24;
@@ -142,39 +155,22 @@ namespace LiquidAPI
             this.liquid = liquid;
         }
 
-
-
-        public override void SetStaticDefaults()
+        internal ModBucket()
         {
-            if (liquid == null)
-                return;
-            DisplayName.SetDefault((liquid.DisplayName.GetDefault() ?? "Empty") + " Bucket");
-        }
 
-        public override void SetDefaults()
+        }
+        public override bool UseItem(Player player)
         {
-            item.width = 24;
-            item.height = 22;
-            item.maxStack = 99;
-            item.useStyle = ItemUseStyleID.SwingThrow;
-            item.useTime = 100;
-            item.useAnimation = 1;
-            item.consumable = true;
-        }
-
-				WorldGen.SquareTileFrame(Player.tileTargetX, Player.tileTargetY, true);
-				//player.PutModItemInInventory(newBucket);
-				//item.stack--;
-			}
-
-            if (!tile.HasLiquid || tile.Type == this.liquid)
+            LiquidRef liquid = LiquidWorld.grid[Player.tileTargetX, Player.tileTargetY];
+            
+            if (!liquid.HasLiquid || liquid.Type == this.liquid)
             {
 
                 //Item newItem = Main.item[Item.NewItem(player.position, item.type)];
                 //ModBucket newBucket = newItem.modItem as ModBucket;
 
-                tile.Type = this.liquid;
-                tile.Amount = 255;
+                liquid.Type = this.liquid;
+                liquid.Amount = 255;
 
                 WorldGen.SquareTileFrame(Player.tileTargetX, Player.tileTargetY, true);
                 //player.PutModItemInInventory(newBucket);

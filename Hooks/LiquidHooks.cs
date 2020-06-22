@@ -21,6 +21,7 @@ namespace LiquidAPI.Hooks
 		    On.Terraria.Main.DrawWater += Hooked_DrawWater;
 		    On.Terraria.Main.drawWaters += Hooked_drawWaters;
 
+
 			// Liquid Renderer
 			On.Terraria.GameContent.Liquid.LiquidRenderer.Update +=
 				(orig, self, time) => LiquidRenderer.Instance.Update(time);

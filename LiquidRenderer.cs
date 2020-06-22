@@ -54,14 +54,14 @@ namespace LiquidAPI
 		private const int CACHE_PADDING_2 = 4;
 		public const float MIN_LIQUID_SIZE = 0.25f;
 
-		private static readonly int[] WATERFALL_LENGTH = new int[]
+		internal static int[] WATERFALL_LENGTH = new int[]
 		{
 			10,
 			3,
 			2
 		};
 
-		private static readonly float[] DEFAULT_OPACITY = new float[]
+		internal static float[] DEFAULT_OPACITY = new float[]
 		{
 			0.6f,
 			0.95f,

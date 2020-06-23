@@ -129,14 +129,14 @@ namespace LiquidAPI.Hooks
             return false;
         }
 
-
+        private static int[] wetImmunityByNPCAI = new int[] { 21, 67 };
+        private static int[] wetImmunityByNPCType = new int[] { NPCID.BlazingWheel, NPCID.SleepingAngler, NPCID.SandElemental, NPCID.BartenderUnconscious };
 
         private static bool Collision_WaterCollision(On.Terraria.Collision.hook_WaterCollision origWaterCollision, NPC self, bool lava)
         {
             bool currentlyWet;
             GlobalLiquidNPC liquidGlobalNPC = self.GetGlobalNPC<GlobalLiquidNPC>();
-            
-            if (self.type == 72 || self.aiStyle == 21 || self.aiStyle == 67 || self.type == 376 || self.type == 579 || self.type == 541)
+            if(wetImmunityByNPCType.Contains(self.type) || wetImmunityByNPCAI.Contains(self.aiStyle))
             {
                 currentlyWet = false;
                 self.wetCount = 0;
@@ -159,15 +159,7 @@ namespace LiquidAPI.Hooks
 
             if (currentlyWet)
             {
-                if (self.onFire && !liquidGlobalNPC.LavaWet() && Main.netMode != 1)
-                {
-                    for (int buffIndex = 0; buffIndex < 5; buffIndex++)
-                    {
-                        if (self.buffType[buffIndex] == 24)
-                            self.DelBuff(buffIndex);
-                    }
-                }
-
+                RemoveOnFireDebuff(self, liquidGlobalNPC);
                 if (!self.wet && self.wetCount == 0)
                 {
                     self.wetCount = 10;
@@ -189,6 +181,8 @@ namespace LiquidAPI.Hooks
 
             return lava;
         }
+
+        
 
         private static void SpawnLiquidDust(NPC self, GlobalLiquidNPC liquidGlobalNPC)
         {
@@ -260,6 +254,18 @@ namespace LiquidAPI.Hooks
 
             if(!blacklistedWaterNPCTypeForSound.Contains(self.type) && !blacklistedWaterNPCAIForSound.Contains(self.aiStyle) && !self.noGravity)
                 Main.PlaySound(SoundID.Splash, (int) self.position.X, (int) self.position.Y, 0);
+        }
+
+        private static void RemoveOnFireDebuff(NPC self, GlobalLiquidNPC liquidGlobalNPC)
+        {
+            if (self.onFire && !liquidGlobalNPC.LavaWet() && Main.netMode != 1)
+            {
+                for (int buffIndex = 0; buffIndex < 5; buffIndex++)
+                {
+                    if (self.buffType[buffIndex] == 24)
+                        self.DelBuff(buffIndex);
+                }
+            }
         }
     }
 }

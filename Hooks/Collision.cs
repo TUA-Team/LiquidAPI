@@ -1,0 +1,287 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using LiquidAPI.Globals;
+using LiquidAPI.ID;
+using LiquidAPI.LiquidMod;
+using Microsoft.Xna.Framework;
+using Terraria;
+using Terraria.ID;
+
+namespace LiquidAPI.Hooks
+{
+    internal static partial class LiquidHooks
+    {
+        public static bool WetCollision(Vector2 Position, int Width, int Height)
+        {
+
+            Collision.honey = false;
+            Vector2 vector = new Vector2(Position.X + (float)(Width / 2), Position.Y + (float)(Height / 2));
+            int width = 10;
+            int height = Height / 2;
+            if (width > Width)
+                width = Width;
+
+            if (height > Height)
+                height = Height;
+
+            vector = new Vector2(vector.X - (float)(width / 2), vector.Y - (float)(height / 2));
+            int leftPosition = (int)(Position.X / 16f) - 1;
+            int rightPosition = (int)((Position.X + (float)Width) / 16f) + 2;
+            int downPosition = (int)(Position.Y / 16f) - 1;
+            int upPosition = (int)((Position.Y + (float)Height) / 16f) + 2;
+            int num3 = Utils.Clamp(leftPosition, 0, Main.maxTilesX - 1);
+            rightPosition = Utils.Clamp(rightPosition, 0, Main.maxTilesX - 1);
+            downPosition = Utils.Clamp(downPosition, 0, Main.maxTilesY - 1);
+            upPosition = Utils.Clamp(upPosition, 0, Main.maxTilesY - 1);
+            Vector2 vector2 = default(Vector2);
+            for (int posX = num3; posX < rightPosition; posX++)
+            {
+                for (int posY = downPosition; posY < upPosition; posY++)
+                {
+
+                    if (Main.tile[posX, posY] == null)
+                        continue;
+                    LiquidRef tile = LiquidWorld.grid[posX, posY];
+                    LiquidRef tile2 = LiquidWorld.grid[posX, posY - 1];
+                    if (tile.Amount > 0)
+                    {
+                        vector2.X = posX * 16;
+                        vector2.Y = posY * 16;
+                        int num4 = 16;
+                        float num5 = 256 - tile.Amount;
+                        num5 /= 32f;
+                        vector2.Y += num5 * 2f;
+                        num4 -= (int)(num5 * 2f);
+                        if (vector.X + (float)width > vector2.X && vector.X < vector2.X + 16f && vector.Y + (float)height > vector2.Y && vector.Y < vector2.Y + (float)num4)
+                        {
+                            if (tile.TypeID == LiquidID.Honey)
+                            {
+                                Collision.honey = true;
+                            }
+                            return true;
+                        }
+                    }
+                    else
+                    {
+                        if (!Main.tile[posX, posY].active() || Main.tile[posX, posY].slope() == 0 || posY <= 0 || Main.tile[posX, posY - 1] == null || tile2.Amount <= 0)
+                            continue;
+
+                        vector2.X = posX * 16;
+                        vector2.Y = posY * 16;
+                        int num6 = 16;
+                        if (vector.X + (float)width > vector2.X && vector.X < vector2.X + 16f && vector.Y + (float)height > vector2.Y && vector.Y < vector2.Y + (float)num6)
+                        {
+                            if (tile2.TypeID == LiquidID.Honey)
+                            {
+                                Collision.honey = true;
+                            }
+
+                            return true;
+                        }
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        public static bool LavaCollision(Vector2 Position, int Width, int Height)
+        {
+            int value = (int)(Position.X / 16f) - 1;
+            int value2 = (int)((Position.X + (float)Width) / 16f) + 2;
+            int value3 = (int)(Position.Y / 16f) - 1;
+            int value4 = (int)((Position.Y + (float)Height) / 16f) + 2;
+            int num = Utils.Clamp(value, 0, Main.maxTilesX - 1);
+            value2 = Utils.Clamp(value2, 0, Main.maxTilesX - 1);
+            value3 = Utils.Clamp(value3, 0, Main.maxTilesY - 1);
+            value4 = Utils.Clamp(value4, 0, Main.maxTilesY - 1);
+            Vector2 vector = default(Vector2);
+            for (int posX = num; posX < value2; posX++)
+            {
+                for (int posY = value3; posY < value4; posY++)
+                {
+                    LiquidRef liquid = LiquidWorld.grid[posX, posY];
+                    if (Main.tile[posX, posY] != null && liquid.Amount > 0 && liquid.TypeID == LiquidID.Lava)
+                    {
+                        vector.X = posX * 16;
+                        vector.Y = posY * 16;
+                        int num2 = 16;
+                        float num3 = 256 - liquid.Amount;
+                        num3 /= 32f;
+                        vector.Y += num3 * 2f;
+                        num2 -= (int)(num3 * 2f);
+                        if (Position.X + (float)Width > vector.X && Position.X < vector.X + 16f && Position.Y + (float)Height > vector.Y && Position.Y < vector.Y + (float)num2)
+                            return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+
+
+        private static bool Collision_WaterCollision(On.Terraria.Collision.hook_WaterCollision origWaterCollision, NPC self, bool lava)
+        {
+            bool currentlyWet;
+            GlobalLiquidNPC liquidGlobalNPC = self.GetGlobalNPC<GlobalLiquidNPC>();
+            
+            if (self.type == 72 || self.aiStyle == 21 || self.aiStyle == 67 || self.type == 376 || self.type == 579 || self.type == 541)
+            {
+                currentlyWet = false;
+                self.wetCount = 0;
+                lava = false;
+            }
+            else
+            {
+                currentlyWet = WetCollision(self.position, self.width, self.height);
+                if (Collision.honey)
+                {
+                    self.honeyWet = true;
+                    liquidGlobalNPC.SetLiquidWetState(LiquidID.Honey, true);
+                }
+
+                if (self.lavaWet)
+                {
+                    liquidGlobalNPC.SetLiquidWetState(LiquidID.Lava, true);
+                }
+            }
+
+            if (currentlyWet)
+            {
+                if (self.onFire && !liquidGlobalNPC.LavaWet() && Main.netMode != 1)
+                {
+                    for (int buffIndex = 0; buffIndex < 5; buffIndex++)
+                    {
+                        if (self.buffType[buffIndex] == 24)
+                            self.DelBuff(buffIndex);
+                    }
+                }
+
+                if (!self.wet && self.wetCount == 0)
+                {
+                    self.wetCount = 10;
+                    if (!lava)
+                    {
+                        if (self.honeyWet)
+                        {
+                            for (int numberOfDust = 0; numberOfDust < 10; numberOfDust++)
+                            {
+                                int dustInstanceID = Dust.NewDust(new Vector2(self.position.X - 6f, self.position.Y + (float)(self.height / 2) - 8f), self.width + 12, 24, 152);
+                                Main.dust[dustInstanceID].velocity.Y -= 1f;
+                                Main.dust[dustInstanceID].velocity.X *= 2.5f;
+                                Main.dust[dustInstanceID].scale = 1.3f;
+                                Main.dust[dustInstanceID].alpha = 100;
+                                Main.dust[dustInstanceID].noGravity = true;
+                            }
+
+                            if (self.aiStyle != 1 && self.type != 1 && self.type != 16 && self.type != 147 && self.type != 59 && self.type != 300 && self.aiStyle != 39 && !self.noGravity)
+                            {
+                                Main.PlaySound(19, (int)self.position.X, (int)self.position.Y);
+                            }
+                        }
+                        else
+                        {
+                            for (int numberOfDust = 0; numberOfDust < 30; numberOfDust++)
+                            {
+                                int dustInstanceID = Dust.NewDust(new Vector2(self.position.X - 6f, self.position.Y + (float)(self.height / 2) - 8f), self.width + 12, 24, Dust.dustWater());
+                                Main.dust[dustInstanceID].velocity.Y -= 4f;
+                                Main.dust[dustInstanceID].velocity.X *= 2.5f;
+                                Main.dust[dustInstanceID].scale *= 0.8f;
+                                Main.dust[dustInstanceID].alpha = 100;
+                                Main.dust[dustInstanceID].noGravity = true;
+                            }
+
+                            if (self.type != 376 && self.type != 579 && self.aiStyle != 1 && self.type != 1 && self.type != 16 && self.type != 147 && self.type != 59 && self.type != 300 && self.aiStyle != 39 && self.aiStyle != 68 && self.type != 362 && self.type != 364 && self.type != 361 && self.type != 445 && !self.noGravity)
+                            {
+                                Main.PlaySound(19, (int)self.position.X, (int)self.position.Y, 0);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        for (int numberOfDust = 0; numberOfDust < 10; numberOfDust++)
+                        {
+                            int dustInstanceID = Dust.NewDust(new Vector2(self.position.X - 6f, self.position.Y + (float)(self.height / 2) - 8f), self.width + 12, 24, 35);
+                            Main.dust[dustInstanceID].velocity.Y -= 1.5f;
+                            Main.dust[dustInstanceID].velocity.X *= 2.5f;
+                            Main.dust[dustInstanceID].scale = 1.3f;
+                            Main.dust[dustInstanceID].alpha = 100;
+                            Main.dust[dustInstanceID].noGravity = true;
+                        }
+
+                        if (self.aiStyle != 1 && self.type != 1 && self.type != 16 && self.type != 147 && self.type != 59 && self.type != 300 && self.aiStyle != 39 && !self.noGravity)
+                        {
+                            Main.PlaySound(19, (int)self.position.X, (int)self.position.Y);
+                        }
+                    }
+                }
+
+                self.wet = true;
+            }
+            else if (self.wet)
+            {
+                self.velocity.X *= 0.5f;
+                self.wet = false;
+                if (self.wetCount == 0)
+                {
+                    self.wetCount = 10;
+                    if (!liquidGlobalNPC.LavaWet())
+                    {
+                        
+                        if (self.honeyWet)
+                        {
+                            for (int m = 0; m < 10; m++)
+                            {
+                                int dustInstanceID = Dust.NewDust(new Vector2(self.position.X - 6f, self.position.Y + (float)(self.height / 2) - 8f), self.width + 12, 24, 152);
+                                Main.dust[dustInstanceID].velocity.Y -= 1f;
+                                Main.dust[dustInstanceID].velocity.X *= 2.5f;
+                                Main.dust[dustInstanceID].scale = 1.3f;
+                                Main.dust[dustInstanceID].alpha = 100;
+                                Main.dust[dustInstanceID].noGravity = true;
+                            }
+
+                            if (self.aiStyle != 1 && self.type != 1 && self.type != 16 && self.type != 147 && self.type != 300 && self.type != 59 && self.aiStyle != 39 && !self.noGravity)
+                                Main.PlaySound(19, (int)self.position.X, (int)self.position.Y);
+                        }
+                        else
+                        {
+                            for (int n = 0; n < 30; n++)
+                            {
+                                int dustInstanceID = Dust.NewDust(new Vector2(self.position.X - 6f, self.position.Y + (float)(self.height / 2) - 8f), self.width + 12, 24, Dust.dustWater());
+                                Main.dust[dustInstanceID].velocity.Y -= 4f;
+                                Main.dust[dustInstanceID].velocity.X *= 2.5f;
+                                Main.dust[dustInstanceID].scale *= 0.8f;
+                                Main.dust[dustInstanceID].alpha = 100;
+                                Main.dust[dustInstanceID].noGravity = true;
+                            }
+
+                            if (self.type != 376 && self.type != 579 && self.aiStyle != 1 && self.type != 1 && self.type != 16 && self.type != 59 && self.type != 300 && self.aiStyle != 39 && self.aiStyle != 68 && self.type != 362 && self.type != 364 && self.type != 361 && self.type != 445 && !self.noGravity)
+                                Main.PlaySound(19, (int)self.position.X, (int)self.position.Y, 0);
+                        }
+                    }
+                    else
+                    {
+                        for (int num6 = 0; num6 < 10; num6++)
+                        {
+                            int num7 = Dust.NewDust(new Vector2(self.position.X - 6f, self.position.Y + (float)(self.height / 2) - 8f), self.width + 12, 24, 35);
+                            Main.dust[num7].velocity.Y -= 1.5f;
+                            Main.dust[num7].velocity.X *= 2.5f;
+                            Main.dust[num7].scale = 1.3f;
+                            Main.dust[num7].alpha = 100;
+                            Main.dust[num7].noGravity = true;
+                        }
+
+                        if (self.aiStyle != 1 && self.type != 1 && self.type != 16 && self.type != 59 && self.type != 300 && self.aiStyle != 39 && !self.noGravity)
+                            Main.PlaySound(19, (int)self.position.X, (int)self.position.Y);
+                    }
+                }
+            }
+
+            return lava;
+        }
+    }
+}

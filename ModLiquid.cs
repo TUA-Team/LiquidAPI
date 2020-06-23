@@ -28,6 +28,7 @@ namespace LiquidAPI
         public virtual Texture2D OldTexture => ModContent.GetTexture(this.GetType().FullName.Replace(".", "/"));
 
         public virtual Color LiquidColor => Color.White;
+        public virtual int dustAmountOnEnter => 10;
 
         public byte WaterfallLength = 10;
         public float DefaultOpacity = 1f;

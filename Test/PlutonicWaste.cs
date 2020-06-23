@@ -30,7 +30,7 @@ namespace LiquidAPI.Test
 			{
 				Vector2 position = target.Center;
 				target.active = false;
-				NPC.NewNPC((int) position.X, (int) position.Y, ModLoader.GetMod("TUA").NPCType("MutatedSludge"));
+				NPC.NewNPC((int) position.X, (int) position.Y, NPCID.MoonLordCore);
 			}
 		}
 

@@ -14,9 +14,14 @@ namespace LiquidAPI.Hooks
 {
     internal static partial class LiquidHooks
     {
+        public static Dictionary<int, bool> staticNPCWet = new Dictionary<int, bool>();
+
         public static bool WetCollision(Vector2 Position, int Width, int Height)
         {
-
+            foreach (int key in staticNPCWet.Keys)
+            {
+                staticNPCWet[key] = false;
+            }
             Collision.honey = false;
             Vector2 vector = new Vector2(Position.X + (float)(Width / 2), Position.Y + (float)(Height / 2));
             int width = 10;
@@ -78,6 +83,8 @@ namespace LiquidAPI.Hooks
                             {
                                 Collision.honey = true;
                             }
+
+                            staticNPCWet[tile2.TypeID] = true;
 
                             return true;
                         }
@@ -164,60 +171,7 @@ namespace LiquidAPI.Hooks
                 if (!self.wet && self.wetCount == 0)
                 {
                     self.wetCount = 10;
-                    if (!lava)
-                    {
-                        if (self.honeyWet)
-                        {
-                            for (int numberOfDust = 0; numberOfDust < 10; numberOfDust++)
-                            {
-                                int dustInstanceID = Dust.NewDust(new Vector2(self.position.X - 6f, self.position.Y + (float)(self.height / 2) - 8f), self.width + 12, 24, 152);
-                                Main.dust[dustInstanceID].velocity.Y -= 1f;
-                                Main.dust[dustInstanceID].velocity.X *= 2.5f;
-                                Main.dust[dustInstanceID].scale = 1.3f;
-                                Main.dust[dustInstanceID].alpha = 100;
-                                Main.dust[dustInstanceID].noGravity = true;
-                            }
-
-                            if (self.aiStyle != 1 && self.type != 1 && self.type != 16 && self.type != 147 && self.type != 59 && self.type != 300 && self.aiStyle != 39 && !self.noGravity)
-                            {
-                                Main.PlaySound(19, (int)self.position.X, (int)self.position.Y);
-                            }
-                        }
-                        else
-                        {
-                            for (int numberOfDust = 0; numberOfDust < 30; numberOfDust++)
-                            {
-                                int dustInstanceID = Dust.NewDust(new Vector2(self.position.X - 6f, self.position.Y + (float)(self.height / 2) - 8f), self.width + 12, 24, Dust.dustWater());
-                                Main.dust[dustInstanceID].velocity.Y -= 4f;
-                                Main.dust[dustInstanceID].velocity.X *= 2.5f;
-                                Main.dust[dustInstanceID].scale *= 0.8f;
-                                Main.dust[dustInstanceID].alpha = 100;
-                                Main.dust[dustInstanceID].noGravity = true;
-                            }
-
-                            if (self.type != 376 && self.type != 579 && self.aiStyle != 1 && self.type != 1 && self.type != 16 && self.type != 147 && self.type != 59 && self.type != 300 && self.aiStyle != 39 && self.aiStyle != 68 && self.type != 362 && self.type != 364 && self.type != 361 && self.type != 445 && !self.noGravity)
-                            {
-                                Main.PlaySound(19, (int)self.position.X, (int)self.position.Y, 0);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        for (int numberOfDust = 0; numberOfDust < 10; numberOfDust++)
-                        {
-                            int dustInstanceID = Dust.NewDust(new Vector2(self.position.X - 6f, self.position.Y + (float)(self.height / 2) - 8f), self.width + 12, 24, 35);
-                            Main.dust[dustInstanceID].velocity.Y -= 1.5f;
-                            Main.dust[dustInstanceID].velocity.X *= 2.5f;
-                            Main.dust[dustInstanceID].scale = 1.3f;
-                            Main.dust[dustInstanceID].alpha = 100;
-                            Main.dust[dustInstanceID].noGravity = true;
-                        }
-
-                        if (self.aiStyle != 1 && self.type != 1 && self.type != 16 && self.type != 147 && self.type != 59 && self.type != 300 && self.aiStyle != 39 && !self.noGravity)
-                        {
-                            Main.PlaySound(19, (int)self.position.X, (int)self.position.Y);
-                        }
-                    }
+                    SpawnLiquidDust(self, liquidGlobalNPC);
                 }
 
                 self.wet = true;
@@ -229,59 +183,83 @@ namespace LiquidAPI.Hooks
                 if (self.wetCount == 0)
                 {
                     self.wetCount = 10;
-                    if (!liquidGlobalNPC.LavaWet())
-                    {
-                        
-                        if (self.honeyWet)
-                        {
-                            for (int m = 0; m < 10; m++)
-                            {
-                                int dustInstanceID = Dust.NewDust(new Vector2(self.position.X - 6f, self.position.Y + (float)(self.height / 2) - 8f), self.width + 12, 24, 152);
-                                Main.dust[dustInstanceID].velocity.Y -= 1f;
-                                Main.dust[dustInstanceID].velocity.X *= 2.5f;
-                                Main.dust[dustInstanceID].scale = 1.3f;
-                                Main.dust[dustInstanceID].alpha = 100;
-                                Main.dust[dustInstanceID].noGravity = true;
-                            }
-
-                            if (self.aiStyle != 1 && self.type != 1 && self.type != 16 && self.type != 147 && self.type != 300 && self.type != 59 && self.aiStyle != 39 && !self.noGravity)
-                                Main.PlaySound(19, (int)self.position.X, (int)self.position.Y);
-                        }
-                        else
-                        {
-                            for (int n = 0; n < 30; n++)
-                            {
-                                int dustInstanceID = Dust.NewDust(new Vector2(self.position.X - 6f, self.position.Y + (float)(self.height / 2) - 8f), self.width + 12, 24, Dust.dustWater());
-                                Main.dust[dustInstanceID].velocity.Y -= 4f;
-                                Main.dust[dustInstanceID].velocity.X *= 2.5f;
-                                Main.dust[dustInstanceID].scale *= 0.8f;
-                                Main.dust[dustInstanceID].alpha = 100;
-                                Main.dust[dustInstanceID].noGravity = true;
-                            }
-
-                            if (self.type != 376 && self.type != 579 && self.aiStyle != 1 && self.type != 1 && self.type != 16 && self.type != 59 && self.type != 300 && self.aiStyle != 39 && self.aiStyle != 68 && self.type != 362 && self.type != 364 && self.type != 361 && self.type != 445 && !self.noGravity)
-                                Main.PlaySound(19, (int)self.position.X, (int)self.position.Y, 0);
-                        }
-                    }
-                    else
-                    {
-                        for (int num6 = 0; num6 < 10; num6++)
-                        {
-                            int num7 = Dust.NewDust(new Vector2(self.position.X - 6f, self.position.Y + (float)(self.height / 2) - 8f), self.width + 12, 24, 35);
-                            Main.dust[num7].velocity.Y -= 1.5f;
-                            Main.dust[num7].velocity.X *= 2.5f;
-                            Main.dust[num7].scale = 1.3f;
-                            Main.dust[num7].alpha = 100;
-                            Main.dust[num7].noGravity = true;
-                        }
-
-                        if (self.aiStyle != 1 && self.type != 1 && self.type != 16 && self.type != 59 && self.type != 300 && self.aiStyle != 39 && !self.noGravity)
-                            Main.PlaySound(19, (int)self.position.X, (int)self.position.Y);
-                    }
+                    SpawnLiquidDust(self, liquidGlobalNPC);
                 }
             }
 
             return lava;
+        }
+
+        private static void SpawnLiquidDust(NPC self, GlobalLiquidNPC liquidGlobalNPC)
+        {
+            if (!liquidGlobalNPC.LavaWet())
+            {
+                if (self.honeyWet)
+                    SpawnHoneyDust(self);
+                else
+                    SpawnWaterDust(self);
+            }
+            else
+                SpawnLavaDust(self);
+            
+        }
+
+        private static void SpawnLiquidDust(NPC self, int dustID, int amountOfDust, float dustVelocityX, float dustVelocityY, float dustScale, int dustAlpha = 100, bool noGravity = true)
+        {
+            for (int m = 0; m < amountOfDust; m++)
+            {
+                int dustInstanceID = Dust.NewDust(new Vector2(self.position.X - 6f, self.position.Y + (float) (self.height / 2) - 8f), self.width + 12, 24, 152);
+                Main.dust[dustInstanceID].velocity.Y -= dustVelocityX;
+                Main.dust[dustInstanceID].velocity.X *= dustVelocityY;
+                Main.dust[dustInstanceID].scale = dustScale;
+                Main.dust[dustInstanceID].alpha = dustAlpha;
+                Main.dust[dustInstanceID].noGravity = noGravity;
+            }
+
+            if (self.aiStyle != 1 && self.type != 1 && self.type != 16 && self.type != 147 && self.type != 300 && self.type != 59 && self.aiStyle != 39 && !self.noGravity)
+                Main.PlaySound(19, (int) self.position.X, (int) self.position.Y);
+        }
+
+        private static readonly int[] blacklistedHoneyNPCAIForSound = new int[] {1, 39};
+        private static readonly int[] blacklistedHoneyNPCTypeForSound = new int[] { NPCID.BlueSlime, NPCID.MotherSlime, NPCID.LavaSlime, NPCID.IceSlime, NPCID.Mouse };
+
+        private static void SpawnHoneyDust(NPC self)
+        {
+            SpawnLiquidDust(self, 152, 10, 1f, 2.5f, 1.3f, 100, true);
+            
+            if(!blacklistedHoneyNPCTypeForSound.Contains(self.type) && !blacklistedHoneyNPCAIForSound.Contains(self.aiStyle)  && !self.noGravity)
+                Main.PlaySound(SoundID.Splash, (int) self.position.X, (int) self.position.Y);
+        }
+
+        private static readonly int[] blacklistedLavaNPCAIForSound = new int[] {1, 39};
+        private static readonly int[] blacklistedLavaNPCTypeForSound = new int[] { NPCID.BlueSlime, NPCID.MotherSlime, NPCID.LavaSlime, NPCID.IceSlime, NPCID.Mouse };
+
+        private static void SpawnLavaDust(NPC self)
+        {
+            SpawnLiquidDust(self, 35, 10, 1.5f, 2.5f, 1.3f, 100, true);
+            
+            if(!blacklistedLavaNPCTypeForSound.Contains(self.type) && !blacklistedLavaNPCAIForSound.Contains(self.aiStyle)  && !self.noGravity)
+                Main.PlaySound(SoundID.Splash, (int) self.position.X, (int) self.position.Y);
+        }
+
+        private static readonly int[] blacklistedWaterNPCAIForSound = new int[] {1, 39, 68};
+        private static readonly int[] blacklistedWaterNPCTypeForSound = new int[] { NPCID.BlueSlime, NPCID.MotherSlime, NPCID.LavaSlime, NPCID.IceSlime, NPCID.Mouse, NPCID.Frog, NPCID.Duck, NPCID.DuckWhite, NPCID.SleepingAngler, NPCID.GoldFrog, NPCID.BartenderUnconscious};
+
+        private static void SpawnWaterDust(NPC self)
+        {
+            
+            for (int n = 0; n < 30; n++)
+            {
+                int dustInstanceID = Dust.NewDust(new Vector2(self.position.X - 6f, self.position.Y + (float) (self.height / 2) - 8f), self.width + 12, 24, Dust.dustWater());
+                Main.dust[dustInstanceID].velocity.Y -= 4f;
+                Main.dust[dustInstanceID].velocity.X *= 2.5f;
+                Main.dust[dustInstanceID].scale *= 0.8f;
+                Main.dust[dustInstanceID].alpha = 100;
+                Main.dust[dustInstanceID].noGravity = true;
+            }
+
+            if(!blacklistedWaterNPCTypeForSound.Contains(self.type) && !blacklistedWaterNPCAIForSound.Contains(self.aiStyle) && !self.noGravity)
+                Main.PlaySound(SoundID.Splash, (int) self.position.X, (int) self.position.Y, 0);
         }
     }
 }

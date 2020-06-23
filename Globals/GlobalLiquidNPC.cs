@@ -15,6 +15,7 @@ namespace LiquidAPI.Globals
         public override bool InstancePerEntity => true;
 
         public Dictionary<int, bool> npcWet = new Dictionary<int, bool>();
+        
 
         public override void ResetEffects(NPC npc)
         {

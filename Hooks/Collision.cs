@@ -186,8 +186,6 @@ namespace LiquidAPI.Hooks
                     SpawnLiquidDust(self, liquidGlobalNPC);
                 }
             }
-
-            return lava;
         }
 
         
@@ -222,7 +220,7 @@ namespace LiquidAPI.Hooks
         {
             for (int m = 0; m < amountOfDust; m++)
             {
-                int dustInstanceID = Dust.NewDust(new Vector2(self.position.X - 6f, self.position.Y + (float) (self.height / 2) - 8f), self.width + 12, 24, 152);
+                int dustInstanceID = Dust.NewDust(new Vector2(self.position.X - 6f, self.position.Y + (float) (self.height / 2) - 8f), self.width + 12, 24, dustID);
                 Main.dust[dustInstanceID].velocity.Y -= dustVelocityX;
                 Main.dust[dustInstanceID].velocity.X *= dustVelocityY;
                 Main.dust[dustInstanceID].scale = dustScale;

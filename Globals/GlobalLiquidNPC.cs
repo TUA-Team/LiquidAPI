@@ -43,12 +43,6 @@ namespace LiquidAPI.Globals
             }
         }
 
-        public override bool PreAI(NPC npc)
-        {
-            
-            return base.PreAI(npc);
-        }
-
         public bool LavaWet()
         {
             return npcWet[LiquidID.Lava];

@@ -16,6 +16,10 @@ namespace LiquidAPI.Hooks
     {
         public static Dictionary<int, bool> staticNPCWet = new Dictionary<int, bool>();
 
+        private const int HoneyDustID = 152;
+        private const int LavaDustID = 35;
+        private static int WaterDustID => Dust.dustWater();
+
         public static bool WetCollision(Vector2 Position, int Width, int Height)
         {
             foreach (int key in staticNPCWet.Keys)
@@ -170,7 +174,7 @@ namespace LiquidAPI.Hooks
             }
             else if (self.wet)
             {
-                self.velocity.X *= 0.5f;
+                self.velocity.X *= 0.5f; //halve the velocity of the entity
                 self.wet = false;
                 if (self.wetCount == 0)
                 {
@@ -188,7 +192,7 @@ namespace LiquidAPI.Hooks
         {
             if (!liquidGlobalNPC.LavaWet())
             {
-                if (self.honeyWet)
+                if (liquidGlobalNPC.HoneyWet())
                     SpawnHoneyDust(self);
                 else
                     SpawnWaterDust(self);
@@ -196,6 +200,11 @@ namespace LiquidAPI.Hooks
             else
                 SpawnLavaDust(self);
             
+        }
+
+        private static void SpawnLiquidDust(NPC self, LiquidDust liquid)
+        {
+            SpawnLiquidDust(self, liquid.dustID, liquid.amountOfDust, liquid.dustVelocityX, liquid.dustVelocityY, liquid.dustScale, liquid.dustAlpha, liquid.noGravity);
         }
 
         private static void SpawnLiquidDust(NPC self, int dustID, int amountOfDust, float dustVelocityX, float dustVelocityY, float dustScale, int dustAlpha = 100, bool noGravity = true)
@@ -209,9 +218,6 @@ namespace LiquidAPI.Hooks
                 Main.dust[dustInstanceID].alpha = dustAlpha;
                 Main.dust[dustInstanceID].noGravity = noGravity;
             }
-
-            if (self.aiStyle != 1 && self.type != 1 && self.type != 16 && self.type != 147 && self.type != 300 && self.type != 59 && self.aiStyle != 39 && !self.noGravity)
-                Main.PlaySound(19, (int) self.position.X, (int) self.position.Y);
         }
 
         private static readonly int[] blacklistedHoneyNPCAIForSound = new int[] {1, 39};
@@ -219,7 +225,7 @@ namespace LiquidAPI.Hooks
 
         private static void SpawnHoneyDust(NPC self)
         {
-            SpawnLiquidDust(self, 152, 10, 1f, 2.5f, 1.3f, 100, true);
+            SpawnLiquidDust(self, HoneyDustID, 10, 1f, 2.5f, 1.3f, 100, true);
             
             if(!blacklistedHoneyNPCTypeForSound.Contains(self.type) && !blacklistedHoneyNPCAIForSound.Contains(self.aiStyle)  && !self.noGravity)
                 Main.PlaySound(SoundID.Splash, (int) self.position.X, (int) self.position.Y);
@@ -230,7 +236,7 @@ namespace LiquidAPI.Hooks
 
         private static void SpawnLavaDust(NPC self)
         {
-            SpawnLiquidDust(self, 35, 10, 1.5f, 2.5f, 1.3f, 100, true);
+            SpawnLiquidDust(self, LavaDustID, 10, 1.5f, 2.5f, 1.3f, 100, true);
             
             if(!blacklistedLavaNPCTypeForSound.Contains(self.type) && !blacklistedLavaNPCAIForSound.Contains(self.aiStyle)  && !self.noGravity)
                 Main.PlaySound(SoundID.Splash, (int) self.position.X, (int) self.position.Y);
@@ -244,7 +250,7 @@ namespace LiquidAPI.Hooks
             
             for (int n = 0; n < 30; n++)
             {
-                int dustInstanceID = Dust.NewDust(new Vector2(self.position.X - 6f, self.position.Y + (float) (self.height / 2) - 8f), self.width + 12, 24, Dust.dustWater());
+                int dustInstanceID = Dust.NewDust(new Vector2(self.position.X - 6f, self.position.Y + (float) (self.height / 2) - 8f), self.width + 12, 24, WaterDustID);
                 Main.dust[dustInstanceID].velocity.Y -= 4f;
                 Main.dust[dustInstanceID].velocity.X *= 2.5f;
                 Main.dust[dustInstanceID].scale *= 0.8f;

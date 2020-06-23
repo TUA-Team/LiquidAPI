@@ -11,11 +11,14 @@ namespace LiquidAPI.Test
 	{
         public override Color LiquidColor => Color.GreenYellow;
 
+        
+
         public override void SetDefaults()
 		{
 			DisplayName.SetDefault("Liquid Waste");
 			DefaultOpacity=0.5f;
             customDelay = 50;
+            LiquidDust = new LiquidDust(DustID.AmberBolt, 20, 1f, 2.5f, 1.3f, 100, true);
         }
 
 		public override void PreDrawValueSet(ref bool bg, ref int style, ref float Alpha)

@@ -20,9 +20,9 @@ namespace LiquidAPI.Hooks
         private const int LavaDustID = 35;
         private static int WaterDustID => Dust.dustWater();
 
-        public static bool WetCollision(Vector2 Position, int Width, int Height)
+        public static bool WetCollision(On.Terraria.Collision.orig_WetCollision orig, Vector2 Position, int Width, int Height)
         {
-            foreach (int key in staticNPCWet.Keys)
+            foreach (int key in new Dictionary<int, bool>(staticNPCWet).Keys)
             {
                 staticNPCWet[key] = false;
             }
@@ -66,10 +66,11 @@ namespace LiquidAPI.Hooks
                         num4 -= (int)(num5 * 2f);
                         if (vector.X + (float)width > vector2.X && vector.X < vector2.X + 16f && vector.Y + (float)height > vector2.Y && vector.Y < vector2.Y + (float)num4)
                         {
-                            if (tile.TypeID == LiquidID.Honey)
+                            /*if (tile.TypeID == LiquidID.Honey)
                             {
                                 Collision.honey = true;
-                            }
+                            }*/
+                            staticNPCWet[tile.TypeID] = true;
                             return true;
                         }
                     }
@@ -83,10 +84,10 @@ namespace LiquidAPI.Hooks
                         int num6 = 16;
                         if (vector.X + (float)width > vector2.X && vector.X < vector2.X + 16f && vector.Y + (float)height > vector2.Y && vector.Y < vector2.Y + (float)num6)
                         {
-                            if (tile2.TypeID == LiquidID.Honey)
+                            /*if (tile2.TypeID == LiquidID.Honey)
                             {
                                 Collision.honey = true;
-                            }
+                            }*/
 
                             staticNPCWet[tile2.TypeID] = true;
 
@@ -99,7 +100,7 @@ namespace LiquidAPI.Hooks
             return false;
         }
 
-        public static bool LavaCollision(Vector2 Position, int Width, int Height)
+        public static bool LavaCollision(On.Terraria.Collision.orig_LavaCollision orig, Vector2 Position, int Width, int Height)
         {
             int value = (int)(Position.X / 16f) - 1;
             int value2 = (int)((Position.X + (float)Width) / 16f) + 2;
@@ -136,7 +137,7 @@ namespace LiquidAPI.Hooks
         private static int[] wetImmunityByNPCAI = new int[] { 21, 67 };
         private static int[] wetImmunityByNPCType = new int[] { NPCID.BlazingWheel, NPCID.SleepingAngler, NPCID.SandElemental, NPCID.BartenderUnconscious };
 
-        private static bool Collision_WaterCollision(On.Terraria.Collision.hook_WaterCollision origWaterCollision, NPC self, bool lava)
+        private static bool Collision_WaterCollision(On.Terraria.NPC.orig_Collision_WaterCollision origWaterCollision, NPC self, bool lava)
         {
             bool currentlyWet;
             GlobalLiquidNPC liquidGlobalNPC = self.GetGlobalNPC<GlobalLiquidNPC>();
@@ -148,7 +149,7 @@ namespace LiquidAPI.Hooks
             }
             else
             {
-                currentlyWet = WetCollision(self.position, self.width, self.height);
+                currentlyWet = Collision.WetCollision(self.position, self.width, self.height);
                 if (Collision.honey)
                 {
                     self.honeyWet = true;
@@ -159,6 +160,9 @@ namespace LiquidAPI.Hooks
                 {
                     liquidGlobalNPC.SetLiquidWetState(LiquidID.Lava, true);
                 }
+
+                for(int i = 3; i < staticNPCWet.Count; i++) 
+                    liquidGlobalNPC.SetLiquidWetState(i, staticNPCWet[i]);
             }
 
             if (currentlyWet)
@@ -195,7 +199,14 @@ namespace LiquidAPI.Hooks
                 if (liquidGlobalNPC.HoneyWet())
                     SpawnHoneyDust(self);
                 else
-                    SpawnWaterDust(self);
+                {
+                    int liquidID = liquidGlobalNPC.GetFirstLiquidWet();
+                    if (liquidGlobalNPC.GetFirstLiquidWet() != 0)
+                        SpawnLiquidDust(self, LiquidRegistry.GetLiquid(liquidID).LiquidDust);
+                    else
+                        SpawnWaterDust(self);
+                }
+                    
             }
             else
                 SpawnLavaDust(self);

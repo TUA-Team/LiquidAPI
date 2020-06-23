@@ -49,7 +49,9 @@ namespace LiquidAPI
             Array.Resize(ref LiquidRenderer.WATERFALL_LENGTH, LiquidRenderer.WATERFALL_LENGTH.Length + 1);
             LiquidRenderer.WATERFALL_LENGTH[LiquidRenderer.WATERFALL_LENGTH.Length - 1] = liquid.WaterfallLength;
             LiquidRenderer.DEFAULT_OPACITY[LiquidRenderer.DEFAULT_OPACITY.Length - 1] = liquid.DefaultOpacity;
+            LiquidHooks.staticNPCWet.Add(initialLiquidIndex, false);
             liquid.Type = initialLiquidIndex++;
+            liquid.SetDefaults();
 			liquidList.Add(liquid.Type, liquid);
 			if (Main.netMode != NetmodeID.Server)
 			{

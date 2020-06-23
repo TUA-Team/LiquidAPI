@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,8 +15,25 @@ namespace LiquidAPI.Globals
     {
         public override bool InstancePerEntity => true;
 
-        public Dictionary<int, bool> npcWet = new Dictionary<int, bool>();
         
+
+        public ConcurrentDictionary<int, bool> npcWet = new ConcurrentDictionary<int, bool>()
+        {
+            [0] = false,
+            [1] = false,
+            [2] = false
+        };
+
+        public GlobalLiquidNPC()
+        {
+            if (npcWet.Count != LiquidRegistry.liquidList.Count)
+            {
+                for (int i = 3; i < LiquidRegistry.liquidList.Count; i++)
+                {
+                    npcWet.TryAdd(i, false);
+                }
+            }
+        }
 
         public override void ResetEffects(NPC npc)
         {
@@ -23,11 +41,6 @@ namespace LiquidAPI.Globals
             {
                 npcWet[npcWetKey] = false;
             }
-        }
-
-        public void PostCollisionUpdate()
-        {
-            
         }
 
         public override bool PreAI(NPC npc)
@@ -54,6 +67,20 @@ namespace LiquidAPI.Globals
         public bool ModdedLiquidWet(ModLiquid liquid)
         {
             return npcWet[liquid.Type];
+        }
+
+        public int GetFirstLiquidWet()
+        {
+            foreach (int npcWetKey in npcWet.Keys)
+            {
+                if(npcWetKey < 2)
+                    continue;
+                if (npcWet[npcWetKey])
+                {
+                    return npcWetKey;
+                }
+            }
+            return 0;
         }
 
         public void SetLiquidWetState(int liquidID, bool state)

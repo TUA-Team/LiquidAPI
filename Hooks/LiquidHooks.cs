@@ -42,8 +42,14 @@ namespace LiquidAPI.Hooks
 			On.Terraria.GameContent.Liquid.LiquidRenderer.GetCachedDrawArea +=
 				(orig, self) => LiquidRenderer.Instance.GetCachedDrawArea();
 
-			// TODO: WaterStyleLoader -> Resize Arrays hook needed for LiquidRenderer texture array (Might not be required if done on PostLoad)
-			// TODO: ModInternals -> SetupContent hook needed for LiquidRenderer texture array (Might not be required if done on PostLoad)	
-		}
+
+			// Collision
+            On.Terraria.NPC.Collision_WaterCollision += Collision_WaterCollision;
+            On.Terraria.Collision.WetCollision += WetCollision;
+            On.Terraria.Collision.LavaCollision += LavaCollision;
+
+            // TODO: WaterStyleLoader -> Resize Arrays hook needed for LiquidRenderer texture array (Might not be required if done on PostLoad)
+            // TODO: ModInternals -> SetupContent hook needed for LiquidRenderer texture array (Might not be required if done on PostLoad)	
+        }
 	}
 }

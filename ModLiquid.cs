@@ -1,4 +1,5 @@
 ﻿using System;
+using LiquidAPI.Globals;
 using LiquidAPI.LiquidMod;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -34,6 +35,13 @@ namespace LiquidAPI
         public float DefaultOpacity = 1f;
         public byte WaveMaskStrength = 0;
         public byte ViscosityMask = 0;
+        internal LiquidDust _liquidDust;
+
+        public LiquidDust LiquidDust
+        {
+            get { return _liquidDust; }
+            set { this._liquidDust = value; }
+        }
 
         internal ModLiquid()
         {

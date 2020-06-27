@@ -53,6 +53,12 @@ namespace LiquidAPI.Hooks
 
                     if (Main.tile[posX, posY] == null)
                         continue;
+
+                    if (posY == 0)
+                    {
+                        continue;
+                        
+                    }
                     LiquidRef tile = LiquidWorld.grid[posX, posY];
                     LiquidRef tile2 = LiquidWorld.grid[posX, posY - 1];
                     if (tile.Amount > 0)
@@ -186,6 +192,8 @@ namespace LiquidAPI.Hooks
                     SpawnLiquidDust(self, liquidGlobalNPC);
                 }
             }
+
+            return lava;
         }
 
         

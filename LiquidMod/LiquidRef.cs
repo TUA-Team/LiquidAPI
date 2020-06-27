@@ -48,7 +48,7 @@ namespace LiquidAPI.LiquidMod
         {
             X = x;
             Y = y;
-            if (Main.tile[x, y] == null)
+            if (WorldGen.InWorld(x, y) && Main.tile[x, y] == null)
             {
                 Main.tile[x, y] = new Tile();
             }

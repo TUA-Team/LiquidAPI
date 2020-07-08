@@ -6,7 +6,7 @@ namespace LiquidAPI.Vanilla
 {
 	public class Water : ModLiquid
 	{
-		public override bool Autoload(ref string name,ref string texture)=>false;
+		public override bool Autoload(ref string name,ref string texture, ref string fancyTexture)=>false;
 
         public override Color LiquidColor => new Color(51, 107, 249);
 

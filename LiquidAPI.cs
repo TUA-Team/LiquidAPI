@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using LiquidAPI.Hooks;
+using LiquidAPI.Test;
 using LiquidAPI.Vanilla;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -30,6 +31,7 @@ namespace LiquidAPI
 			this.AddLiquid<Water>("LiquidWater");
 			this.AddLiquid<Lava>("LiquidLava");
 			this.AddLiquid<Honey>("LiquidHoney");
+			this.AddLiquid<Oil>("LiquidOil");
 
 		    LiquidHooks.OldHoneyTexture = new List<Texture2D>()
 		    {
@@ -104,7 +106,8 @@ namespace LiquidAPI
 	        liquid.Mod = mod;
 	        string name = type.Name;
 	        string texturePath = liquid.GetType().FullName.Replace(".", "/").Replace(this.Name + "/", "");
-	        if (liquid.Autoload(ref name, ref texturePath))
+            string fancyTexturePath = liquid.GetType().FullName.Replace(".", "/").Replace(this.Name + "/", "") + "Fancy";
+	        if (liquid.Autoload(ref name, ref texturePath, ref fancyTexturePath))
 	        {
 	            // @Dradon y u do dis twice lulz
 	            // it supposed to be in func call belowe butt dis no need
@@ -115,7 +118,7 @@ namespace LiquidAPI
 	            //LiquidRenderer.Instance.LiquidTextures[LiquidRenderer.Instance.LiquidTextures.Count - 1] =
 	            //	this.GetTexture(texturePath);
 	            //}
-	            mod.AddLiquid(name, liquid, this.GetTexture(texturePath));
+	            mod.AddLiquid(name, liquid, this.GetTexture(texturePath), this.GetTexture(fancyTexturePath));
 	        }
 	    }
     }

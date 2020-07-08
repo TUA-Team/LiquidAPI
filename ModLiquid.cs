@@ -53,7 +53,7 @@ namespace LiquidAPI
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
-        public virtual bool Autoload(ref string name, ref string texture) => true;
+        public virtual bool Autoload(ref string name, ref string texture, ref string fancyTexture) => true;
 
         public virtual void SetDefaults() { }
 

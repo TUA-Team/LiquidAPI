@@ -9,7 +9,7 @@ namespace LiquidAPI.Vanilla
 {
 	public class Lava : ModLiquid
 	{
-		public override bool Autoload(ref string name,ref string texture)=>false;
+		public override bool Autoload(ref string name,ref string texture, ref string fancyTexture)=>false;
 
         public override Color LiquidColor => new Color(253, 62, 3);
 

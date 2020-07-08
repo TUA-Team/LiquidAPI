@@ -633,6 +633,10 @@ namespace LiquidAPI
 							{
 								num2 = 11;
 							}
+                            else
+                            {
+                                num2 += 9;
+                            }
 
 							num = Math.Min(1f, num);
 							VertexColors colors;
@@ -751,10 +755,10 @@ namespace LiquidAPI
 		static LiquidRenderer()
 		{
 			// Note: this type is marked as 'beforefieldinit'.
-			byte[] array = new byte[5];
+			byte[] array = new byte[255];
 			array[3] = 255;
 			LiquidRenderer.WAVE_MASK_STRENGTH = array;
-			byte[] array2 = new byte[5];
+			byte[] array2 = new byte[255];
 			array2[1] = 200;
 			array2[2] = 240;
 			LiquidRenderer.VISCOSITY_MASK = array2;

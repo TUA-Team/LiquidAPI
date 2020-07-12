@@ -1500,6 +1500,11 @@ namespace LiquidAPI.Hooks
         public static void DrawWaterSlope(Vector2 value, int i, int j, int waterStyleOverride = -1)
         {
             LiquidRef tile = LiquidWorld.grid[j, i];
+
+            if (tile.TypeID == 255)
+            {
+                return;
+            }
             LiquidRef tile2 = LiquidWorld.grid[j + 1, i];
             LiquidRef tile3 = LiquidWorld.grid[j - 1, i];
             LiquidRef tile4 = LiquidWorld.grid[j, i - 1];
@@ -1512,9 +1517,65 @@ namespace LiquidAPI.Hooks
             int num111 = 0;
             bool flag12 = false;
             int num112 = tile.Tile.slope();
-            flag8 = SetTextureIndex(tile3, num112, flag8, ref flag12, ref num111, ref num110);
-            flag9 = SetTextureIndex(tile2, num112, flag8, ref flag12, ref num111, ref num110);
-            flag10 = SetTextureIndex(tile4, num112, flag8, ref flag12, ref num111, ref num110);
+            if (tile3.Amount > 0 && num112 != 1 && num112 != 3) {
+                flag8 = true;
+                switch (tile3.TypeID) {
+                    case 0:
+                        flag12 = true;
+                        break;
+                    case 1:
+                        num111 = 1;
+                        break;
+                    case 2:
+                        num111 = 11;
+                        break;
+                    default:
+                        num111 = 9 + tile3.TypeID;
+                        break;
+                }
+
+                if (tile3.Amount > num110)
+                    num110 = tile3.Amount;
+            }
+
+            if (tile2.Amount > 0 && num112 != 2 && num112 != 4) {
+                flag9 = true;
+                switch (tile2.TypeID) {
+                    case 0:
+                        flag12 = true;
+                        break;
+                    case 1:
+                        num111 = 1;
+                        break;
+                    case 2:
+                        num111 = 11;
+                        break;
+                    default:
+                        num111 = 9 + tile2.TypeID;
+                        break;
+                }
+
+                if (tile2.Amount > num110)
+                    num110 = tile2.Amount;
+            }
+
+            if (tile4.Amount > 0 && num112 != 3 && num112 != 4) {
+                flag10 = true;
+                switch (tile4.TypeID) {
+                    case 0:
+                        flag12 = true;
+                        break;
+                    case 1:
+                        num111 = 1;
+                        break;
+                    case 2:
+                        num111 = 11;
+                        break;
+                    default:
+                        num111 = 9 + tile4.TypeID;
+                        break;
+                }
+            }
 
             if (tile5.Amount > 0 && num112 != 1 && num112 != 2)
             {
@@ -1531,6 +1592,9 @@ namespace LiquidAPI.Hooks
                         break;
                     case 2:
                         num111 = 11;
+                        break;
+                    default:
+                        num111 = 9 + tile5.TypeID;
                         break;
                 }
             }
@@ -1623,7 +1687,15 @@ namespace LiquidAPI.Hooks
                 float num117 = (float)(int)color7.B * num114;
                 float num118 = (float)(int)color7.A * num114;
                 color7 = new Microsoft.Xna.Framework.Color((byte)num115, (byte)num116, (byte)num117, (byte)num118);
-                Main.spriteBatch.Draw(LiquidRegistry.liquidList[tile.TypeID].OldTexture, value4 - Main.screenPosition + value, value5, color7, 0f, default(Vector2), 1f, SpriteEffects.None, 0f);
+                if (num111 > 11)
+                {
+                    Main.spriteBatch.Draw(LiquidRegistry.liquidList[num111 - 9].OldTexture, value4 - Main.screenPosition + value, value5, color7, 0f, default(Vector2), 1f, SpriteEffects.None, 0f);
+                }
+                else
+                {
+                    Main.spriteBatch.Draw(Main.liquidTexture[num111], value4 - Main.screenPosition + value, value5, color7, 0f, default(Vector2), 1f, SpriteEffects.None, 0f);
+                }
+                
             }
         }
 

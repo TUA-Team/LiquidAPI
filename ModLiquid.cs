@@ -170,6 +170,11 @@ namespace LiquidAPI
         }
         public override bool UseItem(Player player)
         {
+            //Implement liquid picking logic here
+            if (this.liquid == null)
+            {
+                return false;
+            }
             LiquidRef liquid = LiquidWorld.grid[Player.tileTargetX, Player.tileTargetY];
             
             if (!liquid.HasLiquid || liquid.Type == this.liquid)

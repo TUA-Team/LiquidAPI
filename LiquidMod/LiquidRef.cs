@@ -16,7 +16,6 @@ namespace LiquidAPI.LiquidMod
             {
                 if (value == null)
                 {
-                    LiquidWorld.liquidGrid[X, Y].data = 255;
                     Main.tile[X, Y].liquid = 0;
                 }
                 else

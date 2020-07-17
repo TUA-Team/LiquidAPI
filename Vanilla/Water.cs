@@ -1,5 +1,7 @@
-﻿using Microsoft.Xna.Framework;
+﻿using LiquidAPI.ID;
+using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.ID;
 using Terraria.ObjectData;
 
 namespace LiquidAPI.Vanilla
@@ -17,6 +19,11 @@ namespace LiquidAPI.Vanilla
 			DefaultOpacity = 0.6f;
 			WaveMaskStrength = 0;
 			ViscosityMask = 0;
+
+			
+            LiquidAPI.interactionResult[Type, LiquidID.Honey] = TileID.HoneyBlock;
+            LiquidAPI.interactionResult[Type, LiquidID.Lava] = TileID.Obsidian;
+            Name = "Water";
 		}
 
 		public override bool CanKillTile(int x,int y) => TileObjectData.CheckWaterDeath(Main.tile[x,y]);

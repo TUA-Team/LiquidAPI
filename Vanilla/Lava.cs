@@ -1,4 +1,5 @@
-﻿using LiquidAPI.LiquidMod;
+﻿using LiquidAPI.ID;
+using LiquidAPI.LiquidMod;
 using LiquidAPI.Test;
 using Microsoft.Xna.Framework;
 using Terraria;
@@ -20,26 +21,12 @@ namespace LiquidAPI.Vanilla
 			DefaultOpacity = 0.95f;
 			WaveMaskStrength = 0;
 			ViscosityMask = 200;
+            Name = "Lava";
+
+            LiquidAPI.interactionResult[Type, LiquidID.Honey] = TileID.CrispyHoneyBlock;
+            LiquidAPI.interactionResult[Type, LiquidID.Water] = TileID.Obsidian;
 		}
 
 		public override bool CanKillTile(int x,int y)=>TileObjectData.CheckLavaDeath(Main.tile[x,y]);
-
-        public override int LiquidInteraction(LiquidRef liquidUp, LiquidRef liquidDown, LiquidRef liquidLeft, LiquidRef liquidRight, int x, int y)
-        {
-            if (liquidLeft.Type is Honey || liquidRight.Type is Honey || liquidDown.Type is Honey)
-            {
-                return TileID.CrispyHoneyBlock;
-            }
-            else if (liquidLeft.Type is PlutonicWaste || liquidRight.Type is PlutonicWaste || liquidDown.Type is PlutonicWaste)
-            {
-                return TileID.Diamond;
-            } 
-            else if (liquidLeft.Type is WeirdLiquid || liquidRight.Type is WeirdLiquid || liquidDown.Type is WeirdLiquid)
-            {
-                return TileID.Emerald;
-            }
-                
-            return base.LiquidInteraction(liquidUp, liquidDown, liquidLeft, liquidRight, x, y);
-        }
     }
 }

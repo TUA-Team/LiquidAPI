@@ -1,4 +1,5 @@
-﻿using LiquidAPI.ID;
+﻿using System;
+using LiquidAPI.ID;
 using LiquidAPI.LiquidMod;
 using LiquidAPI.Vanilla;
 using Microsoft.Xna.Framework;
@@ -14,35 +15,70 @@ namespace LiquidAPI.Hooks
 
         private static void LiquidOnLavaCheck(On.Terraria.Liquid.orig_LavaCheck orig, int x, int y)
         {
+            NewModLiquidCheck(x, y, LiquidRegistry.GetLiquid(LiquidAPI.instance, "Lava"));
+        }
+
+        internal static void NewModLiquidCheck(int x, int y, ModLiquid targetType)
+        {
             LiquidRef liquidLeft = LiquidWorld.grid[x - 1, y];
             LiquidRef liquidRight = LiquidWorld.grid[x + 1, y];
             LiquidRef liquidDown = LiquidWorld.grid[x, y - 1];
             LiquidRef liquidUp = LiquidWorld.grid[x, y + 1];
             LiquidRef liquidSelf = LiquidWorld.grid[x, y];
 
-            if (liquidLeft.Amount > 0 && liquidLeft.TypeID != LiquidID.Lava || liquidRight.Amount > 0 && liquidRight.TypeID != LiquidID.Lava || liquidDown.Amount > 0 && liquidDown.TypeID != LiquidID.Lava)
+
+            LiquidRef self = LiquidWorld.grid[x, y];
+            ModLiquid selfType = self.Type;
+
+            int validLiquidAmount = 0;
+
+            
+
+            if (liquidLeft.Amount > 0 && liquidLeft.Type.Type != targetType.Type || liquidRight.Amount > 0 && liquidRight.Type.Type != targetType.Type || liquidDown.Amount > 0 && liquidDown.Type.Type != targetType.Type)
             {
                 int liquidAmount = 0;
-                if (!(liquidLeft.Type is Lava))
+
+                if (LiquidWorld.grid[x, y - 1].Amount != 0 && LiquidWorld.grid[x, y - 1].Type.GetType() != selfType.GetType())
                 {
-                    liquidAmount += liquidLeft.Amount;
-                    liquidLeft.Amount = 0;
+                    liquidAmount += LiquidWorld.grid[x, y - 1].Amount;
+                    LiquidWorld.grid[x, y - 1].Amount = 0;
                 }
 
-                if (!(liquidRight.Type is Lava))
+                if (LiquidWorld.grid[x, y + 1].Amount != 0 && LiquidWorld.grid[x, y + 1].Type.GetType() != selfType.GetType())
                 {
-                    liquidAmount += liquidRight.Amount;
-                    liquidRight.Amount = 0;
+                    liquidAmount += LiquidWorld.grid[x, y + 1].Amount;
+                    LiquidWorld.grid[x, y + 1].Amount = 0;
                 }
 
-                if (!(liquidDown.Type is Lava))
+                if (LiquidWorld.grid[x - 1, y].Amount != 0 && LiquidWorld.grid[x - 1, y].Type.GetType() != selfType.GetType())
                 {
-                    liquidAmount += liquidDown.Amount;
-                    liquidDown.Amount = 0;
+                    liquidAmount += LiquidWorld.grid[x - 1, y].Amount;
+                    LiquidWorld.grid[x - 1, y].Amount = 0;
                 }
 
-                int type = liquidSelf.Type.LiquidInteraction(liquidUp, liquidDown, liquidLeft, liquidRight, liquidSelf.X, liquidSelf.Y);
+                if (LiquidWorld.grid[x + 1, y].Amount != 0 && LiquidWorld.grid[x + 1, y].Type.GetType() != selfType.GetType()){
+                    liquidAmount += LiquidWorld.grid[x + 1, y].Amount;
+                    LiquidWorld.grid[x + 1, y].Amount = 0;
+                }
 
+                if (liquidLeft.Type.GetType() == liquidSelf.Type.GetType() && liquidRight.Type.GetType() == liquidSelf.Type.GetType() && liquidDown.Type.GetType() == liquidSelf.Type.GetType())
+                    return;
+                int type = -1;
+
+                if (self.Type.LiquidInteraction(x, y, targetType))
+                {
+                    return;
+                }
+
+                type = LiquidAPI.interactionResult[LiquidWorld.grid[x - 1, y].Type.Type, targetType.Type];
+                if (type == -1)
+                {
+                    type = LiquidAPI.interactionResult[LiquidWorld.grid[x + 1, y].Type.Type, targetType.Type];
+                    if (type == -1)
+                    {
+                        type = LiquidAPI.interactionResult[LiquidWorld.grid[x, y + 1].Type.Type, targetType.Type];
+                    }
+                }
                 if (liquidAmount >= 24)
                 {
                     if (liquidSelf.Tile.active() && Main.tileObsidianKill[liquidSelf.Tile.type])
@@ -72,7 +108,7 @@ namespace LiquidAPI.Hooks
                 }
 
             }
-            else if (liquidUp.Amount > 0 && liquidUp.TypeID != LiquidID.Lava)
+            else if (liquidUp.Amount > 0 && liquidUp.Type.Type != targetType.Type)
             {
                 bool flag = liquidSelf.Tile.active() && TileID.Sets.ForceObsidianKill[liquidSelf.Tile.type] && !TileID.Sets.ForceObsidianKill[liquidUp.Tile.type];
 
@@ -109,8 +145,22 @@ namespace LiquidAPI.Hooks
                     }
                     else
                     {
-                        int type = liquidSelf.Type.LiquidInteraction(liquidUp, liquidDown, liquidLeft, liquidRight, liquidSelf.X, liquidSelf.Y);
+                        
 
+                        if (self.Type.LiquidInteraction(x, y, targetType))
+                        {
+                            return;
+                        }
+                        int type = -1;
+                        type = LiquidAPI.interactionResult[LiquidWorld.grid[x - 1, y].Type.Type, targetType.Type];
+                        if (type == -1)
+                        {
+                            type = LiquidAPI.interactionResult[LiquidWorld.grid[x + 1, y].Type.Type, targetType.Type];
+                            if (type == -1)
+                            {
+                                type = LiquidAPI.interactionResult[LiquidWorld.grid[x, y + 1].Type.Type, targetType.Type];
+                            }
+                        }
                         liquidSelf.Amount = 0;
                         liquidSelf.Type = null;
 
@@ -133,6 +183,13 @@ namespace LiquidAPI.Hooks
             }
         }
 
+
+        private static void LiquidOnHoneyCheck(On.Terraria.Liquid.orig_HoneyCheck orig, int x, int y)
+        {
+            NewModLiquidCheck(x, y, LiquidRegistry.GetLiquid(LiquidAPI.instance, "Honey"));
+        }
+
+        /*
         private static void LiquidOnHoneyCheck(On.Terraria.Liquid.orig_HoneyCheck orig, int x, int y)
         {
             LiquidRef liquidLeft = LiquidWorld.grid[x - 1, y];
@@ -141,7 +198,7 @@ namespace LiquidAPI.Hooks
             LiquidRef liquidUp = LiquidWorld.grid[x, y + 1];
             LiquidRef liquidSelf = LiquidWorld.grid[x, y];
 
-            bool flag = false;
+            bool lava = false;
 
             if (liquidLeft.Amount > 0 && liquidLeft.Type is Water || liquidRight.Amount > 0 && liquidRight.Type is Water || liquidDown.Amount > 0 && liquidDown.Type is Water)
             {
@@ -167,7 +224,7 @@ namespace LiquidAPI.Hooks
 
                 if (liquidLeft.Type is Lava || liquidRight.Type is Lava || liquidDown.Type is Lava)
                 {
-                    flag = true;
+                    lava = true;
                 }
                 if (num < 32)
                 {
@@ -189,7 +246,7 @@ namespace LiquidAPI.Hooks
                     return;
                 }
 
-                int type;
+                int type = -1;
                 try
                 {
                     if (liquidUp.Type == null || liquidDown.Type == null || liquidLeft.Type == null || liquidRight.Type == null)
@@ -207,7 +264,7 @@ namespace LiquidAPI.Hooks
                 }
                 WorldGen.PlaceTile(x, y, type, true, true);
 
-                Main.PlaySound(flag ? SoundID.LiquidsHoneyLava : SoundID.LiquidsHoneyWater, new Vector2(x * 16 + 8, y * 16 + 8));
+                Main.PlaySound(lava ? SoundID.LiquidsHoneyLava : SoundID.LiquidsHoneyWater, new Vector2(x * 16 + 8, y * 16 + 8));
 
                 WorldGen.SquareTileFrame(x, y);
 
@@ -216,7 +273,7 @@ namespace LiquidAPI.Hooks
                     return;
                 }
 
-                NetMessage.SendTileSquare(-1, x - 1, y - 1, 3, flag ? TileChangeType.HoneyLava : TileChangeType.HoneyWater);
+                NetMessage.SendTileSquare(-1, x - 1, y - 1, 3, lava ? TileChangeType.HoneyLava : TileChangeType.HoneyWater);
             }
             else if (liquidUp.Amount > 0 && liquidUp.Type is Water)
             {
@@ -245,7 +302,7 @@ namespace LiquidAPI.Hooks
                     {
                         if (liquidUp.Type is Lava)
                         {
-                            flag = true;
+                            lava = true;
                         }
 
                         liquidSelf.Amount = 0;
@@ -253,18 +310,19 @@ namespace LiquidAPI.Hooks
                         liquidUp.Amount = 0;
                         liquidUp.Type = null;
 
-                        Main.PlaySound(flag ? SoundID.LiquidsHoneyLava : SoundID.LiquidsHoneyWater, new Vector2(x * 16 + 8, y * 16 + 8));
+                        Main.PlaySound(lava ? SoundID.LiquidsHoneyLava : SoundID.LiquidsHoneyWater, new Vector2(x * 16 + 8, y * 16 + 8));
 
                         WorldGen.PlaceTile(x, y + 1, TileID.HoneyBlock, true, true);
                         WorldGen.SquareTileFrame(x, y + 1);
 
                         if (Main.netMode == NetmodeID.Server)
                         {
-                            NetMessage.SendTileSquare(-1, x - 1, y, 3, flag ? TileChangeType.HoneyLava : TileChangeType.HoneyWater);
+                            NetMessage.SendTileSquare(-1, x - 1, y, 3, lava ? TileChangeType.HoneyLava : TileChangeType.HoneyWater);
                         }
                     }
                 }
             }
         }
+        */
     }
 }

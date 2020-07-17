@@ -194,9 +194,9 @@ namespace LiquidAPI
 				{
 					for (int n = 0; n < rectangle.Height - 10; n++)
 					{
-						if (ptr2->HasVisibleLiquid && !ptr2->IsSolid)
+						if (ptr2->HasVisibleLiquid && !ptr2->IsSolid && ptr2->Type != 255)
 						{
-							ptr2->Opacity = 1f;
+                            ptr2->Opacity = 1f;
 							ptr2->VisibleType = ptr2->Type;
 							float num3 = 1f / (float) (LiquidRenderer.WATERFALL_LENGTH[(int) ptr2->Type] + 1);
 							float num4 = 1f;

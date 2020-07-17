@@ -137,6 +137,12 @@ namespace LiquidAPI
 				return liquidList[newIndex].CustomPhysic(x, y);
 			}
 		}*/
+
+        public static void ModLiquidCheck(ModLiquid liquidType, int x, int y)
+        {
+            LiquidHooks.NewModLiquidCheck(x, y, liquidType);
+        }
+        /*
         public static void ModLiquidCheck(ModLiquid liquidType, int x, int y)
         {
             LiquidRef liquidLeft = LiquidWorld.grid[x - 1, y];
@@ -148,22 +154,23 @@ namespace LiquidAPI
             if (liquidLeft.Amount > 0 && liquidLeft.TypeID != liquidType.Type || liquidRight.Amount > 0 && liquidRight.TypeID != liquidType.Type || liquidDown.Amount > 0 && liquidDown.TypeID != liquidType.Type)
             {
                 int liquidAmount = 0;
-                if (!(liquidLeft.Type.GetType() == liquidType.Type.GetType()))
+                if (liquidLeft.Type != null && !(liquidLeft.Type.GetType() == liquidType.Type.GetType()))
                 {
                     liquidAmount += liquidLeft.Amount;
                     liquidLeft.Amount = 0;
                 }
 
-                if (!(liquidRight.Type.GetType() == liquidType.Type.GetType()))
+                if (liquidRight.Type != null && !(liquidRight.Type.GetType() == liquidType.Type.GetType()))
                 {
                     liquidAmount += liquidRight.Amount;
                     liquidRight.Amount = 0;
                 }
 
-                if (!(liquidDown.Type.GetType() == liquidType.Type.GetType()))
+                if (liquidDown.Type != null && !(liquidDown.Type.GetType() == liquidType.Type.GetType()))
                 {
                     liquidAmount += liquidDown.Amount;
                     liquidDown.Amount = 0;
+
                 }
 
                 int type = liquidSelf.Type.LiquidInteraction(liquidUp, liquidDown, liquidLeft, liquidRight, liquidSelf.X, liquidSelf.Y);
@@ -256,6 +263,6 @@ namespace LiquidAPI
                     }
                 }
             }
-        }
+        }*/
     }
 }

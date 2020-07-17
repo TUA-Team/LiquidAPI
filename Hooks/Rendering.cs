@@ -1172,6 +1172,11 @@ namespace LiquidAPI.Hooks
                         }
                         else if (liquid.TypeID != LiquidID.Water)
                         {
+                            if (liquid.TypeID == 255)
+                            {
+                                liquid.TypeID = 0;
+                                liquid.Amount = 0;
+                            }
                             liquidTexture = LiquidRegistry.liquidList[liquid.TypeID].OldTexture;
                         }
 

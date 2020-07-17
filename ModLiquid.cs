@@ -17,7 +17,7 @@ namespace LiquidAPI
         public bool gravity = true;
         public int customDelay = 1; //Default value, aka 
 
-        internal int Type;
+        public int Type { get; internal set; }
 
         public Mod Mod { get; internal set; }
 
@@ -113,11 +113,14 @@ namespace LiquidAPI
 
         public virtual void ItemInteraction(Item target) { }
 
-        public virtual void LiquidInteraction(int x, int y, ModLiquid target) { }
-
-        public virtual int LiquidInteraction(LiquidRef liquidUp, LiquidRef liquidDown, LiquidRef liquidLeft, LiquidRef liquidRight, int x, int y)
+        public virtual bool LiquidInteraction(int x, int y, ModLiquid target)
         {
-            return TileID.Obsidian;
+            return false;
+        }
+
+        public virtual bool LiquidInteraction(LiquidRef liquidUp, LiquidRef liquidDown, LiquidRef liquidLeft, LiquidRef liquidRight, int x, int y)
+        {
+            return false;
         }
 
         public virtual bool CanKillTile(int x, int y)

@@ -167,7 +167,7 @@ namespace LiquidAPI.Hooks
                     liquidGlobalNPC.SetLiquidWetState(LiquidID.Lava, true);
                 }
 
-                for(int i = 3; i < staticNPCWet.Count; i++) 
+                for(int i = 3; i < staticNPCWet.Count - 1; i++) 
                     liquidGlobalNPC.SetLiquidWetState(i, staticNPCWet[i]);
             }
 

@@ -8,6 +8,7 @@ namespace LiquidAPI.Hooks
 		{
 			// Update
 			On.Terraria.Liquid.Update += ModdedLiquidUpdate;
+            //On.Terraria.Liquid.QuickWater += QuickWater;
 
 			// Utilities
 			On.Terraria.Liquid.AddWater += AddWater;

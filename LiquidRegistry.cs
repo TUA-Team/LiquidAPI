@@ -16,7 +16,7 @@ namespace LiquidAPI
 {
     public static class LiquidRegistry
     {
-        internal static Dictionary<int, ModLiquid> liquidList = new Dictionary<int, ModLiquid>();
+        internal static Dictionary<int, ModLiquid> liquidList;
         private static int initialLiquidIndex = 0;//3;
         private static int liquidTextureIndex = 12;
 
@@ -24,12 +24,13 @@ namespace LiquidAPI
 
         static LiquidRegistry()
         {
+            liquidList = new Dictionary<int, ModLiquid>();
             LiquidAPI.OnUnload += () =>
-              {
+            {
                   Array.Resize(ref Main.liquidTexture, vanillaMaxVanilla);
                   liquidList.Clear();
                   liquidList = null;
-              };
+            };
         }
 
         public static void AddLiquid<TLiquid>(this Mod mod, string name, Texture2D texture = null, Texture2D fancyTexture2D = null) where TLiquid : ModLiquid, new()

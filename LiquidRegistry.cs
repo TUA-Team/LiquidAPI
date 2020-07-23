@@ -1,13 +1,10 @@
-﻿using System;
+﻿using LiquidAPI.Hooks;
+using LiquidAPI.LiquidMod;
+using Microsoft.Xna.Framework.Graphics;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using LiquidAPI.Hooks;
-using LiquidAPI.ID;
-using LiquidAPI.LiquidMod;
-using LiquidAPI.Vanilla;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -27,9 +24,9 @@ namespace LiquidAPI
             liquidList = new Dictionary<int, ModLiquid>();
             LiquidAPI.OnUnload += () =>
             {
-                  Array.Resize(ref Main.liquidTexture, vanillaMaxVanilla);
-                  liquidList.Clear();
-                  liquidList = null;
+                Array.Resize(ref Main.liquidTexture, vanillaMaxVanilla);
+                liquidList.Clear();
+                liquidList = null;
             };
         }
 
@@ -55,12 +52,12 @@ namespace LiquidAPI
             liquid.Type = initialLiquidIndex++;
             liquid.SetDefaults();
             liquidList.Add(liquid.Type, liquid);
-            
+
             if (Main.netMode != NetmodeID.Server && liquid.Type > 2)
             {
                 LiquidRenderer.Instance.LiquidTextures.Add(liquid.Type + 9, fancyTexture);
             }
-            
+
             liquid.AddModBucket();
         }
 

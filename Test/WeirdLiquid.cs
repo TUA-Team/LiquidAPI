@@ -1,24 +1,22 @@
-﻿using LiquidAPI.LiquidMod;
-using Microsoft.Xna.Framework;
-using Terraria;
+﻿using Terraria;
 using Terraria.ID;
 
 namespace LiquidAPI.Test
 {
-	class WeirdLiquid : ModLiquid
-	{
-		public override void SetDefaults()
-		{
-			DisplayName.SetDefault("Test liquid");
+    class WeirdLiquid : ModLiquid
+    {
+        public override void SetDefaults()
+        {
+            DisplayName.SetDefault("Test liquid");
             DefaultOpacity = 1f;
             LiquidDust = new LiquidDust(DustID.Marble, 20, 1f, 2.5f, 1.3f, 100, true);
-		}
+        }
 
         public override void PreDrawValueSet(ref bool bg, ref int style, ref float Alpha)
-		{
-			style = 12;
-			Alpha = 0.2f;
-		}
+        {
+            style = 12;
+            Alpha = 0.2f;
+        }
 
         /// <summary>
         /// Not implemented yet

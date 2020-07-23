@@ -1,14 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using LiquidAPI.Data;
+using LiquidAPI.Vanilla;
+using System.Collections.Generic;
 using System.IO;
 using Terraria;
+using Terraria.GameContent.Generation;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 using Terraria.Utilities;
-using LiquidAPI.Data;
-using LiquidAPI.Vanilla;
-using Terraria.GameContent.Generation;
 using Terraria.World.Generation;
-using static Terraria.WorldGen;
 
 namespace LiquidAPI.LiquidMod
 {

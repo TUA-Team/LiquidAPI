@@ -1,15 +1,15 @@
-﻿using System;
-using LiquidAPI.ID;
+﻿using LiquidAPI.ID;
 using LiquidAPI.LiquidMod;
 using LiquidAPI.Vanilla;
+using System;
 using Terraria;
 using Terraria.ID;
 using static Terraria.Liquid;
 
 namespace LiquidAPI.Hooks
 {
-	internal static partial class LiquidHooks
-	{
+    internal static partial class LiquidHooks
+    {
         public static void ModdedLiquidUpdate(On.Terraria.Liquid.orig_Update orig, Liquid self)
         {
             Main.tileSolid[TileID.Bubble] = true;
@@ -149,10 +149,10 @@ namespace LiquidAPI.Hooks
                             Liquid.AddWater(self.x, self.y + 1);
                         }
                     }
-                    
+
                 }
 
-                
+
             }
 
             if ((!liquidDown.Tile.nactive() || !Main.tileSolid[(int)liquidDown.Tile.type] ||
@@ -604,163 +604,184 @@ namespace LiquidAPI.Hooks
             self.kill = 0;
         }
 
-        public static double QuickWater(On.Terraria.Liquid.orig_QuickWater orig, int verbose = 0, int minY = -1, int maxY = -1) {
-			Main.tileSolid[379] = true;
-			int num = 0;
-			if (minY == -1)
-				minY = 3;
+        public static double QuickWater(On.Terraria.Liquid.orig_QuickWater orig, int verbose = 0, int minY = -1, int maxY = -1)
+        {
+            Main.tileSolid[379] = true;
+            int num = 0;
+            if (minY == -1)
+                minY = 3;
 
-			if (maxY == -1)
-				maxY = Main.maxTilesY - 3;
+            if (maxY == -1)
+                maxY = Main.maxTilesY - 3;
 
-			for (int num2 = maxY; num2 >= minY; num2--) {
-				if (verbose > 0) {
-					float num3 = (float)(maxY - num2) / (float)(maxY - minY + 1);
-					num3 /= (float)verbose;
-					Main.statusText = Lang.gen[27].Value + " " + (int)(num3 * 100f + 1f) + "%";
-				}
-				else if (verbose < 0) {
-					float num4 = (float)(maxY - num2) / (float)(maxY - minY + 1);
-					num4 /= (float)(-verbose);
-					Main.statusText = Lang.gen[18].Value + " " + (int)(num4 * 100f + 1f) + "%";
-				}
+            for (int num2 = maxY; num2 >= minY; num2--)
+            {
+                if (verbose > 0)
+                {
+                    float num3 = (float)(maxY - num2) / (float)(maxY - minY + 1);
+                    num3 /= (float)verbose;
+                    Main.statusText = Lang.gen[27].Value + " " + (int)(num3 * 100f + 1f) + "%";
+                }
+                else if (verbose < 0)
+                {
+                    float num4 = (float)(maxY - num2) / (float)(maxY - minY + 1);
+                    num4 /= (float)(-verbose);
+                    Main.statusText = Lang.gen[18].Value + " " + (int)(num4 * 100f + 1f) + "%";
+                }
 
-				for (int i = 0; i < 2; i++) {
-					int num5 = 2;
-					int num6 = Main.maxTilesX - 2;
-					int num7 = 1;
-					if (i == 1) {
-						num5 = Main.maxTilesX - 2;
-						num6 = 2;
-						num7 = -1;
-					}
+                for (int i = 0; i < 2; i++)
+                {
+                    int num5 = 2;
+                    int num6 = Main.maxTilesX - 2;
+                    int num7 = 1;
+                    if (i == 1)
+                    {
+                        num5 = Main.maxTilesX - 2;
+                        num6 = 2;
+                        num7 = -1;
+                    }
 
-					for (int j = num5; j != num6; j += num7) {
-						LiquidRef tile = new LiquidRef(j, num2);
-						if (tile.Amount <= 0)
-							continue;
+                    for (int j = num5; j != num6; j += num7)
+                    {
+                        LiquidRef tile = new LiquidRef(j, num2);
+                        if (tile.Amount <= 0)
+                            continue;
 
-						int num8 = -num7;
-						bool flag = false;
-						int num9 = j;
-						int num10 = num2;
-						byte b = (byte) tile.Type.Type;
-						bool isLava = tile.Type is Lava;
-						bool isHoney = tile.Type is Honey;
+                        int num8 = -num7;
+                        bool flag = false;
+                        int num9 = j;
+                        int num10 = num2;
+                        byte b = (byte)tile.Type.Type;
+                        bool isLava = tile.Type is Lava;
+                        bool isHoney = tile.Type is Honey;
                         byte liquidAmount = tile.Amount;
-						tile.Amount = 0;
-						bool flag4 = true;
-						int num11 = 0;
-						while (flag4 && num9 > 3 && num9 < Main.maxTilesX - 4 && num10 < Main.maxTilesY - 4) {
-							flag4 = false;
-							while (LiquidWorld.grid[num9, num10 + 1].Amount == 0 && num10 < Main.maxTilesY - 5 && (!Main.tile[num9, num10 + 1].nactive() || !Main.tileSolid[Main.tile[num9, num10 + 1].type] || Main.tileSolidTop[Main.tile[num9, num10 + 1].type])) {
-								flag = true;
-								num8 = num7;
-								num11 = 0;
-								flag4 = true;
-								num10++;
-								if (num10 > WorldGen.waterLine && WorldGen.gen && !isHoney)
-									b = 1;
-							}
+                        tile.Amount = 0;
+                        bool flag4 = true;
+                        int num11 = 0;
+                        while (flag4 && num9 > 3 && num9 < Main.maxTilesX - 4 && num10 < Main.maxTilesY - 4)
+                        {
+                            flag4 = false;
+                            while (LiquidWorld.grid[num9, num10 + 1].Amount == 0 && num10 < Main.maxTilesY - 5 && (!Main.tile[num9, num10 + 1].nactive() || !Main.tileSolid[Main.tile[num9, num10 + 1].type] || Main.tileSolidTop[Main.tile[num9, num10 + 1].type]))
+                            {
+                                flag = true;
+                                num8 = num7;
+                                num11 = 0;
+                                flag4 = true;
+                                num10++;
+                                if (num10 > WorldGen.waterLine && WorldGen.gen && !isHoney)
+                                    b = 1;
+                            }
 
-							if (LiquidWorld.grid[num9, num10 + 1].Amount > 0 && LiquidWorld.grid[num9, num10 + 1].Amount < byte.MaxValue && Main.tile[num9, num10 + 1].liquidType() == b)
+                            if (LiquidWorld.grid[num9, num10 + 1].Amount > 0 && LiquidWorld.grid[num9, num10 + 1].Amount < byte.MaxValue && Main.tile[num9, num10 + 1].liquidType() == b)
                             {
                                 int num12 = 255 - LiquidWorld.grid[num9, num10 + 1].Amount;
-								if (num12 > liquidAmount)
-									num12 = liquidAmount;
+                                if (num12 > liquidAmount)
+                                    num12 = liquidAmount;
 
                                 LiquidWorld.grid[num9, num10 + 1].Amount += (byte)num12;
-								liquidAmount = (byte)(liquidAmount - (byte)num12);
-								if (liquidAmount == 0) {
-									num++;
-									break;
-								}
-							}
+                                liquidAmount = (byte)(liquidAmount - (byte)num12);
+                                if (liquidAmount == 0)
+                                {
+                                    num++;
+                                    break;
+                                }
+                            }
 
-							if (num11 == 0) {
-								if (LiquidWorld.grid[num9 + num8, num10].Amount == 0 && (!Main.tile[num9 + num8, num10].nactive() || !Main.tileSolid[Main.tile[num9 + num8, num10].type] || Main.tileSolidTop[Main.tile[num9 + num8, num10].type]))
-									num11 = num8;
-								else if (LiquidWorld.grid[num9 - num8, num10].Amount == 0 && (!Main.tile[num9 - num8, num10].nactive() || !Main.tileSolid[Main.tile[num9 - num8, num10].type] || Main.tileSolidTop[Main.tile[num9 - num8, num10].type]))
-									num11 = -num8;
-							}
+                            if (num11 == 0)
+                            {
+                                if (LiquidWorld.grid[num9 + num8, num10].Amount == 0 && (!Main.tile[num9 + num8, num10].nactive() || !Main.tileSolid[Main.tile[num9 + num8, num10].type] || Main.tileSolidTop[Main.tile[num9 + num8, num10].type]))
+                                    num11 = num8;
+                                else if (LiquidWorld.grid[num9 - num8, num10].Amount == 0 && (!Main.tile[num9 - num8, num10].nactive() || !Main.tileSolid[Main.tile[num9 - num8, num10].type] || Main.tileSolidTop[Main.tile[num9 - num8, num10].type]))
+                                    num11 = -num8;
+                            }
 
-							if (num11 != 0 && LiquidWorld.grid[num9 + num11, num10].Amount == 0 && (!Main.tile[num9 + num11, num10].nactive() || !Main.tileSolid[Main.tile[num9 + num11, num10].type] || Main.tileSolidTop[Main.tile[num9 + num11, num10].type])) {
-								flag4 = true;
-								num9 += num11;
-							}
+                            if (num11 != 0 && LiquidWorld.grid[num9 + num11, num10].Amount == 0 && (!Main.tile[num9 + num11, num10].nactive() || !Main.tileSolid[Main.tile[num9 + num11, num10].type] || Main.tileSolidTop[Main.tile[num9 + num11, num10].type]))
+                            {
+                                flag4 = true;
+                                num9 += num11;
+                            }
 
-							if (flag && !flag4) {
-								flag = false;
-								flag4 = true;
-								num8 = -num7;
-								num11 = 0;
-							}
-						}
+                            if (flag && !flag4)
+                            {
+                                flag = false;
+                                flag4 = true;
+                                num8 = -num7;
+                                num11 = 0;
+                            }
+                        }
 
-						if (j != num9 && num2 != num10)
-							num++;
+                        if (j != num9 && num2 != num10)
+                            num++;
 
                         LiquidWorld.grid[num9, num10].Amount = liquidAmount;
                         LiquidRef liquidRef = LiquidWorld.grid[num9, num10];
                         liquidRef.Type = LiquidRegistry.GetLiquid(b);
-						if (LiquidWorld.grid[num9 - 1, num10].Amount > 0 && !(LiquidWorld.grid[num9 - 1, num10].Type is Lava)) {
-							if (isLava)
-								LavaCheck(num9, num10);
-							else
-								LavaCheck(num9 - 1, num10);
-						}
-						else if (LiquidWorld.grid[num9 + 1, num10].Amount  > 0 &&  !(LiquidWorld.grid[num9 + 1, num10].Type is Lava)) {
-							if (isLava)
-								LavaCheck(num9, num10);
-							else
-								LavaCheck(num9 + 1, num10);
-						}
-						else if (LiquidWorld.grid[num9, num10 - 1].Amount  > 0 &&  !(LiquidWorld.grid[num9, num10 - 1].Type is Lava)) {
-							if (isLava)
-								LavaCheck(num9, num10);
-							else
-								LavaCheck(num9, num10 - 1);
-						}
-						else if (LiquidWorld.grid[num9 , num10 + 1].Amount  > 0 && !(LiquidWorld.grid[num9, num10 + 1].Type is Lava)) {
-							if (isLava)
-								LavaCheck(num9, num10);
-							else
-								LavaCheck(num9, num10 + 1);
-						}
+                        if (LiquidWorld.grid[num9 - 1, num10].Amount > 0 && !(LiquidWorld.grid[num9 - 1, num10].Type is Lava))
+                        {
+                            if (isLava)
+                                LavaCheck(num9, num10);
+                            else
+                                LavaCheck(num9 - 1, num10);
+                        }
+                        else if (LiquidWorld.grid[num9 + 1, num10].Amount > 0 && !(LiquidWorld.grid[num9 + 1, num10].Type is Lava))
+                        {
+                            if (isLava)
+                                LavaCheck(num9, num10);
+                            else
+                                LavaCheck(num9 + 1, num10);
+                        }
+                        else if (LiquidWorld.grid[num9, num10 - 1].Amount > 0 && !(LiquidWorld.grid[num9, num10 - 1].Type is Lava))
+                        {
+                            if (isLava)
+                                LavaCheck(num9, num10);
+                            else
+                                LavaCheck(num9, num10 - 1);
+                        }
+                        else if (LiquidWorld.grid[num9, num10 + 1].Amount > 0 && !(LiquidWorld.grid[num9, num10 + 1].Type is Lava))
+                        {
+                            if (isLava)
+                                LavaCheck(num9, num10);
+                            else
+                                LavaCheck(num9, num10 + 1);
+                        }
 
-						if (LiquidWorld.grid[num9, num10].Amount <= 0)
-							continue;
+                        if (LiquidWorld.grid[num9, num10].Amount <= 0)
+                            continue;
 
-						if (LiquidWorld.grid[num9 - 1, num10].Amount > 0 && !(LiquidWorld.grid[num9 - 1, num10].Type is Honey)) {
-							if (isHoney)
-								HoneyCheck(num9, num10);
-							else
-								HoneyCheck(num9 - 1, num10);
-						}
-						else if (LiquidWorld.grid[num9 + 1, num10].Amount > 0 && !(LiquidWorld.grid[num9 + 1, num10].Type is Honey)) {
-							if (isHoney)
-								HoneyCheck(num9, num10);
-							else
-								HoneyCheck(num9 + 1, num10);
-						}
-						else if (LiquidWorld.grid[num9, num10 - 1].Amount > 0 && !(LiquidWorld.grid[num9, num10 - 1].Type is Honey)) {
-							if (isHoney)
-								HoneyCheck(num9, num10);
-							else
-								HoneyCheck(num9, num10 - 1);
-						}
-						else if (LiquidWorld.grid[num9, num10 + 1].Amount > 0 && !(LiquidWorld.grid[num9, num10 + 1].Type is Honey)) {
-							if (isHoney)
-								HoneyCheck(num9, num10);
-							else
-								HoneyCheck(num9, num10 + 1);
-						}
-					}
-				}
-			}
+                        if (LiquidWorld.grid[num9 - 1, num10].Amount > 0 && !(LiquidWorld.grid[num9 - 1, num10].Type is Honey))
+                        {
+                            if (isHoney)
+                                HoneyCheck(num9, num10);
+                            else
+                                HoneyCheck(num9 - 1, num10);
+                        }
+                        else if (LiquidWorld.grid[num9 + 1, num10].Amount > 0 && !(LiquidWorld.grid[num9 + 1, num10].Type is Honey))
+                        {
+                            if (isHoney)
+                                HoneyCheck(num9, num10);
+                            else
+                                HoneyCheck(num9 + 1, num10);
+                        }
+                        else if (LiquidWorld.grid[num9, num10 - 1].Amount > 0 && !(LiquidWorld.grid[num9, num10 - 1].Type is Honey))
+                        {
+                            if (isHoney)
+                                HoneyCheck(num9, num10);
+                            else
+                                HoneyCheck(num9, num10 - 1);
+                        }
+                        else if (LiquidWorld.grid[num9, num10 + 1].Amount > 0 && !(LiquidWorld.grid[num9, num10 + 1].Type is Honey))
+                        {
+                            if (isHoney)
+                                HoneyCheck(num9, num10);
+                            else
+                                HoneyCheck(num9, num10 + 1);
+                        }
+                    }
+                }
+            }
 
-			return num;
-		}
+            return num;
+        }
 
     }
 }

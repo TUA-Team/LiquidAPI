@@ -1,11 +1,7 @@
-﻿using System;
+﻿using LiquidAPI.ID;
+using Microsoft.Xna.Framework;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using LiquidAPI.ID;
-using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ModLoader;
 
@@ -41,7 +37,7 @@ namespace LiquidAPI.Globals
         }
 
         public override void ResetEffects(NPC npc)
-        { 
+        {
             foreach (int npcWetKey in npcWet.Keys)
             {
                 npcWet[npcWetKey] = false;
@@ -72,7 +68,7 @@ namespace LiquidAPI.Globals
         {
             foreach (int npcWetKey in npcWet.Keys)
             {
-                if(npcWetKey < 2)
+                if (npcWetKey < 2)
                     continue;
                 if (npcWet[npcWetKey])
                 {

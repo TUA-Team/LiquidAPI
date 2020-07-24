@@ -170,15 +170,9 @@ namespace LiquidAPI.Hooks
 
                         if (self.Type.LiquidInteraction(x, y, targetType)) return;
                         // what does this code even do? - Agrair
-#pragma warning disable IDE0059 // Unnecessary assignment of a value
                         int type = -1;
-<<<<<<< HEAD
-                        type = LiquidAPI.interactionResult[LiquidWorld.grid[x, y - 1].Type.Type, targetType.Type];
-
-=======
-#pragma warning restore IDE0059 // Unnecessary assignment of a value
                         type = LiquidAPI.interactionResult[LiquidWorld.grid[x - 1, y].Type.Type, targetType.Type];
->>>>>>> a198fce4ca07677298626886dfb1c6aea81a762c
+
                         if (type == -1)
                         {
                             return;

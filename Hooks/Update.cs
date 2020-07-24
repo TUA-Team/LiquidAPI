@@ -78,8 +78,7 @@ namespace LiquidAPI.Hooks
 
                 if (liquidSelf.TypeID == LiquidID.Honey)
                 {
-                    LiquidRegistry.ModLiquidCheck(liquidSelf.Type, self.x, self.y);
-                    //Liquid.HoneyCheck(self.x, self.y);
+                    Liquid.HoneyCheck(self.x, self.y);
                     if (!Liquid.quickFall)
                     {
                         if (self.delay > 0)
@@ -151,8 +150,6 @@ namespace LiquidAPI.Hooks
                     }
 
                 }
-
-
             }
 
             if ((!liquidDown.Tile.nactive() || !Main.tileSolid[(int)liquidDown.Tile.type] ||

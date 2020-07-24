@@ -1,13 +1,10 @@
+using LiquidAPI.Hooks;
+using LiquidAPI.Vanilla;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using LiquidAPI.Hooks;
-using LiquidAPI.Test;
-using LiquidAPI.Vanilla;
-using Microsoft.Xna.Framework.Graphics;
 using Terraria;
-using Terraria.Map;
 using Terraria.ModLoader;
 
 namespace LiquidAPI
@@ -88,7 +85,7 @@ namespace LiquidAPI
 
         public override void Unload()
         {
-            OnUnload();
+            OnUnload?.Invoke();
             OnUnload = null;
             Array.Resize(ref Main.liquidTexture, INITIAL_LIQUID_TEXTURE_INDEX);
         }

@@ -1,13 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Runtime.Remoting.Messaging;
-using LiquidAPI.ID;
+﻿using LiquidAPI.ID;
 using LiquidAPI.LiquidMod;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Mono.Cecil.Cil;
 using MonoMod.Cil;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using Terraria;
 using Terraria.ModLoader;
 
@@ -44,7 +43,7 @@ namespace LiquidAPI.Hooks
                 if (c2.TryGotoNext(i => i.MatchLdloc(out _),
                     i => i.MatchLdcI4(0x13A),
                     i => i.MatchBneUn(out _)))
-                { 
+                {
                     c.Emit(OpCodes.Br, c2.MarkLabel());
 
                     c2.Emit(OpCodes.Ldloc_3);
@@ -1522,9 +1521,11 @@ namespace LiquidAPI.Hooks
             int num111 = 0;
             bool flag12 = false;
             int num112 = tile.Tile.slope();
-            if (tile3.Amount > 0 && num112 != 1 && num112 != 3) {
+            if (tile3.Amount > 0 && num112 != 1 && num112 != 3)
+            {
                 flag8 = true;
-                switch (tile3.TypeID) {
+                switch (tile3.TypeID)
+                {
                     case 0:
                         flag12 = true;
                         break;
@@ -1543,9 +1544,11 @@ namespace LiquidAPI.Hooks
                     num110 = tile3.Amount;
             }
 
-            if (tile2.Amount > 0 && num112 != 2 && num112 != 4) {
+            if (tile2.Amount > 0 && num112 != 2 && num112 != 4)
+            {
                 flag9 = true;
-                switch (tile2.TypeID) {
+                switch (tile2.TypeID)
+                {
                     case 0:
                         flag12 = true;
                         break;
@@ -1564,9 +1567,11 @@ namespace LiquidAPI.Hooks
                     num110 = tile2.Amount;
             }
 
-            if (tile4.Amount > 0 && num112 != 3 && num112 != 4) {
+            if (tile4.Amount > 0 && num112 != 3 && num112 != 4)
+            {
                 flag10 = true;
-                switch (tile4.TypeID) {
+                switch (tile4.TypeID)
+                {
                     case 0:
                         flag12 = true;
                         break;
@@ -1700,7 +1705,7 @@ namespace LiquidAPI.Hooks
                 {
                     Main.spriteBatch.Draw(Main.liquidTexture[num111], value4 - Main.screenPosition + value, value5, color7, 0f, default(Vector2), 1f, SpriteEffects.None, 0f);
                 }
-                
+
             }
         }
 

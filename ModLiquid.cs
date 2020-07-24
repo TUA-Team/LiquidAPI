@@ -1,6 +1,4 @@
-﻿using System;
-using LiquidAPI.Globals;
-using LiquidAPI.LiquidMod;
+﻿using LiquidAPI.LiquidMod;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -24,7 +22,7 @@ namespace LiquidAPI
         public ModTranslation DisplayName { get; internal set; }
 
         public string Name { get; internal set; }
-        
+
         public virtual Texture2D Texture => ModContent.GetTexture(this.GetType().FullName.Replace(".", "/") + "Fancy");
         public virtual Texture2D OldTexture => ModContent.GetTexture(this.GetType().FullName.Replace(".", "/"));
 
@@ -151,16 +149,16 @@ namespace LiquidAPI
             DisplayName.SetDefault((liquid.DisplayName.GetDefault() ?? "Empty") + " Bucket");
         }
 
-		public override void SetDefaults()
-		{
-			item.width = 24;
-			item.height = 22;
-			item.maxStack = 99;
-			item.useStyle = ItemUseStyleID.SwingThrow;
-			item.useTime = 100;
-			item.useAnimation = 1;
-			item.consumable = true;
-		}
+        public override void SetDefaults()
+        {
+            item.width = 24;
+            item.height = 22;
+            item.maxStack = 99;
+            item.useStyle = ItemUseStyleID.SwingThrow;
+            item.useTime = 100;
+            item.useAnimation = 1;
+            item.consumable = true;
+        }
 
         public ModBucket(ModLiquid liquid)
         {
@@ -179,7 +177,7 @@ namespace LiquidAPI
                 return false;
             }
             LiquidRef liquid = LiquidWorld.grid[Player.tileTargetX, Player.tileTargetY];
-            
+
             if (!liquid.HasLiquid || liquid.Type == this.liquid)
             {
 

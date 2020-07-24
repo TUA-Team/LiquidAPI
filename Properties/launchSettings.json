@@ -1,10 +1,15 @@
 {
   "profiles": {
-    "LiquidAPI": {
+    "Terraria": {
       "commandName": "Executable",
-      "executablePath": "D:\\steam game\\steamapps\\steamapps\\common\\tModLoader\\tModLoader.exe",
-      "commandLineArgs": "/unsafe",
-      "workingDirectory": "D:\\steam game\\steamapps\\steamapps\\common\\tModLoader"
+      "executablePath": "$(tMLPath)",
+      "commandLineArgs": "-savedirectory \"D:\\Terraria Saves\"",
+      "workingDirectory": "$(TerrariaSteamPath)"
+    },
+    "TerrariaServer": {
+      "commandName": "Executable",
+      "executablePath": "$(tMLServerPath)",
+      "workingDirectory": "$(TerrariaSteamPath)"
     }
   }
 }

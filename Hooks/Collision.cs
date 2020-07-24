@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using LiquidAPI.Globals;
+﻿using LiquidAPI.Globals;
 using LiquidAPI.ID;
 using LiquidAPI.LiquidMod;
 using Microsoft.Xna.Framework;
+using System.Collections.Generic;
+using System.Linq;
 using Terraria;
 using Terraria.ID;
 
@@ -57,7 +54,7 @@ namespace LiquidAPI.Hooks
                     if (posY == 0)
                     {
                         continue;
-                        
+
                     }
                     LiquidRef tile = LiquidWorld.grid[posX, posY];
                     LiquidRef tile2 = LiquidWorld.grid[posX, posY - 1];
@@ -147,7 +144,7 @@ namespace LiquidAPI.Hooks
         {
             bool currentlyWet;
             GlobalLiquidNPC liquidGlobalNPC = self.GetGlobalNPC<GlobalLiquidNPC>();
-            if(wetImmunityByNPCType.Contains(self.type) || wetImmunityByNPCAI.Contains(self.aiStyle))
+            if (wetImmunityByNPCType.Contains(self.type) || wetImmunityByNPCAI.Contains(self.aiStyle))
             {
                 currentlyWet = false;
                 self.wetCount = 0;
@@ -167,7 +164,7 @@ namespace LiquidAPI.Hooks
                     liquidGlobalNPC.SetLiquidWetState(LiquidID.Lava, true);
                 }
 
-                for(int i = 3; i < staticNPCWet.Count - 1; i++) 
+                for (int i = 3; i < staticNPCWet.Count - 1; i++)
                     liquidGlobalNPC.SetLiquidWetState(i, staticNPCWet[i]);
             }
 
@@ -196,7 +193,7 @@ namespace LiquidAPI.Hooks
             return lava;
         }
 
-        
+
 
         private static void SpawnLiquidDust(NPC self, GlobalLiquidNPC liquidGlobalNPC)
         {
@@ -212,11 +209,11 @@ namespace LiquidAPI.Hooks
                     else
                         SpawnWaterDust(self);
                 }
-                    
+
             }
             else
                 SpawnLavaDust(self);
-            
+
         }
 
         private static void SpawnLiquidDust(NPC self, LiquidDust liquid)
@@ -228,7 +225,7 @@ namespace LiquidAPI.Hooks
         {
             for (int m = 0; m < amountOfDust; m++)
             {
-                int dustInstanceID = Dust.NewDust(new Vector2(self.position.X - 6f, self.position.Y + (float) (self.height / 2) - 8f), self.width + 12, 24, dustID);
+                int dustInstanceID = Dust.NewDust(new Vector2(self.position.X - 6f, self.position.Y + (float)(self.height / 2) - 8f), self.width + 12, 24, dustID);
                 Main.dust[dustInstanceID].velocity.Y -= dustVelocityX;
                 Main.dust[dustInstanceID].velocity.X *= dustVelocityY;
                 Main.dust[dustInstanceID].scale = dustScale;
@@ -237,37 +234,37 @@ namespace LiquidAPI.Hooks
             }
         }
 
-        private static readonly int[] blacklistedHoneyNPCAIForSound = new int[] {1, 39};
+        private static readonly int[] blacklistedHoneyNPCAIForSound = new int[] { 1, 39 };
         private static readonly int[] blacklistedHoneyNPCTypeForSound = new int[] { NPCID.BlueSlime, NPCID.MotherSlime, NPCID.LavaSlime, NPCID.IceSlime, NPCID.Mouse };
 
         private static void SpawnHoneyDust(NPC self)
         {
             SpawnLiquidDust(self, HoneyDustID, 10, 1f, 2.5f, 1.3f, 100, true);
-            
-            if(!blacklistedHoneyNPCTypeForSound.Contains(self.type) && !blacklistedHoneyNPCAIForSound.Contains(self.aiStyle)  && !self.noGravity)
-                Main.PlaySound(SoundID.Splash, (int) self.position.X, (int) self.position.Y);
+
+            if (!blacklistedHoneyNPCTypeForSound.Contains(self.type) && !blacklistedHoneyNPCAIForSound.Contains(self.aiStyle) && !self.noGravity)
+                Main.PlaySound(SoundID.Splash, (int)self.position.X, (int)self.position.Y);
         }
 
-        private static readonly int[] blacklistedLavaNPCAIForSound = new int[] {1, 39};
+        private static readonly int[] blacklistedLavaNPCAIForSound = new int[] { 1, 39 };
         private static readonly int[] blacklistedLavaNPCTypeForSound = new int[] { NPCID.BlueSlime, NPCID.MotherSlime, NPCID.LavaSlime, NPCID.IceSlime, NPCID.Mouse };
 
         private static void SpawnLavaDust(NPC self)
         {
             SpawnLiquidDust(self, LavaDustID, 10, 1.5f, 2.5f, 1.3f, 100, true);
-            
-            if(!blacklistedLavaNPCTypeForSound.Contains(self.type) && !blacklistedLavaNPCAIForSound.Contains(self.aiStyle)  && !self.noGravity)
-                Main.PlaySound(SoundID.Splash, (int) self.position.X, (int) self.position.Y);
+
+            if (!blacklistedLavaNPCTypeForSound.Contains(self.type) && !blacklistedLavaNPCAIForSound.Contains(self.aiStyle) && !self.noGravity)
+                Main.PlaySound(SoundID.Splash, (int)self.position.X, (int)self.position.Y);
         }
 
-        private static readonly int[] blacklistedWaterNPCAIForSound = new int[] {1, 39, 68};
-        private static readonly int[] blacklistedWaterNPCTypeForSound = new int[] { NPCID.BlueSlime, NPCID.MotherSlime, NPCID.LavaSlime, NPCID.IceSlime, NPCID.Mouse, NPCID.Frog, NPCID.Duck, NPCID.DuckWhite, NPCID.SleepingAngler, NPCID.GoldFrog, NPCID.BartenderUnconscious};
+        private static readonly int[] blacklistedWaterNPCAIForSound = new int[] { 1, 39, 68 };
+        private static readonly int[] blacklistedWaterNPCTypeForSound = new int[] { NPCID.BlueSlime, NPCID.MotherSlime, NPCID.LavaSlime, NPCID.IceSlime, NPCID.Mouse, NPCID.Frog, NPCID.Duck, NPCID.DuckWhite, NPCID.SleepingAngler, NPCID.GoldFrog, NPCID.BartenderUnconscious };
 
         private static void SpawnWaterDust(NPC self)
         {
-            
+
             for (int n = 0; n < 30; n++)
             {
-                int dustInstanceID = Dust.NewDust(new Vector2(self.position.X - 6f, self.position.Y + (float) (self.height / 2) - 8f), self.width + 12, 24, WaterDustID);
+                int dustInstanceID = Dust.NewDust(new Vector2(self.position.X - 6f, self.position.Y + (float)(self.height / 2) - 8f), self.width + 12, 24, WaterDustID);
                 Main.dust[dustInstanceID].velocity.Y -= 4f;
                 Main.dust[dustInstanceID].velocity.X *= 2.5f;
                 Main.dust[dustInstanceID].scale *= 0.8f;
@@ -275,8 +272,8 @@ namespace LiquidAPI.Hooks
                 Main.dust[dustInstanceID].noGravity = true;
             }
 
-            if(!blacklistedWaterNPCTypeForSound.Contains(self.type) && !blacklistedWaterNPCAIForSound.Contains(self.aiStyle) && !self.noGravity)
-                Main.PlaySound(SoundID.Splash, (int) self.position.X, (int) self.position.Y, 0);
+            if (!blacklistedWaterNPCTypeForSound.Contains(self.type) && !blacklistedWaterNPCAIForSound.Contains(self.aiStyle) && !self.noGravity)
+                Main.PlaySound(SoundID.Splash, (int)self.position.X, (int)self.position.Y, 0);
         }
 
         private static void RemoveOnFireDebuff(NPC self, GlobalLiquidNPC liquidGlobalNPC)

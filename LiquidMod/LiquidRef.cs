@@ -41,7 +41,7 @@ namespace LiquidAPI.LiquidMod
         }
 
         public bool HasLiquid => Amount > 0;
-        
+
 
         public LiquidRef(int x, int y)
         {

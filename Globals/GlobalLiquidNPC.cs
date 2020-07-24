@@ -1,11 +1,7 @@
-﻿using System;
+﻿using LiquidAPI.ID;
+using Microsoft.Xna.Framework;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using LiquidAPI.ID;
-using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ModLoader;
 
@@ -15,20 +11,25 @@ namespace LiquidAPI.Globals
     {
         public override bool InstancePerEntity => true;
 
-        
-
-        public ConcurrentDictionary<int, bool> npcWet = new ConcurrentDictionary<int, bool>()
-        {
-            [0] = false,
-            [1] = false,
-            [2] = false
-        };
+        public ConcurrentDictionary<int, bool> npcWet;
 
         public GlobalLiquidNPC()
         {
+            npcWet = new ConcurrentDictionary<int, bool>
+            {
+                [0] = false,
+                [1] = false,
+                [2] = false,
+                [3] = false,
+            };
+
+            // TODO: remove somehow because this is a bad hotfix
+            if (LiquidRegistry.liquidList == null) LiquidRegistry.liquidList = new Dictionary<int, ModLiquid>();
+
+
             if (npcWet.Count != LiquidRegistry.liquidList.Count)
             {
-                for (int i = 3; i < LiquidRegistry.liquidList.Count; i++)
+                for (int i = 4; i < LiquidRegistry.liquidList.Count; i++)
                 {
                     npcWet.TryAdd(i, false);
                 }
@@ -67,7 +68,7 @@ namespace LiquidAPI.Globals
         {
             foreach (int npcWetKey in npcWet.Keys)
             {
-                if(npcWetKey < 2)
+                if (npcWetKey < 2)
                     continue;
                 if (npcWet[npcWetKey])
                 {
@@ -85,7 +86,6 @@ namespace LiquidAPI.Globals
         public void SpawnDust(int liquidID)
         {
             Color color = LiquidRegistry.GetLiquid(liquidID).LiquidColor;
-            
         }
     }
 }

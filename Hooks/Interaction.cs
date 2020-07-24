@@ -79,6 +79,10 @@ namespace LiquidAPI.Hooks
                         type = LiquidAPI.interactionResult[LiquidWorld.grid[x, y + 1].Type.Type, targetType.Type];
                     }
                 }
+
+                if (type == -1)
+                    return;
+
                 if (liquidAmount >= 24)
                 {
                     if (liquidSelf.Tile.active() && Main.tileObsidianKill[liquidSelf.Tile.type])
@@ -152,14 +156,11 @@ namespace LiquidAPI.Hooks
                             return;
                         }
                         int type = -1;
-                        type = LiquidAPI.interactionResult[LiquidWorld.grid[x - 1, y].Type.Type, targetType.Type];
+                        type = LiquidAPI.interactionResult[LiquidWorld.grid[x, y - 1].Type.Type, targetType.Type];
+
                         if (type == -1)
                         {
-                            type = LiquidAPI.interactionResult[LiquidWorld.grid[x + 1, y].Type.Type, targetType.Type];
-                            if (type == -1)
-                            {
-                                type = LiquidAPI.interactionResult[LiquidWorld.grid[x, y + 1].Type.Type, targetType.Type];
-                            }
+                            return;
                         }
                         liquidSelf.Amount = 0;
                         liquidSelf.Type = null;

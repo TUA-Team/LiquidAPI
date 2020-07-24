@@ -98,8 +98,6 @@ namespace LiquidAPI.LiquidMod
                     }
                 }
             }
-
-
         }
 
         public LiquidRef this[int x, int y] => new LiquidRef(x, y);

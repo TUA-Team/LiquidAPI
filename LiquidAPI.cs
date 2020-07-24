@@ -34,6 +34,16 @@ namespace LiquidAPI
             interactionResult = new int[256, 256];
             killTile = new bool[TileLoader.TileCount, 256];
 
+
+            for (int i = 0; i < 256; i++)
+            {
+                for (int j = 0; j < 256; j++)
+                {
+                    interactionResult[i, j] = -1;
+                }
+            }
+
+
             ModBucket emptyBucket = new ModBucket();
             AddItem("BucketEmpty", emptyBucket);
 

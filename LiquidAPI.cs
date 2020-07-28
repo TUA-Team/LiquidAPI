@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using LiquidAPI.Caches;
 using Terraria;
 using Terraria.ModLoader;
 
@@ -31,6 +32,7 @@ namespace LiquidAPI
             interactionResult = new int[256, 256];
             killTile = new bool[TileLoader.TileCount, 256];
 
+            ReflectionCaches.Load();
 
             for (int i = 0; i < 256; i++)
             {
@@ -39,10 +41,6 @@ namespace LiquidAPI
                     interactionResult[i, j] = -1;
                 }
             }
-
-
-            ModBucket emptyBucket = new ModBucket();
-            AddItem("BucketEmpty", emptyBucket);
 
             this.AddLiquid<Water>("LiquidWater");
             this.AddLiquid<Lava>("LiquidLava");
@@ -88,6 +86,7 @@ namespace LiquidAPI
             OnUnload?.Invoke();
             OnUnload = null;
             Array.Resize(ref Main.liquidTexture, INITIAL_LIQUID_TEXTURE_INDEX);
+            ReflectionCaches.Unload();
         }
 
         private static void LoadModContent(Action<Mod> loadAction)

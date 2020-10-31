@@ -4,6 +4,7 @@ using System.Text.RegularExpressions;
 using LiquidAPI.Hooks;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -21,7 +22,7 @@ namespace LiquidAPI
 		{
 			LiquidAPI.OnUnload+=()=>
 			{
-				Array.Resize(ref Main.liquidTexture, vanillaMaxVanilla);
+				Array.Resize(ref TextureAssets.Liquid, vanillaMaxVanilla);
 				liquidList.Clear();
 				liquidList = null;
 			};
@@ -39,7 +40,7 @@ namespace LiquidAPI
 			liquid.DisplayName.SetDefault(Regex.Replace(name, "([A-Z])", " $1").Trim());
 
 			Texture2D usedTexture = texture ?? liquid.Texture;
-			Array.Resize(ref Main.liquidTexture, Main.liquidTexture.Length + 1);
+			Array.Resize(ref TextureAssets.Liquid, TextureAssets.Liquid.Length + 1);
 			liquid.Type = initialLiquidIndex++;
 			liquidList.Add(liquid.Type, liquid);
 			if (Main.netMode == NetmodeID.SinglePlayer)

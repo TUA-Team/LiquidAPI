@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "LiquidAPI": {
+      "commandName": "Executable",
+      "executablePath": "$(tMLPath)",
+      "workingDirectory": "$(TerrariaSteamPath)"
+    }
+  }
+}

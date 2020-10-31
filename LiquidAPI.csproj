@@ -1,74 +1,30 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
-  <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{D9056560-33E4-45B5-80C6-E4F4D2218F21}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>LiquidAPI</RootNamespace>
-    <AssemblyName>LiquidAPI</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <Deterministic>true</Deterministic>
-    <TargetFrameworkProfile />
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-  </PropertyGroup>
-  <ItemGroup>
-    <Compile Include="Data\Bit.cs" />
-    <Compile Include="Hooks\Interaction.cs" />
-    <Compile Include="Hooks\ModLoaderMonoModHook.cs" />
-    <Compile Include="Hooks\Rendering.cs" />
-    <Compile Include="Hooks\Update.cs" />
-    <Compile Include="Hooks\Utility.cs" />
-    <Compile Include="ID\LiquidID.cs" />
-    <Compile Include="LiquidAPI.cs" />
-    <Compile Include="Hooks\LiquidHooks.cs" />
-    <Compile Include="LiquidMod\LiquidWorld.cs" />
-    <Compile Include="LiquidMod\LiquidGlobalItem.cs" />
-    <Compile Include="LiquidMod\LiquidGlobalNPC.cs" />
-    <Compile Include="LiquidMod\LiquidPlayer.cs" />
-    <Compile Include="LiquidMod\LiquidRef.cs" />
-    <Compile Include="LiquidRegistry.cs" />
-    <Compile Include="LiquidRenderer.cs" />
-    <Compile Include="ModLiquid.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Test\PlutonicWaste.cs" />
-    <Compile Include="Test\WeirdLiquid.cs" />
-    <Compile Include="Vanilla\Honey.cs" />
-    <Compile Include="Vanilla\Lava.cs" />
-    <Compile Include="Vanilla\Water.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="ModBucket.png" />
-    <Content Include="Test\PlutonicWaste.png" />
-    <Content Include="Test\WeirdLiquid.png" />
-    <Content Include="Texture\Bucket\liquid.png" />
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\..\references\tModLoader.targets" />
   <PropertyGroup>
-    <PostBuildEvent>pushd $(ProjectDir)_scripts\
-"tmlbuild.bat" "$(ProjectDir)\" -eac "$(TargetPath)"
-popd</PostBuildEvent>
+    <AssemblyName>ROI</AssemblyName>
+    <TargetFramework>net472</TargetFramework>
+    <PlatformTarget>x86</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <Target Name="BuildMod" AfterTargets="Build">
+    <Exec Command="&quot;$(tMLBuildServerPath)&quot; -build $(ProjectDir) -eac $(TargetPath) -define &quot;$(DefineConstants)&quot; -unsafe $(AllowUnsafeBlocks)" />
+  </Target>
+  <ItemGroup>
+    <None Remove=".gitignore" />
+    <None Remove=".todo" />
+    <None Remove="build.txt" />
+    <None Remove="description.txt" />
+    <None Remove="README.MD" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="tModLoader.CodeAssist" Version="0.1.*" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System.Net.Http" />
+  </ItemGroup>
 </Project>

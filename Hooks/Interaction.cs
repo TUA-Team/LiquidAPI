@@ -3,6 +3,7 @@ using LiquidAPI.LiquidMod;
 using LiquidAPI.Vanilla;
 using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 
 namespace LiquidAPI.Hooks
@@ -48,6 +49,7 @@ namespace LiquidAPI.Hooks
 						WorldGen.KillTile(x, y);
 						if (Main.netMode == NetmodeID.Server)
 						{
+							// TODO: obsolete
 							NetMessage.SendData(MessageID.TileChange, -1, -1, null, 0, x, y);
 						}
 					}
@@ -57,7 +59,7 @@ namespace LiquidAPI.Hooks
 						liquidSelf.Amount = 0;
 						liquidSelf.Type = null;
 
-						Main.PlaySound(type == TileID.Obsidian ? SoundID.LiquidsWaterLava : SoundID.LiquidsHoneyLava, new Vector2(x * 16 + 8, y * 16 + 8));
+						SoundEngine.PlaySound(type == TileID.Obsidian ? SoundID.LiquidsWaterLava : SoundID.LiquidsHoneyLava, new Vector2(x * 16 + 8, y * 16 + 8));
 
 						WorldGen.PlaceTile(x, y, type, true, true);
 						WorldGen.SquareTileFrame(x, y);
@@ -72,7 +74,7 @@ namespace LiquidAPI.Hooks
 			}
 			else if (liquidUp.Amount > 0 && liquidUp.TypeID != LiquidID.Lava)
 			{
-				bool flag = liquidSelf.Tile.active() && TileID.Sets.ForceObsidianKill[liquidSelf.Tile.type] && !TileID.Sets.ForceObsidianKill[liquidUp.Tile.type];
+				bool flag = liquidSelf.Tile.active()/* && TileID.Sets.ForceObsidianKill[liquidSelf.Tile.type] && !TileID.Sets.ForceObsidianKill[liquidUp.Tile.type]*/;
 
 				if (Main.tileCut[liquidUp.Tile.type])
 				{
@@ -121,7 +123,7 @@ namespace LiquidAPI.Hooks
 
 						if (type == TileID.Obsidian)
 						{
-							Main.PlaySound(type == TileID.Obsidian ? SoundID.LiquidsWaterLava : SoundID.LiquidsHoneyLava, new Vector2(x * 16 + 8, y * 16 + 8));
+							SoundEngine.PlaySound(type == TileID.Obsidian ? SoundID.LiquidsWaterLava : SoundID.LiquidsHoneyLava, new Vector2(x * 16 + 8, y * 16 + 8));
 						}
 						WorldGen.PlaceTile(x, y + 1, type, true, true);
 						WorldGen.SquareTileFrame(x, y + 1);
@@ -196,7 +198,7 @@ namespace LiquidAPI.Hooks
 
 				WorldGen.PlaceTile(x, y, TileID.HoneyBlock, true, true);
 
-				Main.PlaySound(flag?SoundID.LiquidsHoneyLava:SoundID.LiquidsHoneyWater, new Vector2(x * 16 + 8, y * 16 + 8));
+				SoundEngine.PlaySound(flag?SoundID.LiquidsHoneyLava:SoundID.LiquidsHoneyWater, new Vector2(x * 16 + 8, y * 16 + 8));
 				
 				WorldGen.SquareTileFrame(x, y);
 
@@ -242,7 +244,7 @@ namespace LiquidAPI.Hooks
 						liquidUp.Amount = 0;
 						liquidUp.Type = null;
 
-						Main.PlaySound(flag?SoundID.LiquidsHoneyLava:SoundID.LiquidsHoneyWater, new Vector2(x * 16 + 8,y * 16 + 8));
+						SoundEngine.PlaySound(flag?SoundID.LiquidsHoneyLava:SoundID.LiquidsHoneyWater, new Vector2(x * 16 + 8,y * 16 + 8));
 
 						WorldGen.PlaceTile(x, y + 1, TileID.HoneyBlock, true, true);
 						WorldGen.SquareTileFrame(x, y + 1);

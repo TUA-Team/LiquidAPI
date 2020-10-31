@@ -23,8 +23,8 @@ namespace LiquidAPI
 
 		public string Name{get;internal set;}
 
-		public virtual Texture2D Texture=>ModContent.GetTexture(this.GetType().FullName.Replace(".", "/"));
-		public virtual Texture2D OldTexture=>ModContent.GetTexture(this.GetType().FullName.Replace(".", "/"));
+		public virtual Texture2D Texture=>(Texture2D)ModContent.GetTexture(GetType().FullName.Replace(".", "/"));
+		public virtual Texture2D OldTexture=>(Texture2D)ModContent.GetTexture(GetType().FullName.Replace(".", "/"));
 
 		public Color LiquidColor=Color.White;
 
@@ -117,24 +117,29 @@ namespace LiquidAPI
 
 		internal void AddModBucket()
 		{
-			Mod.AddItem("Bucket"+Name, new ModBucket(this));
+			Mod.AddContent(new ModBucket(this,"Bucket"+Name));
 		}
 	}
 
+	[Autoload(false)]
 	public class ModBucket : ModItem
 	{
-		private readonly ModLiquid liquid;
+		private readonly ModLiquid _liquid;
 
-		public override string Texture => "LiquidAPI/ModBucket";
+		private readonly string _name;
+        public sealed override string Name => _name;
+
+        public sealed override string Texture => "LiquidAPI/ModBucket";
 		
-		public override bool Autoload(ref string name)=>false;
+		public ModBucket(string name)
+        {
+			_name = name;
+        }
 
-		public ModBucket(){}
-
-		public ModBucket(ModLiquid liquid)
+		public ModBucket(ModLiquid liquid,string name) : this(name)
 		{
-			this.liquid = liquid;
-			DisplayName.SetDefault((liquid?.DisplayName.GetDefault()??"Empty") + " Bucket");
+			_liquid = liquid;
+			DisplayName.SetDefault((liquid?.DisplayName.GetDefault()??"Empty")+" Bucket");
 		}
 
 		public override void SetDefaults()
@@ -142,7 +147,7 @@ namespace LiquidAPI
 			item.width = 24;
 			item.height = 22;
 			item.maxStack = 99;
-			item.useStyle = ItemUseStyleID.SwingThrow;
+			item.useStyle = ItemUseStyleID.Swing;
 			item.useTime = 100;
 			item.useAnimation = 1;
 			item.consumable = true;
@@ -150,16 +155,15 @@ namespace LiquidAPI
 
 		public override bool UseItem(Player player)
 		{
-			if(this.liquid==null){return false;}
+			if(_liquid==null){return false;}
 			LiquidRef tile = LiquidWorld.grid[Player.tileTargetX, Player.tileTargetY];
 
-			if (!tile.HasLiquid || tile.Type == this.liquid)
+			if (!tile.HasLiquid || tile.Type == _liquid)
 			{
-
 				//Item newItem = Main.item[Item.NewItem(player.position, item.type)];
 				//ModBucket newBucket = newItem.modItem as ModBucket;
 				
-				tile.Type = this.liquid;
+				tile.Type = _liquid;
 				tile.Amount = 255;
 
 				WorldGen.SquareTileFrame(Player.tileTargetX,Player.tileTargetY, true);
@@ -174,21 +178,21 @@ namespace LiquidAPI
 		{
 			item.useAnimation = 45;
 			item.useTime = 45;
-			item.useStyle = 4;
+			item.useStyle = ItemUseStyleID.HoldUp;
 
-			if (liquid != null)
+			if (_liquid != null)
 			{
-				Texture2D liquidTexture = LiquidAPI.instance.GetTexture("Texture/Bucket/liquid");
-				spriteBatch.Draw(liquidTexture, position, null, liquid.LiquidColor, 0f, origin, new Vector2(scale), SpriteEffects.None, 0);
+				Texture2D liquidTexture = (Texture2D)Mod.GetTexture("Texture/Bucket/liquid");
+				spriteBatch.Draw(liquidTexture, position, null, _liquid.LiquidColor, 0f, origin, new Vector2(scale), SpriteEffects.None, 0);
 			}
 		}
 
 		public override void PostDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, float rotation, float scale, int whoAmI)
 		{
-			if (liquid != null)
+			if (_liquid != null)
 			{
-				Texture2D liquidTexture = LiquidAPI.instance.GetTexture("Texture/Bucket/liquid");
-				spriteBatch.Draw(liquidTexture, item.position, liquid.LiquidColor);
+				Texture2D liquidTexture = (Texture2D)Mod.GetTexture("Texture/Bucket/liquid");
+				spriteBatch.Draw(liquidTexture, item.position, _liquid.LiquidColor);
 			}
 		}
 	}

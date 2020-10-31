@@ -5,6 +5,7 @@ using LiquidAPI.LiquidMod;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.GameContent;
 
 namespace LiquidAPI.Hooks
 {
@@ -335,7 +336,10 @@ namespace LiquidAPI.Hooks
 										}
 
 										Color color3 = Color.Lerp(color2,color4 * num17,0.4f);
-										Main.spriteBatch.Draw(Main.liquidTexture[num12],value - Main.screenPosition + new Vector2(num28, num29) +zero,new Rectangle(value2.X + num28,value2.Y + num29, width, height), color3, 0f, default(Vector2), 1f,SpriteEffects.None, 0f);
+										Main.spriteBatch.Draw((Texture2D)TextureAssets.Liquid[num12],
+											value - Main.screenPosition + new Vector2(num28, num29) +zero,
+											new Rectangle(value2.X + num28,value2.Y + num29, width, height),
+											color3, 0f, default(Vector2), 1f,SpriteEffects.None, 0f);
 									}
 								}
 								else

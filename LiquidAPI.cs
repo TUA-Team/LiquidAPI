@@ -22,15 +22,14 @@ namespace LiquidAPI
 			LiquidRenderer.Instance = new LiquidRenderer();
 			instance = this;
 
-			ModBucket emptyBucket = new ModBucket();
-			AddItem("BucketEmpty", emptyBucket);
+			AddContent(new ModBucket("BucketEmpty"));
 
 			this.AddLiquid<Water>("LiquidWater");
 			this.AddLiquid<Lava>("LiquidLava");
 			this.AddLiquid<Honey>("LiquidHoney");
 
-			LiquidHooks.OldHoneyTexture = Main.liquidTexture[11];
-			LiquidHooks.OldLavaTexture = Main.liquidTexture[1];
+			LiquidHooks.OldHoneyTexture = (Texture2D)TextureAssets.Liquid[11];
+			LiquidHooks.OldLavaTexture = (Texture2D)TextureAssets.Liquid[1];
 			List<Texture2D> OldWaterTextureList = new List<Texture2D>();
 			for (int i = 0; i < 11; i++)
 			{
@@ -38,7 +37,7 @@ namespace LiquidAPI
 				{
 					continue;
 				}
-				OldWaterTextureList.Add(Main.liquidTexture[i]);
+				OldWaterTextureList.Add((Texture2D)TextureAssets.Liquid[i]);
 			}
 
 			LiquidHooks.OldWaterTexture = OldWaterTextureList;
@@ -58,7 +57,7 @@ namespace LiquidAPI
 		{
 			OnUnload();
 			OnUnload=null;
-			Array.Resize(ref Main.liquidTexture, INITIAL_LIQUID_TEXTURE_INDEX);
+			Array.Resize(ref (Texture2D)TextureAssets.Liquid, INITIAL_LIQUID_TEXTURE_INDEX);
 		}
 
 		private static void LoadModContent(Action<Mod> loadAction)
@@ -100,7 +99,7 @@ namespace LiquidAPI
 				// an break honey textuar
 				//if (Main.netMode == 0)
 				//{
-					//Main.liquidTexture[Main.liquidTexture.Length - 1] = this.GetTexture(texturePath);
+					//(Texture2D)TextureAssets.Liquid[(Texture2D)TextureAssets.Liquid.Length - 1] = this.GetTexture(texturePath);
 					//LiquidRenderer.Instance.LiquidTextures[LiquidRenderer.Instance.LiquidTextures.Count - 1] =
 					//	this.GetTexture(texturePath);
 				//}

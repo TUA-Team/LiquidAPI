@@ -2,8 +2,8 @@
   "profiles": {
     "Terraria": {
       "commandName": "Executable",
-      "executablePath": "D:\\steam game\\steamapps\\steamapps\\common\\tModLoader\\tModLoader.exe",
-      "workingDirectory": "D:\\steam game\\steamapps\\steamapps\\common\\tModLoader\\"
+      "executablePath": "$(tMLPath)",
+      "workingDirectory": "$(TerrariaSteamPath)"
     },
     "TerrariaServer": {
       "commandName": "Executable",

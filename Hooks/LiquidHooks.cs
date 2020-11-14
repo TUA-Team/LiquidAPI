@@ -29,7 +29,7 @@ namespace LiquidAPI.Hooks
 
             // Liquid Renderer
             On.Terraria.GameContent.Liquid.LiquidRenderer.Update +=
-                (orig, self, time) => LiquidRenderer.Instance.Update(time);
+                (orig, self, time) => LiquidRenderer.Instance?.Update(time);
 
             On.Terraria.GameContent.Liquid.LiquidRenderer.PrepareDraw +=
                 (orig, self, area) => LiquidRenderer.Instance.PrepareDraw(area);

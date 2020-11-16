@@ -17,6 +17,7 @@ namespace LiquidAPI.Test
             customDelay = 50;
             LiquidDust = new LiquidDust(DustID.AmberBolt, 20, 1f, 2.5f, 1.3f, 100, true);
 
+            RegisterMapColorCode(new Color(0, 255, 0));
         }
 
         public override void PreDrawValueSet(ref bool bg, ref int style, ref float Alpha)

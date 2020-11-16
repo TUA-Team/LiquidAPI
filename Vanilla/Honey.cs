@@ -21,6 +21,8 @@ namespace LiquidAPI.Vanilla
 
             LiquidAPI.interactionResult[Type, LiquidID.Water] = TileID.HoneyBlock;
             LiquidAPI.interactionResult[Type, LiquidID.Lava] = TileID.CrispyHoneyBlock;
+
+            RegisterMapColorCode(new Color(254, 194, 20));
         }
     }
 }

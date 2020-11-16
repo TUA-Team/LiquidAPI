@@ -2,8 +2,12 @@
 using LiquidAPI.LiquidMod;
 using LiquidAPI.Vanilla;
 using System;
+using LiquidAPI.Caches;
 using Terraria;
+using Terraria.GameContent.NetModules;
 using Terraria.ID;
+using Terraria.Localization;
+using Terraria.Net;
 using static Terraria.Liquid;
 
 namespace LiquidAPI.Hooks
@@ -779,6 +783,128 @@ namespace LiquidAPI.Hooks
 
             return num;
         }
+
+        public static void UpdateLiquid(On.Terraria.Liquid.orig_UpdateLiquid orig)
+        {
+            int wetCounter = (int) ReflectionCaches.fieldCache[typeof(Liquid)]["wetCounter"].GetValue(null);
+
+            if (!WorldGen.gen) {
+				if (!panicMode) {
+					if (numLiquid + LiquidBuffer.numLiquidBuffer > 4000) {
+						panicCounter++;
+						if (panicCounter > 1800 || numLiquid + LiquidBuffer.numLiquidBuffer > 13500)
+							StartPanic();
+					}
+					else {
+						panicCounter = 0;
+					}
+				}
+                //This is what is ruining the entire settling code
+				if (panicMode) {
+					int num = 0;
+					while (panicY >= 3 && num < 5) {
+						num++;
+						Liquid.QuickWater(0, panicY, panicY);
+						panicY--;
+						if (panicY >= 3)
+							continue;
+
+						Console.WriteLine(Language.GetTextValue("Misc.WaterSettled"));
+						panicCounter = 0;
+						panicMode = false;
+						WorldGen.WaterCheck();
+						if (Main.netMode != 2)
+							continue;
+
+						for (int i = 0; i < 255; i++) {
+							for (int j = 0; j < Main.maxSectionsX; j++) {
+								for (int k = 0; k < Main.maxSectionsY; k++) {
+									Netplay.Clients[i].TileSections[j, k] = false;
+								}
+							}
+						}
+					}
+
+					return;
+				}
+			}
+
+			if (quickSettle || numLiquid > 2000)
+				quickFall = true;
+			else
+				quickFall = false;
+
+			wetCounter++;
+			int num2 = maxLiquid / cycles;
+			int num3 = num2 * (wetCounter - 1);
+			int num4 = num2 * wetCounter;
+			if (wetCounter == cycles)
+				num4 = numLiquid;
+
+			if (num4 > numLiquid) {
+				num4 = numLiquid;
+				_ = Main.netMode;
+				wetCounter = cycles;
+			}
+
+			if (quickFall) {
+				for (int l = num3; l < num4; l++) {
+					Main.liquid[l].delay = 10;
+					Main.liquid[l].Update();
+					Main.tile[Main.liquid[l].x, Main.liquid[l].y].skipLiquid(skipLiquid: false);
+				}
+			}
+			else {
+				for (int m = num3; m < num4; m++) {
+					if (!Main.tile[Main.liquid[m].x, Main.liquid[m].y].skipLiquid())
+						Main.liquid[m].Update();
+					else
+						Main.tile[Main.liquid[m].x, Main.liquid[m].y].skipLiquid(skipLiquid: false);
+				}
+			}
+
+			if (wetCounter >= cycles) {
+                wetCounter = 0;
+				for (int num5 = numLiquid - 1; num5 >= 0; num5--) {
+					if (Main.liquid[num5].kill > 4)
+						DelWater(num5);
+				}
+
+				int num6 = maxLiquid - (maxLiquid - numLiquid);
+				if (num6 > LiquidBuffer.numLiquidBuffer)
+					num6 = LiquidBuffer.numLiquidBuffer;
+
+				for (int n = 0; n < num6; n++) {
+					Main.tile[Main.liquidBuffer[0].x, Main.liquidBuffer[0].y].checkingLiquid(checkingLiquid: false);
+					Liquid.AddWater(Main.liquidBuffer[0].x, Main.liquidBuffer[0].y);
+					LiquidBuffer.DelBuffer(0);
+				}
+
+				if (numLiquid > 0 && numLiquid > stuckAmount - 50 && numLiquid < stuckAmount + 50) {
+					stuckCount++;
+					if (stuckCount >= 10000) {
+						stuck = true;
+						for (int num7 = numLiquid - 1; num7 >= 0; num7--) {
+							DelWater(num7);
+						}
+
+						stuck = false;
+						stuckCount = 0;
+					}
+				}
+				else {
+					stuckCount = 0;
+					stuckAmount = numLiquid;
+				}
+			}
+
+			//if (!WorldGen.gen && Main.netMode == 2 && _netChangeSet.Count > 0) {
+				//Utils.Swap(ref _netChangeSet, ref _swapNetChangeSet);
+				//NetManager.Instance.Broadcast(NetLiquidModule.Serialize(_swapNetChangeSet));
+				//_swapNetChangeSet.Clear();
+			//}
+
+		}
 
     }
 }

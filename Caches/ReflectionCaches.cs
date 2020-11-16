@@ -39,6 +39,11 @@ namespace LiquidAPI.Caches
             {
                 ["items"] = typeof(ItemLoader).GetField("items", BindingFlags.Static | BindingFlags.NonPublic)
             });
+            fieldCache.Add(typeof(Liquid), new Dictionary<string, FieldInfo>()
+            {
+                ["wetCounter"] = typeof(Liquid).GetField("wetCounter", BindingFlags.Static | BindingFlags.NonPublic),
+
+            });
         }
     }
 }

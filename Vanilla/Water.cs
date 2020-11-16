@@ -24,6 +24,8 @@ namespace LiquidAPI.Vanilla
             LiquidAPI.interactionResult[Type, LiquidID.Honey] = TileID.HoneyBlock;
             LiquidAPI.interactionResult[Type, LiquidID.Lava] = TileID.Obsidian;
             Name = "Water";
+
+            RegisterMapColorCode(new Color(9, 61, 191));
         }
 
         public override bool CanKillTile(int x, int y) => TileObjectData.CheckWaterDeath(Main.tile[x, y]);

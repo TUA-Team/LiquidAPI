@@ -3,7 +3,7 @@ using Terraria.ID;
 
 namespace LiquidAPI.Vanilla
 {
-    class Oil : ModLiquid
+    public class Oil : ModLiquid
     {
         public override bool Autoload(ref string name, ref string texture, ref string fancyTexture) => false;
 
@@ -17,6 +17,8 @@ namespace LiquidAPI.Vanilla
             WaterfallLength = 50;
             LiquidDust = new LiquidDust(DustID.Blood, 20, 1f, 2.5f, 1.3f, 100, true);
             Name = "Oil";
+
+            RegisterMapColorCode(new Color(0, 0, 0));
         }
 
         public override void PreDrawValueSet(ref bool bg, ref int style, ref float Alpha)

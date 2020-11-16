@@ -1,4 +1,8 @@
-﻿using Microsoft.Xna.Framework.Graphics;
+﻿using System.Reflection;
+using Microsoft.Xna.Framework.Graphics;
+using MonoMod.RuntimeDetour.HookGen;
+using Terraria.Map;
+using Terraria.ModLoader;
 
 namespace LiquidAPI.Hooks
 {
@@ -51,6 +55,39 @@ namespace LiquidAPI.Hooks
 
             // TODO: WaterStyleLoader -> Resize Arrays hook needed for LiquidRenderer texture array (Might not be required if done on PostLoad)
             // TODO: ModInternals -> SetupContent hook needed for LiquidRenderer texture array (Might not be required if done on PostLoad)	
+
+            //Map
+            On.Terraria.Map.MapHelper.CreateMapTile += CreateMapTile;
+            On.Terraria.Map.MapHelper.GetMapTileXnaColor += GetMapTileXnaColor;
+
+            //Lang
+            On.Terraria.Lang.GetMapObjectName += GetMapObjectName;
+
+            //
+            MapLegend_FromTile += FromTile;
+        }
+
+        internal delegate string orig_FromTile(MapLegend instance, MapTile mapTile, int x, int y);
+        internal delegate string hook_FromTile(orig_FromTile orig, MapLegend instance, MapTile mapTile, int x, int y);
+
+        public static event hook_FromTile MapLegend_FromTile
+        {
+            add
+            {
+                HookEndpointManager.Add<hook_FromTile>(MethodBase.GetMethodFromHandle(typeof(MapLegend).GetMethod("FromTile", BindingFlags.Public | BindingFlags.Instance).MethodHandle), value);
+            }
+            remove
+            {
+                HookEndpointManager.Remove<hook_FromTile>(MethodBase.GetMethodFromHandle(typeof(MapLegend).GetMethod("FromTile", BindingFlags.Public | BindingFlags.Instance).MethodHandle), value);
+            }
+        }
+
+        public static string FromTile(orig_FromTile orig, MapLegend instance, MapTile mapTile, int x, int y) {
+            if (mapTile.Type < 10000)
+            {
+                return orig(instance, mapTile, x, y);
+            }
+            return "Programmer are working, do not disturb them unless you are ready to face the wrath of hell";;
         }
     }
 }

@@ -104,6 +104,7 @@ namespace LiquidAPI.LiquidMod
         public override void ModifyWorldGenTasks(List<GenPass> tasks, ref float totalWeight)
         {
             int liquidSettleIndex = tasks.FindIndex(i => i.Name == "Settle Liquids");
+            int settleLiquidAgainIndex = tasks.FindIndex(i => i.Name == "Settle Liquids Again");
             int mossIntensifyIndex = tasks.FindIndex(i => i.Name == "Moss");
             if (liquidSettleIndex != -1)
             {
@@ -132,6 +133,9 @@ namespace LiquidAPI.LiquidMod
                                         break;
                                     case 2:
                                         liquidRef.Type = new Honey();
+                                        break;
+                                    case 3:
+                                        liquidRef.Type = new Oil();
                                         break;
                                 }
                             }
@@ -164,6 +168,49 @@ namespace LiquidAPI.LiquidMod
                     WorldGen.WaterCheck();
                 });
             }
+
+            if (settleLiquidAgainIndex != -1)
+            {
+                tasks[settleLiquidAgainIndex] = new PassLegacy("Settle Liquids Again", progress =>
+                {
+                    return;
+                    progress.Message = Lang.gen[27].Value;
+                    Liquid.QuickWater(3);
+                    //WorldGen.WaterCheck();
+                    int num78 = 0;
+                    Liquid.quickSettle = true;
+                    while (num78 < 10) {
+                        int num79 = Liquid.numLiquid + LiquidBuffer.numLiquidBuffer;
+                        num78++;
+                        float num80 = 0f;
+                        while (Liquid.numLiquid > 0) {
+                            float num81 = (float)(num79 - (Liquid.numLiquid + LiquidBuffer.numLiquidBuffer)) / (float)num79;
+                            if (Liquid.numLiquid + LiquidBuffer.numLiquidBuffer > num79)
+                                num79 = Liquid.numLiquid + LiquidBuffer.numLiquidBuffer;
+
+                            if (num81 > num80)
+                                num80 = num81;
+                            else
+                                num81 = num80;
+
+                            if (num78 == 1)
+                                progress.Set(num81 / 3f + 0.33f);
+
+                            int num82 = 10;
+                            if (num78 > num82)
+                                num82 = num78;
+
+                            Liquid.UpdateLiquid();
+                        }
+
+                        //WorldGen.WaterCheck();
+                        progress.Set((float)num78 * 0.1f / 3f + 0.66f);
+                    }
+
+                    Liquid.quickSettle = false;
+                });
+            }
+
             base.ModifyWorldGenTasks(tasks, ref totalWeight);
         }
     }

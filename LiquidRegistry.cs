@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -14,6 +15,7 @@ namespace LiquidAPI
     public static class LiquidRegistry
     {
         internal static Dictionary<int, ModLiquid> liquidList;
+        internal static Dictionary<int, Color> mapColorLookup;
         private static int initialLiquidIndex = 0;//3;
         private static int liquidTextureIndex = 12;
 
@@ -22,9 +24,12 @@ namespace LiquidAPI
         static LiquidRegistry()
         {
             liquidList = new Dictionary<int, ModLiquid>();
+            mapColorLookup = new Dictionary<int, Color>();
             LiquidAPI.OnUnload += () =>
             {
                 Array.Resize(ref Main.liquidTexture, vanillaMaxVanilla);
+                Array.Resize(ref LiquidRenderer.DEFAULT_OPACITY, 3);
+                Array.Resize(ref LiquidRenderer.WATERFALL_LENGTH, 3);
                 liquidList.Clear();
                 liquidList = null;
             };
@@ -59,6 +64,11 @@ namespace LiquidAPI
             }
 
             liquid.AddModBucket();
+        }
+
+        public static void Unload()
+        {
+            liquidList.Clear();
         }
 
         public static ModLiquid GetLiquid(int i)

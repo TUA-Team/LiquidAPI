@@ -134,5 +134,10 @@ namespace LiquidAPI
         {
             Mod.AddItem("Bucket" + Name, new ModBucket(this));
         }
+
+        protected void RegisterMapColorCode(Color color)
+        {
+            LiquidRegistry.mapColorLookup[Type] = color;
+        }
     }
 }

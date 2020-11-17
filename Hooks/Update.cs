@@ -30,7 +30,7 @@ namespace LiquidAPI.Hooks
             }
 
             byte liquid = liquidSelf.Amount;
-            if (self.y > Main.maxTilesY - 200 && liquidSelf.Type is Water && liquidSelf.Amount > 0)
+            if (self.y > Main.maxTilesY - 200 && liquidSelf.LiquidType is Water && liquidSelf.Amount > 0)
             {
                 if (liquidSelf.Amount >= 2)
                 {
@@ -117,9 +117,9 @@ namespace LiquidAPI.Hooks
                     }
                 }
 
-                if (LiquidRegistry.liquidList.ContainsValue(liquidSelf.Type) && !(liquidSelf.Type is Water))
+                if (LiquidRegistry.liquidList.ContainsValue(liquidSelf.LiquidType) && !(liquidSelf.LiquidType is Water))
                 {
-                    LiquidRegistry.ModLiquidCheck(liquidSelf.Type, self.x, self.y);
+                    LiquidRegistry.ModLiquidCheck(liquidSelf.LiquidType, self.x, self.y);
                     if (!Liquid.quickFall)
                     {
                         if (self.delay > 0)
@@ -652,9 +652,9 @@ namespace LiquidAPI.Hooks
                         bool flag = false;
                         int num9 = j;
                         int num10 = num2;
-                        byte b = (byte)tile.Type.Type;
-                        bool isLava = tile.Type is Lava;
-                        bool isHoney = tile.Type is Honey;
+                        byte b = (byte)tile.LiquidType.Type;
+                        bool isLava = tile.LiquidType is Lava;
+                        bool isHoney = tile.LiquidType is Honey;
                         byte liquidAmount = tile.Amount;
                         tile.Amount = 0;
                         bool flag4 = true;
@@ -716,29 +716,29 @@ namespace LiquidAPI.Hooks
 
                         LiquidWorld.grid[num9, num10].Amount = liquidAmount;
                         LiquidRef liquidRef = LiquidWorld.grid[num9, num10];
-                        liquidRef.Type = LiquidRegistry.GetLiquid(b);
-                        if (LiquidWorld.grid[num9 - 1, num10].Amount > 0 && !(LiquidWorld.grid[num9 - 1, num10].Type is Lava))
+                        liquidRef.LiquidType = LiquidRegistry.GetLiquid(b);
+                        if (LiquidWorld.grid[num9 - 1, num10].Amount > 0 && !(LiquidWorld.grid[num9 - 1, num10].LiquidType is Lava))
                         {
                             if (isLava)
                                 LavaCheck(num9, num10);
                             else
                                 LavaCheck(num9 - 1, num10);
                         }
-                        else if (LiquidWorld.grid[num9 + 1, num10].Amount > 0 && !(LiquidWorld.grid[num9 + 1, num10].Type is Lava))
+                        else if (LiquidWorld.grid[num9 + 1, num10].Amount > 0 && !(LiquidWorld.grid[num9 + 1, num10].LiquidType is Lava))
                         {
                             if (isLava)
                                 LavaCheck(num9, num10);
                             else
                                 LavaCheck(num9 + 1, num10);
                         }
-                        else if (LiquidWorld.grid[num9, num10 - 1].Amount > 0 && !(LiquidWorld.grid[num9, num10 - 1].Type is Lava))
+                        else if (LiquidWorld.grid[num9, num10 - 1].Amount > 0 && !(LiquidWorld.grid[num9, num10 - 1].LiquidType is Lava))
                         {
                             if (isLava)
                                 LavaCheck(num9, num10);
                             else
                                 LavaCheck(num9, num10 - 1);
                         }
-                        else if (LiquidWorld.grid[num9, num10 + 1].Amount > 0 && !(LiquidWorld.grid[num9, num10 + 1].Type is Lava))
+                        else if (LiquidWorld.grid[num9, num10 + 1].Amount > 0 && !(LiquidWorld.grid[num9, num10 + 1].LiquidType is Lava))
                         {
                             if (isLava)
                                 LavaCheck(num9, num10);
@@ -749,28 +749,28 @@ namespace LiquidAPI.Hooks
                         if (LiquidWorld.grid[num9, num10].Amount <= 0)
                             continue;
 
-                        if (LiquidWorld.grid[num9 - 1, num10].Amount > 0 && !(LiquidWorld.grid[num9 - 1, num10].Type is Honey))
+                        if (LiquidWorld.grid[num9 - 1, num10].Amount > 0 && !(LiquidWorld.grid[num9 - 1, num10].LiquidType is Honey))
                         {
                             if (isHoney)
                                 HoneyCheck(num9, num10);
                             else
                                 HoneyCheck(num9 - 1, num10);
                         }
-                        else if (LiquidWorld.grid[num9 + 1, num10].Amount > 0 && !(LiquidWorld.grid[num9 + 1, num10].Type is Honey))
+                        else if (LiquidWorld.grid[num9 + 1, num10].Amount > 0 && !(LiquidWorld.grid[num9 + 1, num10].LiquidType is Honey))
                         {
                             if (isHoney)
                                 HoneyCheck(num9, num10);
                             else
                                 HoneyCheck(num9 + 1, num10);
                         }
-                        else if (LiquidWorld.grid[num9, num10 - 1].Amount > 0 && !(LiquidWorld.grid[num9, num10 - 1].Type is Honey))
+                        else if (LiquidWorld.grid[num9, num10 - 1].Amount > 0 && !(LiquidWorld.grid[num9, num10 - 1].LiquidType is Honey))
                         {
                             if (isHoney)
                                 HoneyCheck(num9, num10);
                             else
                                 HoneyCheck(num9, num10 - 1);
                         }
-                        else if (LiquidWorld.grid[num9, num10 + 1].Amount > 0 && !(LiquidWorld.grid[num9, num10 + 1].Type is Honey))
+                        else if (LiquidWorld.grid[num9, num10 + 1].Amount > 0 && !(LiquidWorld.grid[num9, num10 + 1].LiquidType is Honey))
                         {
                             if (isHoney)
                                 HoneyCheck(num9, num10);

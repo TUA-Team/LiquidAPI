@@ -6,6 +6,15 @@ namespace LiquidAPI.Test
 {
     class PlutonicWaste : ModLiquid
     {
+        public override bool Autoload(ref string name, ref string texture, ref string fancyTexture)
+        {
+#if DEBUG
+            return true;
+#else
+            return false;
+#endif
+        }
+
         public override Color LiquidColor => Color.GreenYellow;
 
 

@@ -37,7 +37,9 @@ namespace LiquidAPI.Hooks
                 return;
             }
 
-            if (LiquidRegistry.liquidList[LiquidWorld.liquidGrid[x, y].data].CanKillTile(x, y))
+            var liq = LiquidWorld.liquidGrid[x, y].data;
+            // TODO: figure out why exactly why liq can be 0, I think it's 0 worlds generated WITHOUT liquid api, but can't be too sure
+            if (liq != 0 && LiquidRegistry.liquidList[liq].CanKillTile(x, y))
             {
                 WorldGen.KillTile(x, y);
                 if (Main.netMode == NetmodeID.Server)

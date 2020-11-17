@@ -27,22 +27,25 @@ namespace LiquidAPI.Hooks
             if (x != 0)
             {
                 left = LiquidWorld.grid[x - 1, y];
-                if (left.Amount != 0 && left.Type.Type != targetType.Type)
+                if (left.LiquidType != null)
                 {
-                    if (left.Type.Type != self.Type.Type)
+                    if (left.Amount != 0 && left.LiquidType.Type != targetType.Type)
                     {
-                        liquidAmount += left.Amount;
-                        LiquidWorld.grid[x - 1, y].Amount = 0;
+                        if (left.LiquidType.Type != self.LiquidType.Type)
+                        {
+                            liquidAmount += left.Amount;
+                            LiquidWorld.grid[x - 1, y].Amount = 0;
+                        }
+                        flag = true;
                     }
-                    flag = true;
                 }
             }
             else if (x != Main.maxTilesX)
             {
                 right = LiquidWorld.grid[x + 1, y];
-                if (right.Amount != 0 && right.Type.Type != targetType.Type)
+                if (right.Amount != 0 && right.LiquidType.Type != targetType.Type)
                 {
-                    if (right.Type.Type != self.Type.Type)
+                    if (right.LiquidType.Type != self.LiquidType.Type)
                     {
                         liquidAmount += right.Amount;
                         LiquidWorld.grid[x + 1, y].Amount = 0;
@@ -53,9 +56,9 @@ namespace LiquidAPI.Hooks
             else if (y != 0)
             {
                 up = LiquidWorld.grid[x, y - 1];
-                if (up.Amount != 0 && up.Type.Type != targetType.Type)
+                if (up.Amount != 0 && up.LiquidType.Type != targetType.Type)
                 {
-                    if (up.Type.Type != self.Type.Type)
+                    if (up.LiquidType.Type != self.LiquidType.Type)
                     {
                         liquidAmount += up.Amount;
                         LiquidWorld.grid[x, y - 1].Amount = 0;
@@ -66,9 +69,9 @@ namespace LiquidAPI.Hooks
             else if (x != Main.maxTilesY)
             {
                 down = LiquidWorld.grid[x, y + 1];
-                if (down.Amount != 0 && down.Type.Type != targetType.Type)
+                if (down.Amount != 0 && down.LiquidType.Type != targetType.Type)
                 {
-                    if (down.Type.Type != self.Type.Type)
+                    if (down.LiquidType.Type != self.LiquidType.Type)
                     {
                         liquidAmount += down.Amount;
                         LiquidWorld.grid[x, y + 1].Amount = 0;
@@ -78,23 +81,23 @@ namespace LiquidAPI.Hooks
             }
             if (flag)
             {
-                if (x != 0 && left.Type.GetType() == self.Type.GetType()) return;
-                if (x != Main.maxTilesX && right.Type.GetType() == self.Type.GetType()) return;
-                if (y != Main.maxTilesY && down.Type.GetType() == self.Type.GetType()) return;
+                if (x != 0 && left.LiquidType.GetType() == self.LiquidType.GetType()) return;
+                if (x != Main.maxTilesX && right.LiquidType.GetType() == self.LiquidType.GetType()) return;
+                if (y != Main.maxTilesY && down.LiquidType.GetType() == self.LiquidType.GetType()) return;
 
-                if (self.Type.LiquidInteraction(x, y, targetType)) return;
+                if (self.LiquidType.LiquidInteraction(x, y, targetType)) return;
 
                 // what does this code even do? - Agrair
 #pragma warning disable IDE0059 // Unnecessary assignment of a value
                 int type = -1;
 #pragma warning restore IDE0059 // Unnecessary assignment of a value
-                type = LiquidAPI.interactionResult[LiquidWorld.grid[x - 1, y].Type.Type, targetType.Type];
+                type = LiquidAPI.interactionResult[LiquidWorld.grid[x - 1, y].LiquidType.Type, targetType.Type];
                 if (type == -1)
                 {
-                    type = LiquidAPI.interactionResult[LiquidWorld.grid[x + 1, y].Type.Type, targetType.Type];
+                    type = LiquidAPI.interactionResult[LiquidWorld.grid[x + 1, y].LiquidType.Type, targetType.Type];
                     if (type == -1)
                     {
-                        type = LiquidAPI.interactionResult[LiquidWorld.grid[x, y + 1].Type.Type, targetType.Type];
+                        type = LiquidAPI.interactionResult[LiquidWorld.grid[x, y + 1].LiquidType.Type, targetType.Type];
                     }
                 }
 
@@ -115,7 +118,7 @@ namespace LiquidAPI.Hooks
                     if (!self.Tile.active())
                     {
                         self.Amount = 0;
-                        self.Type = null;
+                        self.LiquidType = null;
 
                         Main.PlaySound(type == TileID.Obsidian ? SoundID.LiquidsWaterLava : SoundID.LiquidsHoneyLava, new Vector2(x * 16 + 8, y * 16 + 8));
 
@@ -129,7 +132,7 @@ namespace LiquidAPI.Hooks
                     }
                 }
             }
-            else if (y != 0 && up.Amount > 0 && up.Type.Type != targetType.Type)
+            else if (y != 0 && up.Amount > 0 && up.LiquidType.Type != targetType.Type)
             {
                 flag = self.Tile.active() && TileID.Sets.ForceObsidianKill[self.Tile.type] && !TileID.Sets.ForceObsidianKill[up.Tile.type];
 
@@ -157,7 +160,7 @@ namespace LiquidAPI.Hooks
                     if (self.Amount < 24)
                     {
                         self.Amount = 0;
-                        self.Type = null;
+                        self.LiquidType = null;
 
                         if (Main.netMode == NetmodeID.Server)
                         {
@@ -168,21 +171,20 @@ namespace LiquidAPI.Hooks
                     {
 
 
-                        if (self.Type.LiquidInteraction(x, y, targetType)) return;
-                        // what does this code even do? - Agrair
-                        int type = -1;
-                        type = LiquidAPI.interactionResult[LiquidWorld.grid[x - 1, y].Type.Type, targetType.Type];
+                        if (self.LiquidType.LiquidInteraction(x, y, targetType)) return;
+                        int type = LiquidAPI.interactionResult[LiquidWorld.grid[x - 1, y].LiquidType.Type, targetType.Type];
 
                         if (type == -1)
                         {
                             return;
                         }
                         self.Amount = 0;
-                        self.Type = null;
+                        self.LiquidType = null;
 
                         //self.lava(false);
                         up.Amount = 0;
 
+                        // TODO: add functionality for interaction sounds
                         if (type == TileID.Obsidian)
                         {
                             Main.PlaySound(type == TileID.Obsidian ? SoundID.LiquidsWaterLava : SoundID.LiquidsHoneyLava, new Vector2(x * 16 + 8, y * 16 + 8));

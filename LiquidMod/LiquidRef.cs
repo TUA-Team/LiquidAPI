@@ -9,7 +9,7 @@ namespace LiquidAPI.LiquidMod
 
         public Tile Tile => Main.tile[X, Y];
 
-        public ModLiquid Type
+        public ModLiquid LiquidType
         {
             get => LiquidRegistry.GetLiquid(LiquidWorld.liquidGrid[X, Y].data);
             set

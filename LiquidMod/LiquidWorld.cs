@@ -93,7 +93,7 @@ namespace LiquidAPI.LiquidMod
                     {
                         liquidRef.Amount = 0;
                         liquidRef.TypeID = 0;
-                        liquidRef.Type = null;
+                        liquidRef.LiquidType = null;
                     }
                 }
             }
@@ -126,16 +126,16 @@ namespace LiquidAPI.LiquidMod
                                 switch (tile.liquidType())
                                 {
                                     case 0:
-                                        liquidRef.Type = new Water();
+                                        liquidRef.LiquidType = new Water();
                                         break;
                                     case 1:
-                                        liquidRef.Type = new Lava();
+                                        liquidRef.LiquidType = new Lava();
                                         break;
                                     case 2:
-                                        liquidRef.Type = new Honey();
+                                        liquidRef.LiquidType = new Honey();
                                         break;
                                     case 3:
-                                        liquidRef.Type = new Oil();
+                                        liquidRef.LiquidType = new Oil();
                                         break;
                                 }
                             }

@@ -59,13 +59,13 @@ namespace LiquidAPI.Items
             }
             LiquidRef liquid = LiquidWorld.grid[Player.tileTargetX, Player.tileTargetY];
 
-            if (!liquid.HasLiquid || liquid.Type == this.liquid)
+            if (!liquid.HasLiquid || liquid.LiquidType == this.liquid)
             {
 
                 //Item newItem = Main.item[Item.NewItem(player.position, item.type)];
                 //ModBucket newBucket = newItem.modItem as ModBucket;
 
-                liquid.Type = this.liquid;
+                liquid.LiquidType = this.liquid;
                 liquid.Amount = 255;
 
                 WorldGen.SquareTileFrame(Player.tileTargetX, Player.tileTargetY, true);

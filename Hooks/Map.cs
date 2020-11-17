@@ -24,7 +24,7 @@ namespace LiquidAPI.Hooks
             int num7 = 0;
 
             if (tile.liquid > 32) {
-                num7 = liquid.Type.Type + 10000;
+                num7 = liquid.LiquidType.Type + 10000;
             }
             else
             {

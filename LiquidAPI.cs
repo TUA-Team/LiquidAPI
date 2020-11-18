@@ -13,6 +13,7 @@ namespace LiquidAPI
     public class LiquidAPI : Mod
     {
         internal static LiquidAPI instance;
+        public static Mod Instance => instance;
 
         private const int INITIAL_LIQUID_TEXTURE_INDEX = 12;
 

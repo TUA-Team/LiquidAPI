@@ -45,7 +45,7 @@ namespace LiquidAPI
             set { this._liquidDust = value; }
         }
 
-        internal ModLiquid()
+        protected ModLiquid()
         {
             Name = this.GetType().Name;
         }

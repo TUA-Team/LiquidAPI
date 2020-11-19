@@ -19,7 +19,7 @@ namespace LiquidAPI
         private static int initialLiquidIndex = 0;//3;
         private static int liquidTextureIndex = 12;
 
-        private const int vanillaMaxVanilla = 13;
+        private const int vanillaMax = 13;
 
         static LiquidRegistry()
         {
@@ -27,7 +27,7 @@ namespace LiquidAPI
             mapColorLookup = new Dictionary<int, Color>();
             LiquidAPI.OnUnload += () =>
             {
-                Array.Resize(ref Main.liquidTexture, vanillaMaxVanilla);
+                Array.Resize(ref Main.liquidTexture, vanillaMax);
                 Array.Resize(ref LiquidRenderer.DEFAULT_OPACITY, 3);
                 Array.Resize(ref LiquidRenderer.WATERFALL_LENGTH, 3);
                 liquidList.Clear();

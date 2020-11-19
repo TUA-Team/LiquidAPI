@@ -56,8 +56,8 @@ namespace LiquidAPI
             LiquidHooks.OldLavaTexture = new List<Texture2D>()
             {
                 Main.liquidTexture[1], //default lava
-		        LiquidAPI.instance.GetTexture("Texture/Lava_Test/Cursed_Lava"),
-                LiquidAPI.instance.GetTexture("Texture/Lava_Test/Ichor_Lava")
+		        GetTexture("Texture/Lava_Test/Cursed_Lava"),
+                GetTexture("Texture/Lava_Test/Ichor_Lava")
             };
             List<Texture2D> OldWaterTextureList = new List<Texture2D>();
             for (int i = 0; i < 11; i++)

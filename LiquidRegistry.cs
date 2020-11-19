@@ -46,7 +46,8 @@ namespace LiquidAPI
             liquid.DisplayName = mod.CreateTranslation($"Mods.{mod.Name}.ItemName.{name}".Replace(" ", "_"));
             liquid.DisplayName.SetDefault(Regex.Replace(name, "([A-Z])", " $1").Trim());
 
-            Texture2D usedTexture = texture ?? liquid.OldTexture;
+            // TODO: texture is not being used?? Also, I think all of this can be moved into the netMode != Server
+            //Texture2D usedTexture = texture ?? liquid.OldTexture;
             Texture2D fancyTexture = fancyTexture2D ?? liquid.Texture;
             Array.Resize(ref Main.liquidTexture, Main.liquidTexture.Length + 1);
             Array.Resize(ref LiquidRenderer.DEFAULT_OPACITY, LiquidRenderer.DEFAULT_OPACITY.Length + 1);
@@ -73,7 +74,7 @@ namespace LiquidAPI
 
         public static ModLiquid GetLiquid(int i)
         {
-            return liquidList.ContainsKey(i) ? liquidList[i] : null;
+            return liquidList.TryGetValue(i, out var liq) ? liq : null;
         }
 
         public static ModLiquid GetLiquid(Mod mod, string name)

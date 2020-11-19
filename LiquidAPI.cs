@@ -123,10 +123,9 @@ namespace LiquidAPI
         private void AutoloadLiquid(Mod mod, Type type)
         {
             ModLiquid liquid = (ModLiquid)Activator.CreateInstance(type);
-            liquid.Mod = mod;
             string name = type.Name;
-            string texturePath = liquid.GetType().FullName.Replace(".", "/").Replace(this.Name + "/", "");
-            string fancyTexturePath = liquid.GetType().FullName.Replace(".", "/").Replace(this.Name + "/", "") + "Fancy";
+            string texturePath = type.FullName.Replace(".", "/").Substring(mod.Name.Length + 1);
+            string fancyTexturePath = texturePath + "Fancy";
             if (liquid.Autoload(ref name, ref texturePath, ref fancyTexturePath))
             {
                 // @Dradon y u do dis twice lulz
@@ -138,7 +137,8 @@ namespace LiquidAPI
                 //LiquidRenderer.Instance.LiquidTextures[LiquidRenderer.Instance.LiquidTextures.Count - 1] =
                 //	this.GetTexture(texturePath);
                 //}
-                mod.AddLiquid(name, liquid, this.GetTexture(texturePath), this.GetTexture(fancyTexturePath));
+                mod.AddLiquid(name, liquid, mod.GetTexture(texturePath),
+                    mod.GetTexture(fancyTexturePath));
             }
         }
     }

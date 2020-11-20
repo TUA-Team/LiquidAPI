@@ -9,7 +9,7 @@ using Terraria.ID;
 
 namespace LiquidAPI.Hooks
 {
-    internal static partial class LiquidHooks
+    internal static class Collision
     {
         public static Dictionary<int, bool> staticNPCWet = new Dictionary<int, bool>();
 

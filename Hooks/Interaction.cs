@@ -5,7 +5,7 @@ using Terraria.ID;
 
 namespace LiquidAPI.Hooks
 {
-    internal static partial class LiquidHooks
+    internal static class Interaction
     {
         //public const int DEF_TYPE = 56;
 

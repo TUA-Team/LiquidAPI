@@ -12,7 +12,7 @@ using static Terraria.Liquid;
 
 namespace LiquidAPI.Hooks
 {
-    internal static partial class LiquidHooks
+    internal static class Update
     {
         public static void ModdedLiquidUpdate(On.Terraria.Liquid.orig_Update orig, Liquid self)
         {

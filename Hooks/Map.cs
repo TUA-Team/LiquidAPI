@@ -11,7 +11,7 @@ using static Terraria.Map.MapHelper;
 
 namespace LiquidAPI.Hooks
 {
-    internal static partial class LiquidHooks
+    internal static class Map
     {
         public static MapTile CreateMapTile(On.Terraria.Map.MapHelper.orig_CreateMapTile orig, int i, int j, byte Light) {
 			Tile tile = Main.tile[i, j];

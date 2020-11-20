@@ -12,7 +12,7 @@ using Terraria.ModLoader;
 
 namespace LiquidAPI.Hooks
 {
-    internal static partial class LiquidHooks
+    internal static class Rendering
     {
         public static Texture2D OldHoneyTexture;
         public static Texture2D[] OldLavaTexture;

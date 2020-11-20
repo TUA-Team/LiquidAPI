@@ -24,7 +24,8 @@ namespace LiquidAPI.Globals
             };
 
             // TODO: remove somehow because this is a bad hotfix
-            if (LiquidRegistry.liquidList == null) LiquidRegistry.liquidList = new Dictionary<int, ModLiquid>();
+            if (LiquidRegistry.liquidList == null)
+                LiquidRegistry.liquidList = new Dictionary<int, ModLiquid>();
 
 
             if (npcWet.Count != LiquidRegistry.liquidList.Count)

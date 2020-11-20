@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using LiquidAPI.Caches;
+﻿using LiquidAPI.Caches;
 using LiquidAPI.LiquidMod;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System.Collections.Generic;
+using System.Linq;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -69,7 +66,7 @@ namespace LiquidAPI.Items
                 liquid.Amount = 255;
 
                 WorldGen.SquareTileFrame(Player.tileTargetX, Player.tileTargetY, true);
-                
+
             }
 
             return true;
@@ -83,7 +80,7 @@ namespace LiquidAPI.Items
 
             if (liquid != null)
             {
-                Texture2D liquidTexture = LiquidAPI.instance.GetTexture("Texture/Bucket/liquid");
+                Texture2D liquidTexture = LiquidAPI.Instance.GetTexture("Texture/Bucket/liquid");
                 spriteBatch.Draw(liquidTexture, position, null, liquid.LiquidColor, 0f, origin, new Vector2(scale), SpriteEffects.None, 0);
             }
         }
@@ -92,7 +89,7 @@ namespace LiquidAPI.Items
         {
             if (liquid != null)
             {
-                Texture2D liquidTexture = LiquidAPI.instance.GetTexture("Texture/Bucket/liquid");
+                Texture2D liquidTexture = LiquidAPI.Instance.GetTexture("Texture/Bucket/liquid");
                 spriteBatch.Draw(liquidTexture, item.position, liquid.LiquidColor);
             }
         }
@@ -101,7 +98,7 @@ namespace LiquidAPI.Items
         public static Item CreateBucketItem(ModLiquid liquid)
         {
             List<ModItem> itemList = (List<ModItem>)ReflectionCaches.fieldCache[typeof(ItemLoader)]["items"].GetValue(null);
-            ModBucket modBucket = (ModBucket) itemList.Single(i => i is ModBucket i2 && i2.liquid.Type == liquid.Type);
+            ModBucket modBucket = (ModBucket)itemList.Single(i => i is ModBucket i2 && i2.liquid.Type == liquid.Type);
 
             Item bucket = new Item();
             bucket.SetDefaults(modBucket.item.type);

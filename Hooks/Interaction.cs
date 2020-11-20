@@ -5,16 +5,16 @@ using Terraria.ID;
 
 namespace LiquidAPI.Hooks
 {
-    internal static partial class LiquidHooks
+    internal static class Interaction
     {
-        //private const int DEF_TYPE = 56;
+        //public const int DEF_TYPE = 56;
 
-        private static void LiquidOnLavaCheck(On.Terraria.Liquid.orig_LavaCheck orig, int x, int y)
+        public static void LiquidOnLavaCheck(On.Terraria.Liquid.orig_LavaCheck orig, int x, int y)
         {
-            NewModLiquidCheck(x, y, LiquidRegistry.GetLiquid(LiquidAPI.instance, "Lava"));
+            NewModLiquidCheck(x, y, LiquidRegistry.GetLiquid(LiquidAPI.Instance, "Lava"));
         }
 
-        internal static void NewModLiquidCheck(int x, int y, ModLiquid targetType)
+        public static void NewModLiquidCheck(int x, int y, ModLiquid targetType)
         {
             LiquidRef left = default;
             LiquidRef right = default;
@@ -52,7 +52,7 @@ namespace LiquidAPI.Hooks
                     }
                     flag = true;
                 }
-            }            
+            }
             else if (y != 0)
             {
                 up = LiquidWorld.grid[x, y - 1];
@@ -65,7 +65,7 @@ namespace LiquidAPI.Hooks
                     }
                     flag = true;
                 }
-            }            
+            }
             else if (x != Main.maxTilesY)
             {
                 down = LiquidWorld.grid[x, y + 1];
@@ -81,11 +81,15 @@ namespace LiquidAPI.Hooks
             }
             if (flag)
             {
-                if (x != 0 && left.LiquidType.GetType() == self.LiquidType.GetType()) return;
-                if (x != Main.maxTilesX && right.LiquidType.GetType() == self.LiquidType.GetType()) return;
-                if (y != Main.maxTilesY && down.LiquidType.GetType() == self.LiquidType.GetType()) return;
+                if (x != 0 && left.LiquidType.GetType() == self.LiquidType.GetType())
+                    return;
+                if (x != Main.maxTilesX && right.LiquidType.GetType() == self.LiquidType.GetType())
+                    return;
+                if (y != Main.maxTilesY && down.LiquidType.GetType() == self.LiquidType.GetType())
+                    return;
 
-                if (self.LiquidType.LiquidInteraction(x, y, targetType)) return;
+                if (self.LiquidType.LiquidInteraction(x, y, targetType))
+                    return;
 
                 // what does this code even do? - Agrair
 #pragma warning disable IDE0059 // Unnecessary assignment of a value
@@ -171,7 +175,8 @@ namespace LiquidAPI.Hooks
                     {
 
 
-                        if (self.LiquidType.LiquidInteraction(x, y, targetType)) return;
+                        if (self.LiquidType.LiquidInteraction(x, y, targetType))
+                            return;
                         int type = LiquidAPI.interactionResult[LiquidWorld.grid[x - 1, y].LiquidType.Type, targetType.Type];
 
                         if (type == -1)
@@ -202,13 +207,13 @@ namespace LiquidAPI.Hooks
         }
 
 
-        private static void LiquidOnHoneyCheck(On.Terraria.Liquid.orig_HoneyCheck orig, int x, int y)
+        public static void LiquidOnHoneyCheck(On.Terraria.Liquid.orig_HoneyCheck orig, int x, int y)
         {
-            NewModLiquidCheck(x, y, LiquidRegistry.GetLiquid(LiquidAPI.instance, "Honey"));
+            NewModLiquidCheck(x, y, LiquidRegistry.GetLiquid(LiquidAPI.Instance, "Honey"));
         }
 
         /*
-        private static void LiquidOnHoneyCheck(On.Terraria.Liquid.orig_HoneyCheck orig, int x, int y)
+        public static void LiquidOnHoneyCheck(On.Terraria.Liquid.orig_HoneyCheck orig, int x, int y)
         {
             LiquidRef liquidLeft = LiquidWorld.grid[x - 1, y];
             LiquidRef liquidRight = LiquidWorld.grid[x + 1, y];

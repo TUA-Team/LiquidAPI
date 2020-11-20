@@ -5,21 +5,46 @@ using Microsoft.Xna.Framework.Graphics;
 using Mono.Cecil.Cil;
 using MonoMod.Cil;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using Terraria;
 using Terraria.ModLoader;
 
 namespace LiquidAPI.Hooks
 {
-    internal static partial class LiquidHooks
+    internal static class Rendering
     {
-        public static List<Texture2D> OldHoneyTexture;
-        public static List<Texture2D> OldLavaTexture;
-        public static List<Texture2D> OldWaterTexture;
+        public static Texture2D OldHoneyTexture;
+        public static Texture2D[] OldLavaTexture;
+        public static Texture2D[] OldWaterTexture;
 
         public static int lavaStyle = 0; //0 being default lava texture
         public static int honeyStyle = 0; //0 being default honey texture
+
+        public static void LoadOldVanillaTextures()
+        {
+            OldHoneyTexture = Main.liquidTexture[11]; //default honey;
+
+            OldLavaTexture = new Texture2D[]
+            {
+                Main.liquidTexture[1], //default lava
+		        LiquidAPI.Instance.GetTexture("Texture/Lava_Test/Cursed_Lava"),
+                LiquidAPI.Instance.GetTexture("Texture/Lava_Test/Ichor_Lava")
+            };
+
+            OldWaterTexture = new Texture2D[]
+            {
+                Main.liquidTexture[0],
+                Main.liquidTexture[2],
+                Main.liquidTexture[3],
+                Main.liquidTexture[4],
+                Main.liquidTexture[5],
+                Main.liquidTexture[6],
+                Main.liquidTexture[7],
+                Main.liquidTexture[8],
+                Main.liquidTexture[9],
+                Main.liquidTexture[10],
+            };
+        }
 
 
         public static void ILDrawWaterSlope(ILContext il)
@@ -849,7 +874,7 @@ namespace LiquidAPI.Hooks
                     num3 = Math.Max(num3, 5);
                     num2 = Math.Min(num2, Main.maxTilesX - 5) + 2;
                     num4 = Math.Min(num4, Main.maxTilesY - 5) + 4;
-                    Microsoft.Xna.Framework.Rectangle drawArea = new Microsoft.Xna.Framework.Rectangle(num, num3, num2 - num, num4 - num3);
+                    Rectangle drawArea = new Rectangle(num, num3, num2 - num, num4 - num3);
                     LiquidRenderer.Instance.PrepareDraw(drawArea);
                 }
 
@@ -1065,13 +1090,13 @@ namespace LiquidAPI.Hooks
             }
         }
 
-        private static void OldWaterDraw(On.Terraria.Main.orig_oldDrawWater orig, Terraria.Main self,
+        public static void OldWaterDraw(On.Terraria.Main.orig_oldDrawWater orig, Terraria.Main self,
             bool bg = false, int Style = 0, float Alpha = 1f)
         {
             MainOnOldDrawWater(self, bg, Style, Alpha);
         }
 
-        private static void MainOnOldDrawWater(Terraria.Main self,
+        public static void MainOnOldDrawWater(Terraria.Main self,
             bool bg = false, int Style = 0, float Alpha = 1f)
         {
             Texture2D liquidTexture = OldWaterTexture[Style];
@@ -1167,7 +1192,7 @@ namespace LiquidAPI.Hooks
                         }
                         else if (liquid.TypeID == LiquidID.Honey)
                         {
-                            liquidTexture = OldHoneyTexture[honeyStyle];
+                            liquidTexture = OldHoneyTexture;
                         }
                         else if (liquid.TypeID != LiquidID.Water)
                         {
@@ -1486,7 +1511,8 @@ namespace LiquidAPI.Hooks
                         }
                     }
 
-                IL_E7F:;
+                IL_E7F:
+                    ;
                 }
             }
 

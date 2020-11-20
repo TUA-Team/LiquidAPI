@@ -1,11 +1,10 @@
-﻿using LiquidAPI.Hooks;
-using LiquidAPI.LiquidMod;
+﻿using LiquidAPI.LiquidMod;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -80,14 +79,6 @@ namespace LiquidAPI
         public static ModLiquid GetLiquid(Mod mod, string name)
         {
             return liquidList.Values.Single(i => i.Mod.Name == mod.Name && i.Name == name);
-        }
-
-        public static void AddHooks()
-        {
-            //LiquidSwapping.MethodSwap();
-            //WaterDrawInjection.MethodSwap();
-            //InternalLiquidDrawInjection.SwapMethod();
-            LiquidHooks.AddHooks();
         }
 
         public static void PreDrawValue(ref bool bg, ref int style, ref float Alpha)

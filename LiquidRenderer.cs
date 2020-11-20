@@ -71,7 +71,7 @@ namespace LiquidAPI
         private static readonly byte[] WAVE_MASK_STRENGTH;
         private static readonly byte[] VISCOSITY_MASK;
 
-        public static LiquidRenderer Instance;
+        public static LiquidRenderer Instance => LiquidAPI.Instance.renderer;
         public Dictionary<int, Texture2D> LiquidTextures = new Dictionary<int, Texture2D>();
 
         //private Tile[,] _tiles = Main.tile;

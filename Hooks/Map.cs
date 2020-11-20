@@ -1,29 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using LiquidAPI.LiquidMod;
+﻿using LiquidAPI.LiquidMod;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.Map;
-using static Terraria.Map.MapHelper;
 
 namespace LiquidAPI.Hooks
 {
-    internal static partial class LiquidHooks
+    internal static class Map
     {
-        public static MapTile CreateMapTile(On.Terraria.Map.MapHelper.orig_CreateMapTile orig, int i, int j, byte Light) {
-			Tile tile = Main.tile[i, j];
-			if (tile == null)
-				tile = (Main.tile[i, j] = new Tile());
+        public static MapTile CreateMapTile(On.Terraria.Map.MapHelper.orig_CreateMapTile orig, int i, int j, byte Light)
+        {
+            Tile tile = Main.tile[i, j];
+            if (tile == null)
+                tile = (Main.tile[i, j] = new Tile());
 
             LiquidRef liquid = LiquidWorld.grid[i, j];
 
             int num2 = Light;
             int num7 = 0;
 
-            if (tile.liquid > 32) {
+            if (tile.liquid > 32)
+            {
                 num7 = liquid.LiquidType.Type + 10000;
             }
             else
@@ -31,7 +27,7 @@ namespace LiquidAPI.Hooks
                 return orig(i, j, Light);
             }
 
-            return MapTile.Create((ushort) num7, (byte)num2, (byte)0);
+            return MapTile.Create((ushort)num7, (byte)num2, (byte)0);
         }
 
         public static Color GetMapTileXnaColor(On.Terraria.Map.MapHelper.orig_GetMapTileXnaColor orig, ref MapTile tile)
@@ -41,7 +37,7 @@ namespace LiquidAPI.Hooks
             {
                 return orig(ref tile);
             }
-			
+
             actualID = tile.Type - 10000;
 
             if (!LiquidRegistry.mapColorLookup.ContainsKey(actualID))
@@ -54,8 +50,8 @@ namespace LiquidAPI.Hooks
             if (color > 0)
                 //MapColor(tile.Type, ref oldColor, color);
 
-            if (tile.Light == byte.MaxValue)
-                return oldColor;
+                if (tile.Light == byte.MaxValue)
+                    return oldColor;
 
             float num = (float)(int)tile.Light / 255f;
             oldColor.R = (byte)((float)(int)oldColor.R * num);

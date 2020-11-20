@@ -1,19 +1,14 @@
-using LiquidAPI.Hooks;
-using LiquidAPI.Vanilla;
-using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using LiquidAPI.Caches;
+using LiquidAPI.Vanilla;
+using System;
 using Terraria;
 using Terraria.ModLoader;
 
 namespace LiquidAPI
 {
-    public class LiquidAPI : Mod
+    public sealed partial class LiquidAPI : Mod
     {
-        internal static LiquidAPI instance;
-        public static Mod Instance => instance;
+        public static LiquidAPI Instance => ModContent.GetInstance<LiquidAPI>();
 
         private const int INITIAL_LIQUID_TEXTURE_INDEX = 12;
 
@@ -27,9 +22,6 @@ namespace LiquidAPI
 
         public override void Load()
         {
-            LiquidRenderer.Instance = new LiquidRenderer();
-            instance = this;
-
             interactionResult = new int[256, 256];
             killTile = new bool[TileLoader.TileCount, 256];
 
@@ -48,28 +40,9 @@ namespace LiquidAPI
             this.AddLiquid<Honey>("LiquidHoney");
             this.AddLiquid<Oil>("LiquidOil");
 
-            LiquidHooks.OldHoneyTexture = new List<Texture2D>()
-            {
-                Main.liquidTexture[11] //default honey
+            renderer = new LiquidRenderer();
 
-		    };
-            LiquidHooks.OldLavaTexture = new List<Texture2D>()
-            {
-                Main.liquidTexture[1], //default lava
-		        GetTexture("Texture/Lava_Test/Cursed_Lava"),
-                GetTexture("Texture/Lava_Test/Ichor_Lava")
-            };
-            List<Texture2D> OldWaterTextureList = new List<Texture2D>();
-            for (int i = 0; i < 11; i++)
-            {
-                if (i == 1 || i == 11)
-                {
-                    continue;
-                }
-                OldWaterTextureList.Add(Main.liquidTexture[i]);
-            }
-
-            LiquidHooks.OldWaterTexture = OldWaterTextureList;
+            LiquidHooks.LoadOldVanillaTextures();
         }
 
         public override void PostSetupContent()
@@ -78,14 +51,14 @@ namespace LiquidAPI
             // Otherwise we would need to override ModLoader functions to resize the arrays and load textures.
 
 
-            LiquidRegistry.AddHooks();
+            //LiquidSwapping.MethodSwap();
+            //WaterDrawInjection.MethodSwap();
+            //InternalLiquidDrawInjection.SwapMethod();
+            AddHooks();
         }
 
         public override void Unload()
         {
-            LiquidRenderer.Instance = null;
-            instance = null;
-
             OnUnload?.Invoke();
             OnUnload = null;
 
@@ -95,11 +68,18 @@ namespace LiquidAPI
 
         public static void Autoload(Mod mod)
         {
-            if (mod.Code == null) { return; }
+            if (mod.Code == null)
+            { return; }
 
-            foreach (Type type in mod.Code.DefinedTypes.Where(type => type.IsSubclassOf(typeof(ModLiquid))).OrderBy(type => type.FullName))
+            foreach (Type type in mod.Code.DefinedTypes)
             {
-                AutoloadLiquid(mod, type);
+                if (type.IsAbstract)
+                    continue;
+
+                if (type.IsSubclassOf(typeof(ModLiquid)))
+                {
+                    AutoloadLiquid(mod, type);
+                }
             }
         }
         private static void AutoloadLiquid(Mod mod, Type type)

@@ -70,7 +70,6 @@ namespace LiquidAPI
             }
 
             LiquidHooks.OldWaterTexture = OldWaterTextureList;
-            LoadModContent(Autoload);
         }
 
         public override void PostSetupContent()
@@ -94,24 +93,7 @@ namespace LiquidAPI
             ReflectionCaches.Unload();
         }
 
-        private static void LoadModContent(Action<Mod> loadAction)
-        {
-            foreach (Mod mod in ModLoader.Mods)
-            {
-                try
-                {
-                    loadAction(mod);
-                }
-                catch (Exception e)
-                {
-                    Main.statusText = e.Message;
-                    throw e;
-                }
-            }
-        }
-
-
-        private void Autoload(Mod mod)
+        public static void Autoload(Mod mod)
         {
             if (mod.Code == null) { return; }
 
@@ -120,7 +102,7 @@ namespace LiquidAPI
                 AutoloadLiquid(mod, type);
             }
         }
-        private void AutoloadLiquid(Mod mod, Type type)
+        private static void AutoloadLiquid(Mod mod, Type type)
         {
             ModLiquid liquid = (ModLiquid)Activator.CreateInstance(type);
             string name = type.Name;

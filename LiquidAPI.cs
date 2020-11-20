@@ -12,8 +12,7 @@ namespace LiquidAPI
 {
     public class LiquidAPI : Mod
     {
-        internal static LiquidAPI instance;
-        public static Mod Instance => instance;
+        public static Mod Instance => ModContent.GetInstance<LiquidAPI>();
 
         private const int INITIAL_LIQUID_TEXTURE_INDEX = 12;
 
@@ -28,7 +27,6 @@ namespace LiquidAPI
         public override void Load()
         {
             LiquidRenderer.Instance = new LiquidRenderer();
-            instance = this;
 
             interactionResult = new int[256, 256];
             killTile = new bool[TileLoader.TileCount, 256];
@@ -84,7 +82,6 @@ namespace LiquidAPI
         public override void Unload()
         {
             LiquidRenderer.Instance = null;
-            instance = null;
 
             OnUnload?.Invoke();
             OnUnload = null;

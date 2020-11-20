@@ -11,7 +11,7 @@ namespace LiquidAPI.Hooks
 
         private static void LiquidOnLavaCheck(On.Terraria.Liquid.orig_LavaCheck orig, int x, int y)
         {
-            NewModLiquidCheck(x, y, LiquidRegistry.GetLiquid(LiquidAPI.instance, "Lava"));
+            NewModLiquidCheck(x, y, LiquidRegistry.GetLiquid(LiquidAPI.Instance, "Lava"));
         }
 
         internal static void NewModLiquidCheck(int x, int y, ModLiquid targetType)
@@ -204,7 +204,7 @@ namespace LiquidAPI.Hooks
 
         private static void LiquidOnHoneyCheck(On.Terraria.Liquid.orig_HoneyCheck orig, int x, int y)
         {
-            NewModLiquidCheck(x, y, LiquidRegistry.GetLiquid(LiquidAPI.instance, "Honey"));
+            NewModLiquidCheck(x, y, LiquidRegistry.GetLiquid(LiquidAPI.Instance, "Honey"));
         }
 
         /*

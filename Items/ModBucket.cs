@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using LiquidAPI.Caches;
 using LiquidAPI.LiquidMod;
 using Microsoft.Xna.Framework;
@@ -83,7 +80,7 @@ namespace LiquidAPI.Items
 
             if (liquid != null)
             {
-                Texture2D liquidTexture = LiquidAPI.instance.GetTexture("Texture/Bucket/liquid");
+                Texture2D liquidTexture = LiquidAPI.Instance.GetTexture("Texture/Bucket/liquid");
                 spriteBatch.Draw(liquidTexture, position, null, liquid.LiquidColor, 0f, origin, new Vector2(scale), SpriteEffects.None, 0);
             }
         }
@@ -92,7 +89,7 @@ namespace LiquidAPI.Items
         {
             if (liquid != null)
             {
-                Texture2D liquidTexture = LiquidAPI.instance.GetTexture("Texture/Bucket/liquid");
+                Texture2D liquidTexture = LiquidAPI.Instance.GetTexture("Texture/Bucket/liquid");
                 spriteBatch.Draw(liquidTexture, item.position, liquid.LiquidColor);
             }
         }

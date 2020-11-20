@@ -82,14 +82,6 @@ namespace LiquidAPI
             return liquidList.Values.Single(i => i.Mod.Name == mod.Name && i.Name == name);
         }
 
-        public static void AddHooks()
-        {
-            //LiquidSwapping.MethodSwap();
-            //WaterDrawInjection.MethodSwap();
-            //InternalLiquidDrawInjection.SwapMethod();
-            LiquidHooks.AddHooks();
-        }
-
         public static void PreDrawValue(ref bool bg, ref int style, ref float Alpha)
         {
             foreach (ModLiquid liquid in liquidList.Values)

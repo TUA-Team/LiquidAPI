@@ -140,7 +140,7 @@ namespace LiquidAPI.Hooks
         private static int[] wetImmunityByNPCAI = new int[] { 21, 67 };
         private static int[] wetImmunityByNPCType = new int[] { NPCID.BlazingWheel, NPCID.SleepingAngler, NPCID.SandElemental, NPCID.BartenderUnconscious };
 
-        private static bool Collision_WaterCollision(On.Terraria.NPC.orig_Collision_WaterCollision origWaterCollision, NPC self, bool lava)
+        public static bool Collision_WaterCollision(On.Terraria.NPC.orig_Collision_WaterCollision origWaterCollision, NPC self, bool lava)
         {
             bool currentlyWet;
             GlobalLiquidNPC liquidGlobalNPC = self.GetGlobalNPC<GlobalLiquidNPC>();

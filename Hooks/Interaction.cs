@@ -7,14 +7,14 @@ namespace LiquidAPI.Hooks
 {
     internal static partial class LiquidHooks
     {
-        //private const int DEF_TYPE = 56;
+        //public const int DEF_TYPE = 56;
 
-        private static void LiquidOnLavaCheck(On.Terraria.Liquid.orig_LavaCheck orig, int x, int y)
+        public static void LiquidOnLavaCheck(On.Terraria.Liquid.orig_LavaCheck orig, int x, int y)
         {
             NewModLiquidCheck(x, y, LiquidRegistry.GetLiquid(LiquidAPI.Instance, "Lava"));
         }
 
-        internal static void NewModLiquidCheck(int x, int y, ModLiquid targetType)
+        public static void NewModLiquidCheck(int x, int y, ModLiquid targetType)
         {
             LiquidRef left = default;
             LiquidRef right = default;
@@ -202,13 +202,13 @@ namespace LiquidAPI.Hooks
         }
 
 
-        private static void LiquidOnHoneyCheck(On.Terraria.Liquid.orig_HoneyCheck orig, int x, int y)
+        public static void LiquidOnHoneyCheck(On.Terraria.Liquid.orig_HoneyCheck orig, int x, int y)
         {
             NewModLiquidCheck(x, y, LiquidRegistry.GetLiquid(LiquidAPI.Instance, "Honey"));
         }
 
         /*
-        private static void LiquidOnHoneyCheck(On.Terraria.Liquid.orig_HoneyCheck orig, int x, int y)
+        public static void LiquidOnHoneyCheck(On.Terraria.Liquid.orig_HoneyCheck orig, int x, int y)
         {
             LiquidRef liquidLeft = LiquidWorld.grid[x - 1, y];
             LiquidRef liquidRight = LiquidWorld.grid[x + 1, y];

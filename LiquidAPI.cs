@@ -10,9 +10,9 @@ using Terraria.ModLoader;
 
 namespace LiquidAPI
 {
-    public class LiquidAPI : Mod
+    public sealed partial class LiquidAPI : Mod
     {
-        public static Mod Instance => ModContent.GetInstance<LiquidAPI>();
+        public static LiquidAPI Instance => ModContent.GetInstance<LiquidAPI>();
 
         private const int INITIAL_LIQUID_TEXTURE_INDEX = 12;
 
@@ -26,7 +26,7 @@ namespace LiquidAPI
 
         public override void Load()
         {
-            LiquidRenderer.Instance = new LiquidRenderer();
+            renderer = new LiquidRenderer();
 
             interactionResult = new int[256, 256];
             killTile = new bool[TileLoader.TileCount, 256];
@@ -49,25 +49,23 @@ namespace LiquidAPI
             LiquidHooks.OldHoneyTexture = new List<Texture2D>()
             {
                 Main.liquidTexture[11] //default honey
-
 		    };
+
             LiquidHooks.OldLavaTexture = new List<Texture2D>()
             {
                 Main.liquidTexture[1], //default lava
 		        GetTexture("Texture/Lava_Test/Cursed_Lava"),
                 GetTexture("Texture/Lava_Test/Ichor_Lava")
             };
-            List<Texture2D> OldWaterTextureList = new List<Texture2D>();
+
+            LiquidHooks.OldWaterTexture = new List<Texture2D>();
             for (int i = 0; i < 11; i++)
             {
-                if (i == 1 || i == 11)
-                {
+                if (i == 1)
                     continue;
-                }
-                OldWaterTextureList.Add(Main.liquidTexture[i]);
-            }
 
-            LiquidHooks.OldWaterTexture = OldWaterTextureList;
+                LiquidHooks.OldWaterTexture.Add(Main.liquidTexture[i]);
+            }
         }
 
         public override void PostSetupContent()
@@ -76,13 +74,14 @@ namespace LiquidAPI
             // Otherwise we would need to override ModLoader functions to resize the arrays and load textures.
 
 
-            LiquidRegistry.AddHooks();
+            //LiquidSwapping.MethodSwap();
+            //WaterDrawInjection.MethodSwap();
+            //InternalLiquidDrawInjection.SwapMethod();
+            AddHooks();
         }
 
         public override void Unload()
         {
-            LiquidRenderer.Instance = null;
-
             OnUnload?.Invoke();
             OnUnload = null;
 

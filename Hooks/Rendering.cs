@@ -849,7 +849,7 @@ namespace LiquidAPI.Hooks
                     num3 = Math.Max(num3, 5);
                     num2 = Math.Min(num2, Main.maxTilesX - 5) + 2;
                     num4 = Math.Min(num4, Main.maxTilesY - 5) + 4;
-                    Microsoft.Xna.Framework.Rectangle drawArea = new Microsoft.Xna.Framework.Rectangle(num, num3, num2 - num, num4 - num3);
+                    Rectangle drawArea = new Rectangle(num, num3, num2 - num, num4 - num3);
                     LiquidRenderer.Instance.PrepareDraw(drawArea);
                 }
 
@@ -1065,13 +1065,13 @@ namespace LiquidAPI.Hooks
             }
         }
 
-        private static void OldWaterDraw(On.Terraria.Main.orig_oldDrawWater orig, Terraria.Main self,
+        public static void OldWaterDraw(On.Terraria.Main.orig_oldDrawWater orig, Terraria.Main self,
             bool bg = false, int Style = 0, float Alpha = 1f)
         {
             MainOnOldDrawWater(self, bg, Style, Alpha);
         }
 
-        private static void MainOnOldDrawWater(Terraria.Main self,
+        public static void MainOnOldDrawWater(Terraria.Main self,
             bool bg = false, int Style = 0, float Alpha = 1f)
         {
             Texture2D liquidTexture = OldWaterTexture[Style];

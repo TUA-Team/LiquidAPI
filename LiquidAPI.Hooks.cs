@@ -1,14 +1,17 @@
-﻿using System.Reflection;
-using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework.Graphics;
 using MonoMod.RuntimeDetour.HookGen;
+using System.Reflection;
 using Terraria.Map;
 using Terraria.ModLoader;
+using static LiquidAPI.Hooks.LiquidHooks;
 
-namespace LiquidAPI.Hooks
+namespace LiquidAPI
 {
-    internal static partial class LiquidHooks
+    partial class LiquidAPI
     {
-        public static void AddHooks()
+        internal LiquidRenderer renderer;
+
+        private void AddHooks()
         {
             // Update
             On.Terraria.Liquid.Update += ModdedLiquidUpdate;
@@ -29,23 +32,23 @@ namespace LiquidAPI.Hooks
 
             // Liquid Renderer
             On.Terraria.GameContent.Liquid.LiquidRenderer.Update +=
-                (orig, self, time) => LiquidRenderer.Instance?.Update(time);
+                (orig, self, time) => renderer.Update(time);
 
             On.Terraria.GameContent.Liquid.LiquidRenderer.PrepareDraw +=
-                (orig, self, area) => LiquidRenderer.Instance.PrepareDraw(area);
+                (orig, self, area) => renderer.PrepareDraw(area);
 
             On.Terraria.GameContent.Liquid.LiquidRenderer.Draw += (orig, self, batch, offset, style, alpha, draw) =>
-                LiquidRenderer.Instance.Draw(batch, offset, style, alpha, draw);
+                renderer.Draw(batch, offset, style, alpha, draw);
 
             On.Terraria.GameContent.Liquid.LiquidRenderer.HasFullWater +=
-                (orig, self, x, y) => LiquidRenderer.Instance.HasFullWater(x, y);
+                (orig, self, x, y) => renderer.HasFullWater(x, y);
 
             On.Terraria.GameContent.Liquid.LiquidRenderer.SetWaveMaskData +=
                 (On.Terraria.GameContent.Liquid.LiquidRenderer.orig_SetWaveMaskData orig, Terraria.GameContent.Liquid.LiquidRenderer self, ref Texture2D texture) =>
-                    LiquidRenderer.Instance.SetWaveMaskData(ref texture);
+                    renderer.SetWaveMaskData(ref texture);
 
             On.Terraria.GameContent.Liquid.LiquidRenderer.GetCachedDrawArea +=
-                (orig, self) => LiquidRenderer.Instance.GetCachedDrawArea();
+                (orig, self) => renderer.GetCachedDrawArea();
 
 
             // Collision
@@ -67,27 +70,28 @@ namespace LiquidAPI.Hooks
             MapLegend_FromTile += FromTile;
         }
 
-        internal delegate string orig_FromTile(MapLegend instance, MapTile mapTile, int x, int y);
-        internal delegate string hook_FromTile(orig_FromTile orig, MapLegend instance, MapTile mapTile, int x, int y);
+        private delegate string orig_FromTile(MapLegend instance, MapTile mapTile, int x, int y);
+        private delegate string hook_FromTile(orig_FromTile orig, MapLegend instance, MapTile mapTile, int x, int y);
 
-        public static event hook_FromTile MapLegend_FromTile
+        private static event hook_FromTile MapLegend_FromTile
         {
             add
             {
-                HookEndpointManager.Add<hook_FromTile>(MethodBase.GetMethodFromHandle(typeof(MapLegend).GetMethod("FromTile", BindingFlags.Public | BindingFlags.Instance).MethodHandle), value);
+                HookEndpointManager.Add<hook_FromTile>(MethodBase.GetMethodFromHandle(typeof(MapLegend).GetMethod("FromTile", BindingFlags.Public | BindingFlags.Instance).MethodHandle), value);
             }
             remove
             {
-                HookEndpointManager.Remove<hook_FromTile>(MethodBase.GetMethodFromHandle(typeof(MapLegend).GetMethod("FromTile", BindingFlags.Public | BindingFlags.Instance).MethodHandle), value);
+                HookEndpointManager.Remove<hook_FromTile>(MethodBase.GetMethodFromHandle(typeof(MapLegend).GetMethod("FromTile", BindingFlags.Public | BindingFlags.Instance).MethodHandle), value);
             }
         }
 
-        public static string FromTile(orig_FromTile orig, MapLegend instance, MapTile mapTile, int x, int y) {
+        private static string FromTile(orig_FromTile orig, MapLegend instance, MapTile mapTile, int x, int y)
+        {
             if (mapTile.Type < 10000)
             {
                 return orig(instance, mapTile, x, y);
             }
-            return "Programmer are working, do not disturb them unless you are ready to face the wrath of hell";;
+            return "Programmer are working, do not disturb them unless you are ready to face the wrath of hell";
         }
     }
 }

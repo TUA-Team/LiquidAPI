@@ -4,7 +4,7 @@ using Terraria.ID;
 
 namespace LiquidAPI.Hooks
 {
-    internal static class Utilities
+    internal static partial class LiquidHooks
     {
         public static void AddWater(On.Terraria.Liquid.orig_AddWater org, int x, int y)
         {

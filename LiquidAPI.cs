@@ -26,8 +26,6 @@ namespace LiquidAPI
 
         public override void Load()
         {
-            renderer = new LiquidRenderer();
-
             interactionResult = new int[256, 256];
             killTile = new bool[TileLoader.TileCount, 256];
 
@@ -46,26 +44,9 @@ namespace LiquidAPI
             this.AddLiquid<Honey>("LiquidHoney");
             this.AddLiquid<Oil>("LiquidOil");
 
-            LiquidHooks.OldHoneyTexture = new List<Texture2D>()
-            {
-                Main.liquidTexture[11] //default honey
-		    };
+            renderer = new LiquidRenderer();
 
-            LiquidHooks.OldLavaTexture = new List<Texture2D>()
-            {
-                Main.liquidTexture[1], //default lava
-		        GetTexture("Texture/Lava_Test/Cursed_Lava"),
-                GetTexture("Texture/Lava_Test/Ichor_Lava")
-            };
-
-            LiquidHooks.OldWaterTexture = new List<Texture2D>();
-            for (int i = 0; i < 11; i++)
-            {
-                if (i == 1)
-                    continue;
-
-                LiquidHooks.OldWaterTexture.Add(Main.liquidTexture[i]);
-            }
+            LiquidHooks.LoadOldVanillaTextures();
         }
 
         public override void PostSetupContent()

@@ -14,12 +14,38 @@ namespace LiquidAPI.Hooks
 {
     internal static partial class LiquidHooks
     {
-        public static List<Texture2D> OldHoneyTexture;
-        public static List<Texture2D> OldLavaTexture;
-        public static List<Texture2D> OldWaterTexture;
+        public static Texture2D OldHoneyTexture;
+        public static Texture2D[] OldLavaTexture;
+        public static Texture2D[] OldWaterTexture;
 
         public static int lavaStyle = 0; //0 being default lava texture
         public static int honeyStyle = 0; //0 being default honey texture
+
+        public static void LoadOldVanillaTextures()
+        {
+            OldHoneyTexture = Main.liquidTexture[11]; //default honey;
+
+            OldLavaTexture = new Texture2D[]
+            {
+                Main.liquidTexture[1], //default lava
+		        LiquidAPI.Instance.GetTexture("Texture/Lava_Test/Cursed_Lava"),
+                LiquidAPI.Instance.GetTexture("Texture/Lava_Test/Ichor_Lava")
+            };
+
+            OldWaterTexture = new Texture2D[]
+            {
+                Main.liquidTexture[0],
+                Main.liquidTexture[2],
+                Main.liquidTexture[3],
+                Main.liquidTexture[4],
+                Main.liquidTexture[5],
+                Main.liquidTexture[6],
+                Main.liquidTexture[7],
+                Main.liquidTexture[8],
+                Main.liquidTexture[9],
+                Main.liquidTexture[10],
+            };
+        }
 
 
         public static void ILDrawWaterSlope(ILContext il)
@@ -1167,7 +1193,7 @@ namespace LiquidAPI.Hooks
                         }
                         else if (liquid.TypeID == LiquidID.Honey)
                         {
-                            liquidTexture = OldHoneyTexture[honeyStyle];
+                            liquidTexture = OldHoneyTexture;
                         }
                         else if (liquid.TypeID != LiquidID.Water)
                         {

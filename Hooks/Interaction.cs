@@ -52,7 +52,7 @@ namespace LiquidAPI.Hooks
                     }
                     flag = true;
                 }
-            }            
+            }
             else if (y != 0)
             {
                 up = LiquidWorld.grid[x, y - 1];
@@ -65,7 +65,7 @@ namespace LiquidAPI.Hooks
                     }
                     flag = true;
                 }
-            }            
+            }
             else if (x != Main.maxTilesY)
             {
                 down = LiquidWorld.grid[x, y + 1];
@@ -81,11 +81,15 @@ namespace LiquidAPI.Hooks
             }
             if (flag)
             {
-                if (x != 0 && left.LiquidType.GetType() == self.LiquidType.GetType()) return;
-                if (x != Main.maxTilesX && right.LiquidType.GetType() == self.LiquidType.GetType()) return;
-                if (y != Main.maxTilesY && down.LiquidType.GetType() == self.LiquidType.GetType()) return;
+                if (x != 0 && left.LiquidType.GetType() == self.LiquidType.GetType())
+                    return;
+                if (x != Main.maxTilesX && right.LiquidType.GetType() == self.LiquidType.GetType())
+                    return;
+                if (y != Main.maxTilesY && down.LiquidType.GetType() == self.LiquidType.GetType())
+                    return;
 
-                if (self.LiquidType.LiquidInteraction(x, y, targetType)) return;
+                if (self.LiquidType.LiquidInteraction(x, y, targetType))
+                    return;
 
                 // what does this code even do? - Agrair
 #pragma warning disable IDE0059 // Unnecessary assignment of a value
@@ -171,7 +175,8 @@ namespace LiquidAPI.Hooks
                     {
 
 
-                        if (self.LiquidType.LiquidInteraction(x, y, targetType)) return;
+                        if (self.LiquidType.LiquidInteraction(x, y, targetType))
+                            return;
                         int type = LiquidAPI.interactionResult[LiquidWorld.grid[x - 1, y].LiquidType.Type, targetType.Type];
 
                         if (type == -1)

@@ -1,10 +1,6 @@
-using LiquidAPI.Hooks;
-using LiquidAPI.Vanilla;
-using Microsoft.Xna.Framework.Graphics;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using LiquidAPI.Caches;
+using LiquidAPI.Vanilla;
+using System;
 using Terraria;
 using Terraria.ModLoader;
 
@@ -72,7 +68,8 @@ namespace LiquidAPI
 
         public static void Autoload(Mod mod)
         {
-            if (mod.Code == null) { return; }
+            if (mod.Code == null)
+            { return; }
 
             foreach (Type type in mod.Code.DefinedTypes)
             {

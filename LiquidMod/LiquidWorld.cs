@@ -42,7 +42,8 @@ namespace LiquidAPI.LiquidMod
             try
             {
                 string path = Path.ChangeExtension(Main.ActiveWorldFileData.Path, EXTENSION); //Change current world path to the custom save one
-                if (FileUtilities.Exists(path, false)) { FileUtilities.Copy(path, path + ".bak", false, true); } //also make a backup
+                if (FileUtilities.Exists(path, false))
+                { FileUtilities.Copy(path, path + ".bak", false, true); } //also make a backup
                 Queue<byte> data = new Queue<byte>();
                 data.Enqueue(MODE);
                 data.Enqueue(FORM);//Point Storage
@@ -52,8 +53,10 @@ namespace LiquidAPI.LiquidMod
                     {
                         if (liquidGrid[x, y] != 0)
                         {
-                            data.Enqueue((byte)(x >> 8)); data.Enqueue((byte)x);
-                            data.Enqueue((byte)(y >> 8)); data.Enqueue((byte)y);
+                            data.Enqueue((byte)(x >> 8));
+                            data.Enqueue((byte)x);
+                            data.Enqueue((byte)(y >> 8));
+                            data.Enqueue((byte)y);
                             data.Enqueue(liquidGrid[x, y]);
                         }
                     }
@@ -69,7 +72,8 @@ namespace LiquidAPI.LiquidMod
             try
             {
                 string path = Path.ChangeExtension(Main.ActiveWorldFileData.Path, EXTENSION);
-                if (!FileUtilities.Exists(path, false)) { return; }
+                if (!FileUtilities.Exists(path, false))
+                { return; }
                 Queue<byte> data = new Queue<byte>(FileUtilities.ReadAllBytes(path, false));
                 byte mode = data.Dequeue();
                 byte form = data.Dequeue();
@@ -179,11 +183,13 @@ namespace LiquidAPI.LiquidMod
                     //WorldGen.WaterCheck();
                     int num78 = 0;
                     Liquid.quickSettle = true;
-                    while (num78 < 10) {
+                    while (num78 < 10)
+                    {
                         int num79 = Liquid.numLiquid + LiquidBuffer.numLiquidBuffer;
                         num78++;
                         float num80 = 0f;
-                        while (Liquid.numLiquid > 0) {
+                        while (Liquid.numLiquid > 0)
+                        {
                             float num81 = (float)(num79 - (Liquid.numLiquid + LiquidBuffer.numLiquidBuffer)) / (float)num79;
                             if (Liquid.numLiquid + LiquidBuffer.numLiquidBuffer > num79)
                                 num79 = Liquid.numLiquid + LiquidBuffer.numLiquidBuffer;

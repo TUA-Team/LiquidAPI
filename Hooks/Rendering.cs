@@ -5,7 +5,6 @@ using Microsoft.Xna.Framework.Graphics;
 using Mono.Cecil.Cil;
 using MonoMod.Cil;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using Terraria;
 using Terraria.ModLoader;
@@ -1512,7 +1511,8 @@ namespace LiquidAPI.Hooks
                         }
                     }
 
-                IL_E7F:;
+                IL_E7F:
+                    ;
                 }
             }
 

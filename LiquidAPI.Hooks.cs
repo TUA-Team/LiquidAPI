@@ -1,5 +1,4 @@
-﻿using Microsoft.Xna.Framework.Graphics;
-using MonoMod.RuntimeDetour.HookGen;
+﻿using MonoMod.RuntimeDetour.HookGen;
 using System.Reflection;
 using Terraria.Map;
 using Terraria.ModLoader;
@@ -31,25 +30,7 @@ namespace LiquidAPI
             IL.Terraria.Main.DrawTiles += ILDrawWaterSlope;
 
             // Liquid Renderer
-            On.Terraria.GameContent.Liquid.LiquidRenderer.Update +=
-                (orig, self, time) => renderer.Update(time);
-
-            On.Terraria.GameContent.Liquid.LiquidRenderer.PrepareDraw +=
-                (orig, self, area) => renderer.PrepareDraw(area);
-
-            On.Terraria.GameContent.Liquid.LiquidRenderer.Draw += (orig, self, batch, offset, style, alpha, draw) =>
-                renderer.Draw(batch, offset, style, alpha, draw);
-
-            On.Terraria.GameContent.Liquid.LiquidRenderer.HasFullWater +=
-                (orig, self, x, y) => renderer.HasFullWater(x, y);
-
-            On.Terraria.GameContent.Liquid.LiquidRenderer.SetWaveMaskData +=
-                (On.Terraria.GameContent.Liquid.LiquidRenderer.orig_SetWaveMaskData orig, Terraria.GameContent.Liquid.LiquidRenderer self, ref Texture2D texture) =>
-                    renderer.SetWaveMaskData(ref texture);
-
-            On.Terraria.GameContent.Liquid.LiquidRenderer.GetCachedDrawArea +=
-                (orig, self) => renderer.GetCachedDrawArea();
-
+            renderer.AddHooks();
 
             // Collision
             On.Terraria.NPC.Collision_WaterCollision += Collision_WaterCollision;
@@ -62,26 +43,23 @@ namespace LiquidAPI
             //Map
             On.Terraria.Map.MapHelper.CreateMapTile += CreateMapTile;
             On.Terraria.Map.MapHelper.GetMapTileXnaColor += GetMapTileXnaColor;
-
-            //Lang
             On.Terraria.Lang.GetMapObjectName += GetMapObjectName;
-
-            //
             MapLegend_FromTile += FromTile;
         }
 
         private delegate string orig_FromTile(MapLegend instance, MapTile mapTile, int x, int y);
         private delegate string hook_FromTile(orig_FromTile orig, MapLegend instance, MapTile mapTile, int x, int y);
+        private static readonly MethodBase method_MapLegend_FromTile = MethodBase.GetMethodFromHandle(typeof(MapLegend).GetMethod("FromTile", BindingFlags.Public | BindingFlags.Instance).MethodHandle);
 
         private static event hook_FromTile MapLegend_FromTile
         {
             add
             {
-                HookEndpointManager.Add<hook_FromTile>(MethodBase.GetMethodFromHandle(typeof(MapLegend).GetMethod("FromTile", BindingFlags.Public | BindingFlags.Instance).MethodHandle), value);
+                HookEndpointManager.Add<hook_FromTile>(method_MapLegend_FromTile, value);
             }
             remove
             {
-                HookEndpointManager.Remove<hook_FromTile>(MethodBase.GetMethodFromHandle(typeof(MapLegend).GetMethod("FromTile", BindingFlags.Public | BindingFlags.Instance).MethodHandle), value);
+                HookEndpointManager.Remove<hook_FromTile>(method_MapLegend_FromTile, value);
             }
         }
 

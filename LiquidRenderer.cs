@@ -93,6 +93,28 @@ namespace LiquidAPI
             }
         }
 
+        public void AddHooks()
+        {
+            On.Terraria.GameContent.Liquid.LiquidRenderer.Update +=
+                (orig, self, time) => this.Update(time);
+
+            On.Terraria.GameContent.Liquid.LiquidRenderer.PrepareDraw +=
+                (orig, self, area) => this.PrepareDraw(area);
+
+            On.Terraria.GameContent.Liquid.LiquidRenderer.Draw += (orig, self, batch, offset, style, alpha, draw) =>
+                this.Draw(batch, offset, style, alpha, draw);
+
+            On.Terraria.GameContent.Liquid.LiquidRenderer.HasFullWater +=
+                (orig, self, x, y) => this.HasFullWater(x, y);
+
+            On.Terraria.GameContent.Liquid.LiquidRenderer.SetWaveMaskData +=
+                (On.Terraria.GameContent.Liquid.LiquidRenderer.orig_SetWaveMaskData orig, Terraria.GameContent.Liquid.LiquidRenderer self, ref Texture2D texture) =>
+                    this.SetWaveMaskData(ref texture);
+
+            On.Terraria.GameContent.Liquid.LiquidRenderer.GetCachedDrawArea +=
+                (orig, self) => this.GetCachedDrawArea();
+        }
+
         private unsafe void InternalPrepareDraw(Rectangle drawArea)
         {
             Rectangle rectangle =

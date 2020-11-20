@@ -93,9 +93,15 @@ namespace LiquidAPI
         {
             if (mod.Code == null) { return; }
 
-            foreach (Type type in mod.Code.DefinedTypes.Where(type => type.IsSubclassOf(typeof(ModLiquid))).OrderBy(type => type.FullName))
+            foreach (Type type in mod.Code.DefinedTypes)
             {
-                AutoloadLiquid(mod, type);
+                if (type.IsAbstract)
+                    continue;
+
+                if (type.IsSubclassOf(typeof(ModLiquid)))
+                {
+                    AutoloadLiquid(mod, type);
+                }
             }
         }
         private static void AutoloadLiquid(Mod mod, Type type)

@@ -1,9 +1,9 @@
-﻿using LiquidAPI.Caches;
+﻿using System.Collections.Generic;
+using System.Linq;
+using LiquidAPI.Caches;
 using LiquidAPI.LiquidMod;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System.Collections.Generic;
-using System.Linq;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -66,7 +66,7 @@ namespace LiquidAPI.Items
                 liquid.Amount = 255;
 
                 WorldGen.SquareTileFrame(Player.tileTargetX, Player.tileTargetY, true);
-
+                
             }
 
             return true;
@@ -98,7 +98,7 @@ namespace LiquidAPI.Items
         public static Item CreateBucketItem(ModLiquid liquid)
         {
             List<ModItem> itemList = (List<ModItem>)ReflectionCaches.fieldCache[typeof(ItemLoader)]["items"].GetValue(null);
-            ModBucket modBucket = (ModBucket)itemList.Single(i => i is ModBucket i2 && i2.liquid.Type == liquid.Type);
+            ModBucket modBucket = (ModBucket) itemList.Single(i => i is ModBucket i2 && i2.liquid.Type == liquid.Type);
 
             Item bucket = new Item();
             bucket.SetDefaults(modBucket.item.type);

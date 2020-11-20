@@ -1,9 +1,13 @@
-﻿using LiquidAPI.Items;
+﻿using System.Collections.Generic;
+using System.Linq;
+using LiquidAPI.Caches;
+using LiquidAPI.Items;
 using LiquidAPI.LiquidMod;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.Graphics;
+using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ObjectData;
 // ReSharper disable InconsistentNaming

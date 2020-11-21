@@ -17,7 +17,8 @@ namespace LiquidAPI
         internal static Dictionary<int, ModLiquid> liquidList;
         internal static Dictionary<int, Color> mapColorLookup;
         private static int initialLiquidIndex = 0;//3;
-        private static int liquidTextureIndex = 12;
+        private static readonly int liquidTextureIndex = 12;
+        private static Dictionary<int, Texture2D> registeredLiquidTextures;
 
         private const int vanillaMax = 13;
 
@@ -33,6 +34,8 @@ namespace LiquidAPI
                 liquidList.Clear();
                 liquidList = null;
             };
+
+            registeredLiquidTextures = new Dictionary<int, Texture2D>();
         }
 
         public static void AddLiquid<TLiquid>(this Mod mod, string name, Texture2D texture = null, Texture2D fancyTexture2D = null) where TLiquid : ModLiquid, new()
@@ -61,15 +64,26 @@ namespace LiquidAPI
 
             if (Main.netMode != NetmodeID.Server && liquid.Type > 2)
             {
-                LiquidRenderer.Instance.LiquidTextures.Add(liquid.Type + 9, fancyTexture);
+                registeredLiquidTextures.Add(liquid.Type + 9, fancyTexture);
             }
 
             liquid.AddModBucket();
         }
 
+        public static void PostSetupContent()
+        {
+            foreach (var tex in registeredLiquidTextures)
+            {
+                LiquidRenderer.Instance.LiquidTextures.Add(tex.Key, tex.Value);
+            }
+            registeredLiquidTextures.Clear();
+            registeredLiquidTextures = null;
+        }
+
         public static void Unload()
         {
-            liquidList.Clear();
+            liquidList?.Clear();
+            liquidList = null;
         }
 
         public static ModLiquid GetLiquid(int i)

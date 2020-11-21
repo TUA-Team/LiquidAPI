@@ -56,6 +56,7 @@ namespace LiquidAPI
             //WaterDrawInjection.MethodSwap();
             //InternalLiquidDrawInjection.SwapMethod();
             AddHooks();
+            LiquidRegistry.PostSetupContent();
         }
 
         public override void Unload()

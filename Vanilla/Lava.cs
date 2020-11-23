@@ -1,4 +1,4 @@
-﻿using Microsoft.Xna.Framework;
+﻿/*using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ObjectData;
 
@@ -11,13 +11,14 @@ namespace LiquidAPI.Vanilla
 		public override void SetDefaults()
 		{
 			DisplayName.SetDefault("Lava");
-			LiquidColor = new Color(253, 62, 3);
-			WaterfallLength = 3;
-			DefaultOpacity = 0.95f;
-			WaveMaskStrength = 0;
-			ViscosityMask = 200;
+			liquidColor = new Color(253, 62, 3);
+			waterfallLength = 3;
+			defaultOpacity = 0.95f;
+			waveMaskStrength = 0;
+			viscosityMask = 200;
 		}
 
-		public override bool CanKillTile(int x,int y)=>TileObjectData.CheckLavaDeath(Main.tile[x,y]);
+		public override bool CanKillWater(int x,int y)=>TileObjectData.CheckLavaDeath(Main.tile[x,y]);
 	}
 }
+*/

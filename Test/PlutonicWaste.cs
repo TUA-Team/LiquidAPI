@@ -1,4 +1,4 @@
-﻿using Microsoft.Xna.Framework;
+﻿/*using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -10,8 +10,8 @@ namespace LiquidAPI.Test
 		public override void SetDefaults()
 		{
 			DisplayName.SetDefault("Liquid Waste");
-			DefaultOpacity=0.5f;
-			LiquidColor=Color.GreenYellow;
+			defaultOpacity=0.5f;
+			liquidColor=Color.GreenYellow;
 		}
 
 		public override void PreDrawValueSet(ref bool bg, ref int style, ref float Alpha)
@@ -37,3 +37,4 @@ namespace LiquidAPI.Test
 		}
 	}
 }
+*/

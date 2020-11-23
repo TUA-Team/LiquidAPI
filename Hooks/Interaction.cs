@@ -1,4 +1,4 @@
-﻿using LiquidAPI.ID;
+﻿/*using LiquidAPI.ID;
 using LiquidAPI.LiquidMod;
 using LiquidAPI.Vanilla;
 using Microsoft.Xna.Framework;
@@ -74,7 +74,7 @@ namespace LiquidAPI.Hooks
 			}
 			else if (liquidUp.Amount > 0 && liquidUp.TypeID != LiquidID.Lava)
 			{
-				bool flag = liquidSelf.Tile.active()/* && TileID.Sets.ForceObsidianKill[liquidSelf.Tile.type] && !TileID.Sets.ForceObsidianKill[liquidUp.Tile.type]*/;
+				bool flag = liquidSelf.Tile.active()*//* && TileID.Sets.ForceObsidianKill[liquidSelf.Tile.type] && !TileID.Sets.ForceObsidianKill[liquidUp.Tile.type]*//*;
 
 				if (Main.tileCut[liquidUp.Tile.type])
 				{
@@ -259,3 +259,4 @@ namespace LiquidAPI.Hooks
 		}
 	}
 }
+*/

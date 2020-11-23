@@ -1,51 +1,57 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
-using Terraria.Graphics;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.ObjectData;
 using LiquidAPI.LiquidMod;
 // ReSharper disable InconsistentNaming
 
 namespace LiquidAPI
 {
-	public abstract class ModLiquid
+    public abstract class ModLiquid : ModTexturedType
 	{
-		public bool gravity = true;
-		public int customDelay = 1; //Default value, aka 
+		public Color liquidColor = Color.White;
+		public byte waterfallLength = 10;
+		public float defaultOpacity = 1f;
+		public byte waveMaskStrength = 0;
+		public byte viscosityMask = 0;
 
-		internal int Type;
 
-		public Mod Mod{get;internal set;}
+		internal void AddModBucket() => Mod.AddContent(CreateBucket());
 
-		public ModTranslation DisplayName{get;internal set;}
 
-		public string Name{get;internal set;}
+		protected sealed override void Register()
+        {
+			LiquidLoader.Add(this);
+        }
 
-		public virtual Texture2D Texture=>(Texture2D)ModContent.GetTexture(GetType().FullName.Replace(".", "/"));
-		public virtual Texture2D OldTexture=>(Texture2D)ModContent.GetTexture(GetType().FullName.Replace(".", "/"));
 
-		public Color LiquidColor=Color.White;
+        public virtual void SetStaticDefaults()
+        {
+        }
 
-		public byte WaterfallLength=10;
-		public float DefaultOpacity=1f;
-		public byte WaveMaskStrength=0;
-		public byte ViscosityMask=0;
+		public virtual void SetDefaults()
+		{
+		}
+
+		protected virtual ModBucket CreateBucket() => new ModBucket(this, $"{Name}Bucket");
+
 
 		/// <summary>
-		/// Takes an array that contain legacy style texture and 1.3.4+ texture style
+		/// The ID of this liquid
 		/// </summary>
-		/// <param name="name"></param>
-		/// <returns></returns>
-		public virtual bool Autoload(ref string name,ref string texture)=>true;
+		public int Type { get; internal set; }
 
-		public virtual void SetDefaults(){}
+		public ModTranslation DisplayName { get; internal set; }
 
-		public virtual void Update() { }
 
-		//Normally trigger if gravity is at false
-		/*public virtual bool CustomPhysic(int x, int y)
+		// Legacy (to be ported)		
+		/*
+		 * 		public bool gravity = true;
+		public int customDelay = 1; //Default value, aka 
+
+		 * //Normally trigger if gravity is at false
+		public virtual bool CustomPhysic(int x, int y)
 		{
 			LiquidRef liquidLeft = LiquidCore.grid[x - 1, y];
 			LiquidRef liquidRight = LiquidCore.grid[x + 1, y];
@@ -90,7 +96,7 @@ namespace LiquidAPI
 			return true;
 		}*/
 
-		public virtual void PreDrawValueSet(ref bool bg, ref int style, ref float Alpha) { }
+		/*public virtual void PreDrawValueSet(ref bool bg, ref int style, ref float Alpha) { }
 
 		public virtual void PreDraw(TileBatch batch) { }
 
@@ -109,40 +115,35 @@ namespace LiquidAPI
 		public virtual void LavaInteraction(int x, int y) { }
 
 		public virtual void HoneyInteraction(int x, int y) { }
-
-		public virtual bool CanKillTile(int x,int y)
+		
+		 		public virtual void Update() { }
+		
+		 		public virtual bool CanKillWater(int x,int y)
 		{
 			return TileObjectData.CheckWaterDeath(Main.tile[x,y]);
-		}
-
-		internal void AddModBucket()
-		{
-			Mod.AddContent(new ModBucket(this,"Bucket"+Name));
-		}
+		}*/
 	}
 
 	[Autoload(false)]
 	public class ModBucket : ModItem
 	{
 		private readonly ModLiquid _liquid;
-
 		private readonly string _name;
-        public sealed override string Name => _name;
 
-        public sealed override string Texture => "LiquidAPI/ModBucket";
-		
-		public ModBucket(string name)
+		private ModBucket(string name)
         {
 			_name = name;
         }
 
-		public ModBucket(ModLiquid liquid,string name) : this(name)
+		public ModBucket(ModLiquid liquid, string name) : this(name)
 		{
+			// TODO: Does this work with json localization?
 			_liquid = liquid;
-			DisplayName.SetDefault((liquid?.DisplayName.GetDefault()??"Empty")+" Bucket");
+			DisplayName.SetDefault($"{liquid.DisplayName.GetDefault() ?? "Empty"} Bucket");
 		}
 
-		public override void SetDefaults()
+
+		public sealed override void SetDefaults()
 		{
 			item.width = 24;
 			item.height = 22;
@@ -182,8 +183,7 @@ namespace LiquidAPI
 
 			if (_liquid != null)
 			{
-				Texture2D liquidTexture = (Texture2D)Mod.GetTexture("Texture/Bucket/liquid");
-				spriteBatch.Draw(liquidTexture, position, null, _liquid.LiquidColor, 0f, origin, new Vector2(scale), SpriteEffects.None, 0);
+				spriteBatch.Draw(BaseLiquidTexture, position, null, _liquid.liquidColor, 0f, origin, scale, SpriteEffects.None, 0);
 			}
 		}
 
@@ -191,9 +191,24 @@ namespace LiquidAPI
 		{
 			if (_liquid != null)
 			{
-				Texture2D liquidTexture = (Texture2D)Mod.GetTexture("Texture/Bucket/liquid");
-				spriteBatch.Draw(liquidTexture, item.position, _liquid.LiquidColor);
+				spriteBatch.Draw(BaseLiquidTexture, item.position, _liquid.liquidColor);
 			}
 		}
-	}
+
+
+		public sealed override string Name => _name;
+
+		public sealed override string Texture => "LiquidAPI/ModBucket";
+
+
+		private static Texture2D BaseLiquidTexture { get; } = (Texture2D)LiquidAPI.instance.GetTexture("Assets/Liquid");
+
+		public static ModBucket Empty { get; } = new ModBucket("EmptyBucket");
+
+
+        public override void Unload()
+        {
+			BaseLiquidTexture?.Dispose();
+        }
+    }
 }

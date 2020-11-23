@@ -1,4 +1,4 @@
-﻿using Microsoft.Xna.Framework;
+﻿/*using Microsoft.Xna.Framework;
 using Terraria;
 
 namespace LiquidAPI.Test
@@ -8,8 +8,8 @@ namespace LiquidAPI.Test
 		public override void SetDefaults()
 		{
 			DisplayName.SetDefault("Test liquid");
-			LiquidColor = Color.White;
-			DefaultOpacity = 1f;
+			liquidColor = Color.White;
+			defaultOpacity = 1f;
 		}
 
 		public override void PreDrawValueSet(ref bool bg, ref int style, ref float Alpha)
@@ -29,3 +29,4 @@ namespace LiquidAPI.Test
 		}
 	}
 }
+*/

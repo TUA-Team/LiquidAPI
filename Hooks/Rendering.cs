@@ -1,4 +1,4 @@
-﻿using System;
+﻿/*using System;
 using System.Collections.Generic;
 using LiquidAPI.ID;
 using LiquidAPI.LiquidMod;
@@ -380,4 +380,4 @@ namespace LiquidAPI.Hooks
 			Main.drewLava = true;
 		}
 	}
-}
+}*/

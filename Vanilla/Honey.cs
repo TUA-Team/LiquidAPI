@@ -1,4 +1,4 @@
-﻿using Microsoft.Xna.Framework;
+﻿/*using Microsoft.Xna.Framework;
 
 namespace LiquidAPI.Vanilla
 {
@@ -9,11 +9,12 @@ namespace LiquidAPI.Vanilla
 		public override void SetDefaults()
 		{
 			DisplayName.SetDefault("Honey");
-			LiquidColor = new Color(215, 131, 8);
-			WaterfallLength = 2;
-			DefaultOpacity = 0.95f;
-			WaveMaskStrength = 0;
-			ViscosityMask = 240;
+			liquidColor = new Color(215, 131, 8);
+			waterfallLength = 2;
+			defaultOpacity = 0.95f;
+			waveMaskStrength = 0;
+			viscosityMask = 240;
 		}
 	}
 }
+*/

@@ -1,4 +1,4 @@
-﻿using System;
+﻿/*using System;
 using Terraria;
 using Terraria.ID;
 using LiquidAPI.ID;
@@ -561,4 +561,4 @@ namespace LiquidAPI.Hooks
 			self.kill = 0;
 		}
 	}
-}
+}*/

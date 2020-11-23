@@ -1,4 +1,4 @@
-﻿using Terraria;
+﻿/*using Terraria;
 using Terraria.ID;
 using LiquidAPI.LiquidMod;
 
@@ -37,7 +37,7 @@ namespace LiquidAPI.Hooks
 				return;
 			}
 
-			if (LiquidRegistry.liquidList[LiquidWorld.liquidGrid[x, y].data].CanKillTile(x,y))
+			if (LiquidRegistry.liquidList[LiquidWorld.liquidGrid[x, y].data].CanKillWater(x,y))
 			{
 				WorldGen.KillTile(x, y);
 				if (Main.netMode == NetmodeID.Server)
@@ -48,3 +48,4 @@ namespace LiquidAPI.Hooks
 		}
 	}
 }
+*/

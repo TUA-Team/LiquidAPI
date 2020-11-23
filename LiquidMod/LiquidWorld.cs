@@ -4,12 +4,12 @@ using Terraria;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 using Terraria.Utilities;
-using LiquidAPI.Data;
+using LiquidAPI.Commons;
 
 namespace LiquidAPI.LiquidMod
 {
-	//The following code is a modified version of DataCore from Project_Logic 0.5.0.1 provided by Rartrin
-	public class LiquidWorld : ModWorld
+    //The following code is a modified version of DataCore from Project_Logic 0.5.0.1 provided by Rartrin
+    public class LiquidWorld : ModWorld
 	{
 		private const string EXTENSION = "tua";//Should work without the leading period
 		private const byte MODE = 0; //Extra data

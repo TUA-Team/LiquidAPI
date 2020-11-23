@@ -1,4 +1,4 @@
-﻿namespace LiquidAPI.Data
+﻿namespace LiquidAPI.Commons
 {
     public struct Bit
     {
@@ -8,11 +8,11 @@
         {
             get
             {
-                return (data & (1 << index)) != 0;
+                return (data & 1 << index) != 0;
             }
             set
             {
-                data = (byte)((data & ~(1 << index)) | (value ? (1 << index) : 0));
+                data = (byte)(data & ~(1 << index) | (value ? 1 << index : 0));
             }
         }
 
@@ -33,7 +33,7 @@
 
         public static byte operator ~(Bit b1)
         {
-            return (byte)(~b1.data);
+            return (byte)~b1.data;
         }
 
         public static byte operator +(Bit b1, Bit b2)

@@ -81,7 +81,6 @@ namespace LiquidAPI
 			240
 		};
 
-		public static LiquidRenderer Instance;
 		public Dictionary<int, Texture2D> LiquidTextures = new Dictionary<int, Texture2D>();
 
 		//private Tile[,] _tiles = Main.tile;
@@ -201,7 +200,7 @@ namespace LiquidAPI
 							ModLiquid liquid=LiquidRegistry.liquidList[ptr2->Type];
 							ptr2->Opacity = 1f;
 							ptr2->VisibleType = ptr2->Type;
-							byte waterfallLength=liquid.WaterfallLength;
+							byte waterfallLength=liquid.waterfallLength;
 							float num3 = 1f / waterfallLength + 1;
 							float num4 = 1f;
 							for (int num5 = 1; num5 <= waterfallLength; num5++)
@@ -506,11 +505,11 @@ namespace LiquidAPI
 									ptr5->LiquidOffset = new Vector2((float) Math.Floor(num20 * 16),(float) Math.Floor(num22 * 16));
 									ptr5->Type = ptr2->VisibleType;
 									ptr5->HasWall = ptr2->HasWall;
-									byte b = LiquidRegistry.liquidList[ptr2->VisibleType].WaveMaskStrength;
+									byte b = LiquidRegistry.liquidList[ptr2->VisibleType].waveMaskStrength;
 									byte b2 = (byte) (b >> 1);
 									ptr6->R = b2;
 									ptr6->G = b2;
-									ptr6->B = LiquidRegistry.liquidList[ptr2->VisibleType].ViscosityMask;
+									ptr6->B = LiquidRegistry.liquidList[ptr2->VisibleType].viscosityMask;
 									ptr6->A = b;
 									LiquidCache* ptr7 = ptr2 - 1;
 									if (num19 != 2 && !ptr7->HasVisibleLiquid && !ptr7->IsSolid && !ptr7->IsHalfBrick)
@@ -599,7 +598,7 @@ namespace LiquidAPI
 							}
 
 							Vector2 liquidOffset = ptr2->LiquidOffset;
-							float opacity = ptr2->Opacity * (isBackgroundDraw ? 1f : LiquidRegistry.liquidList[ptr2->Type].DefaultOpacity);
+							float opacity = ptr2->Opacity * (isBackgroundDraw ? 1f : LiquidRegistry.liquidList[ptr2->Type].defaultOpacity);
 							int type = ptr2->Type;
 							if (type == 0)
 							{

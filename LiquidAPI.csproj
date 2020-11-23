@@ -15,10 +15,12 @@
     <Exec Command="&quot;$(tMLBuildServerPath)&quot; -build $(ProjectDir) -eac $(TargetPath) -define &quot;$(DefineConstants)&quot; -unsafe $(AllowUnsafeBlocks)" />
   </Target>
   <ItemGroup>
+    <None Remove=".gitattributes" />
     <None Remove=".gitignore" />
     <None Remove=".todo" />
     <None Remove="build.txt" />
     <None Remove="description.txt" />
+    <None Remove="ModBucket.png" />
     <None Remove="README.MD" />
   </ItemGroup>
   <ItemGroup>
@@ -26,5 +28,8 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System.Net.Http" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Texture\Bucket\" />
   </ItemGroup>
 </Project>

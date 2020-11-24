@@ -74,14 +74,13 @@ namespace LiquidAPI
             {
                 LiquidRenderer.Instance.LiquidTextures.Add(tex.Key, tex.Value);
             }
+
             registeredLiquidTextures.Clear();
-            registeredLiquidTextures = null;
         }
 
         public static void Unload()
         {
             liquidList?.Clear();
-            liquidList = null;
         }
 
         public static ModLiquid GetLiquid(int i)

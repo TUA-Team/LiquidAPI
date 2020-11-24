@@ -62,7 +62,6 @@ namespace LiquidAPI
         public override void Unload()
         {
             OnUnload?.Invoke();
-            OnUnload = null;
 
             Array.Resize(ref Main.liquidTexture, INITIAL_LIQUID_TEXTURE_INDEX);
             ReflectionCaches.Unload();

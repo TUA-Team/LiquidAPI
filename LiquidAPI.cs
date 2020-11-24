@@ -66,6 +66,8 @@ namespace LiquidAPI
 
             Array.Resize(ref Main.liquidTexture, INITIAL_LIQUID_TEXTURE_INDEX);
             ReflectionCaches.Unload();
+
+            LiquidRegistry.Unload();
         }
 
         public static void Autoload(Mod mod)

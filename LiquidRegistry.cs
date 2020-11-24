@@ -31,8 +31,6 @@ namespace LiquidAPI
                 Array.Resize(ref Main.liquidTexture, vanillaMax);
                 Array.Resize(ref LiquidRenderer.DEFAULT_OPACITY, 3);
                 Array.Resize(ref LiquidRenderer.WATERFALL_LENGTH, 3);
-                liquidList.Clear();
-                liquidList = null;
             };
 
             registeredLiquidTextures = new Dictionary<int, Texture2D>();

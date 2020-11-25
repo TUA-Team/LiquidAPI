@@ -105,29 +105,32 @@ namespace LiquidAPI
                 this.Draw(batch, offset, style, alpha, draw);
 
             On.Terraria.GameContent.Liquid.LiquidRenderer.HasFullWater +=
-                (orig, self, x, y) => this.HasFullWater(x, y);
+                (orig, self, x, y) => HasFullWater(x, y);
 
             On.Terraria.GameContent.Liquid.LiquidRenderer.SetWaveMaskData +=
                 (On.Terraria.GameContent.Liquid.LiquidRenderer.orig_SetWaveMaskData orig, Terraria.GameContent.Liquid.LiquidRenderer self, ref Texture2D texture) =>
-                    this.SetWaveMaskData(ref texture);
+                    SetWaveMaskData(ref texture);
 
             On.Terraria.GameContent.Liquid.LiquidRenderer.GetCachedDrawArea +=
-                (orig, self) => this.GetCachedDrawArea();
+                (orig, self) => GetCachedDrawArea();
+
+            On.Terraria.GameContent.Liquid.LiquidRenderer.GetVisibleLiquid +=
+                (orig, self, x, y) => GetVisibleLiquid(x, y);
         }
 
         private unsafe void InternalPrepareDraw(Rectangle drawArea)
         {
             Rectangle rectangle =
                 new Rectangle(drawArea.X - 2, drawArea.Y - 2, drawArea.Width + 4, drawArea.Height + 4);
-            this._drawArea = drawArea;
-            if (this._cache.Length < rectangle.Width * rectangle.Height + 1)
+            _drawArea = drawArea;
+            if (_cache.Length < rectangle.Width * rectangle.Height + 1)
             {
-                this._cache = new LiquidRenderer.LiquidCache[rectangle.Width * rectangle.Height + 1];
+                _cache = new LiquidCache[rectangle.Width * rectangle.Height + 1];
             }
 
-            if (this._drawCache.Length < drawArea.Width * drawArea.Height + 1)
+            if (_drawCache.Length < drawArea.Width * drawArea.Height + 1)
             {
-                this._drawCache = new LiquidRenderer.LiquidDrawCache[drawArea.Width * drawArea.Height + 1];
+                _drawCache = new LiquidDrawCache[drawArea.Width * drawArea.Height + 1];
             }
 
             if (this._waveMask.Length < drawArea.Width * drawArea.Height)
@@ -680,7 +683,7 @@ namespace LiquidAPI
             Main.tileBatch.End();
         }
 
-        public bool HasFullWater(int x, int y)
+        private bool HasFullWater(int x, int y)
         {
             x -= this._drawArea.X;
             y -= this._drawArea.Y;
@@ -689,7 +692,7 @@ namespace LiquidAPI
                    (this._drawCache[num].IsVisible && !this._drawCache[num].IsSurfaceLiquid);
         }
 
-        public float GetVisibleLiquid(int x, int y)
+        private float GetVisibleLiquid(int x, int y)
         {
             x -= this._drawArea.X;
             y -= this._drawArea.Y;
@@ -707,7 +710,7 @@ namespace LiquidAPI
             return this._cache[num].VisibleLiquidLevel;
         }
 
-        public void Update(GameTime gameTime)
+        private void Update(GameTime gameTime)
         {
             if (Main.gamePaused || !Main.hasFocus)
             {
@@ -737,7 +740,7 @@ namespace LiquidAPI
 
         public void PrepareDraw(Rectangle drawArea)
         {
-            this.InternalPrepareDraw(drawArea);
+            InternalPrepareDraw(drawArea);
         }
 
         public void SetWaveMaskData(ref Texture2D texture)

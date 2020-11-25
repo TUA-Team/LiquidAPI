@@ -1,4 +1,4 @@
-﻿using Microsoft.Xna.Framework;
+﻿/*using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ModLoader;
 
@@ -9,13 +9,13 @@ namespace LiquidAPI.LiquidMod
 		public override void PostUpdate()
 		{
 			bool[] liquidCollision = ModdedWetCollision(player.Center, player.width, player.height);
-			/*for (byte i = 0; i < LiquidRegistry.liquidList.; i++)
+			*//*for (byte i = 0; i < LiquidRegistry.liquidList.; i++)
 			{
 				if (liquidCollision[i])
 				{
 					LiquidRegistry.PlayerInteraction(i, player);
 				}
-			}*/
+			}*//*
 		}
 
 		private static bool[] ModdedWetCollision(Vector2 _position, int _width, int _height)
@@ -93,4 +93,4 @@ namespace LiquidAPI.LiquidMod
 			return moddedLiquid;
 		}
 	}
-}
+}*/

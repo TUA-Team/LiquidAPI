@@ -6,6 +6,8 @@ namespace LiquidAPI
 {
     public sealed partial class LiquidAPI : Mod
 	{
+        public static LiquidAPI Instance => ModContent.GetInstance<LiquidAPI>();
+
 		public static event Action OnUnload;
 
 		public override void Load()
@@ -15,12 +17,15 @@ namespace LiquidAPI
 
 		public override void PostSetupContent()
 		{
-			// Do this after everything is loaded to ensure that ModLoader liquids get taken care of.
-			// Otherwise we would need to override ModLoader functions to resize the arrays and load textures.
-			LiquidHooks.AddHooks();
-		}
+            // Do this after everything is loaded to ensure that ModLoader liquids get taken care of.
+            // Otherwise we would need to override ModLoader functions to resize the arrays and load textures.
 
-		public override void Unload()
+            #region Hooks
+            UpdateHooks.Init();
+			#endregion
+        }
+
+        public override void Unload()
 		{
 			if (OnUnload != null)
 			{

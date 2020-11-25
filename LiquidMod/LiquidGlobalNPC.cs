@@ -1,4 +1,4 @@
-﻿using Terraria;
+﻿/*using Terraria;
 using Terraria.ModLoader;
 
 namespace LiquidAPI.LiquidMod
@@ -7,14 +7,15 @@ namespace LiquidAPI.LiquidMod
     {
         public override void PostAI(NPC npc)
         {
-            /*bool[] liquidCollision = CollisionSwap.ModdedWetCollision(npc.Center, npc.width, npc.height);
+            *//*bool[] liquidCollision = CollisionSwap.ModdedWetCollision(npc.Center, npc.width, npc.height);
             for (byte i = 0; i < LiquidRegistry.liquidList.Capacity; i++)
             {
                 if (liquidCollision[i])
                 {
                     LiquidRegistry.NPCInteraction(i, npc);
                 }
-            }*/
+            }*//*
         }
     }
 }
+*/

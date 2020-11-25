@@ -2,7 +2,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\..\references\tModLoader.targets" />
   <PropertyGroup>
-    <AssemblyName>ROI</AssemblyName>
+    <AssemblyName>LiquidAPI</AssemblyName>
     <TargetFramework>net472</TargetFramework>
     <PlatformTarget>x86</PlatformTarget>
     <LangVersion>7.3</LangVersion>
@@ -12,8 +12,13 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <Target Name="BuildMod" AfterTargets="Build">
-    <Exec Command="&quot;$(tMLBuildServerPath)&quot; -build $(ProjectDir) -eac $(TargetPath) -define &quot;$(DefineConstants)&quot; -unsafe $(AllowUnsafeBlocks)" />
+    <Exec Command="&quot;$(tMLBuildServerPath)&quot; -build $(ProjectDir) -eac $(TargetPath) -unsafe $(AllowUnsafeBlocks)" />
   </Target>
+  <ItemGroup>
+    <Compile Remove="Texture\**" />
+    <EmbeddedResource Remove="Texture\**" />
+    <None Remove="Texture\**" />
+  </ItemGroup>
   <ItemGroup>
     <None Remove=".gitattributes" />
     <None Remove=".gitignore" />
@@ -28,8 +33,5 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System.Net.Http" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Texture\Bucket\" />
   </ItemGroup>
 </Project>

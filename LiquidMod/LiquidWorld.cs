@@ -11,11 +11,9 @@ namespace LiquidAPI.LiquidMod
     //The following code is a modified version of DataCore from Project_Logic 0.5.0.1 provided by Rartrin
     public class LiquidWorld : ModWorld
 	{
-		private const string EXTENSION = "tua";//Should work without the leading period
+		private const string EXTENSION = "tliq";//Should work without the leading period
 		private const byte MODE = 0; //Extra data
 		private const byte FORM = 3; //Saving format
-
-		public static LiquidWorld grid;
 
 		public static Bit[,] liquidGrid; // MAKE SURE YOU DEREFERENCE THIS ON UNLOAD
 
@@ -23,14 +21,13 @@ namespace LiquidAPI.LiquidMod
 		{
 			LiquidAPI.OnUnload+=()=>
 			{
-				grid=null;
 				liquidGrid=null;
 			};
 		}
 
 		public override void Initialize()
 		{
-			grid=this;
+			// NOTE: can this break on subworlds somehow?
 			liquidGrid = new Bit[Main.maxTilesX, Main.maxTilesY];
 		}
 
@@ -81,6 +78,6 @@ namespace LiquidAPI.LiquidMod
 			catch { }
 		}
 
-		public LiquidRef this[int x, int y]=>new LiquidRef(x, y);
+		public LiquidRef this[ushort x, ushort y]=>new LiquidRef(x, y);
 	}
 }

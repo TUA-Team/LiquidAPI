@@ -4,9 +4,9 @@ using Terraria.ID;
 
 namespace LiquidAPI.Hooks
 {
-    internal sealed class UpdateHooks : ILiquidHook
+    internal static class UpdateHooks
 	{
-		public void Init()
+		public static void Init()
 		{
 			On.Terraria.Liquid.Update += Update;
 		}

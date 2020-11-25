@@ -1,23 +1,8 @@
-﻿using System;
-using System.Reflection;
-
-namespace LiquidAPI.Hooks
+﻿/*namespace LiquidAPI.Hooks
 {
     internal static partial class LiquidHooks
 	{
 		public static void AddHooks()
-        {
-			foreach (var type in Assembly.GetExecutingAssembly().DefinedTypes)
-            {
-				if (typeof(ILiquidHook).IsAssignableFrom(type))
-                {
-					var hook = (ILiquidHook)Activator.CreateInstance(type);
-					hook.Init();
-                }
-            }
-        }
-
-		/*public static void AddHooks()
 		{
 			// Update
 			On.Terraria.Liquid.Update += ModdedLiquidUpdate;
@@ -54,6 +39,6 @@ namespace LiquidAPI.Hooks
 
 			// TODO: WaterStyleLoader -> Resize Arrays hook needed for LiquidRenderer texture array (Might not be required if done on PostLoad)
 			// TODO: ModInternals -> SetupContent hook needed for LiquidRenderer texture array (Might not be required if done on PostLoad)	
-		}*/
+		}
 	}
-}
+}*/
